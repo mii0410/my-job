@@ -1,0 +1,174 @@
+/*
+ * common.c
+ *
+ *  Created on: Jun 22, 2020
+ *      Author: Alberto Gallegos Ramonet
+ */
+
+#include "Utils.h"
+#include "DBG.h"
+#include "dbg_jtag.h"
+#include "DBG_Uart.h"
+#include <string.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+// okayama
+#define COMMAND_SIZE 64
+char command[64];
+static uint8 cmd_index = 0;
+
+
+PUBLIC uint8_t RxByte[128];
+int  i = 0;
+int l=0;
+
+
+int cmd = 0;
+int c =0;
+
+typedef enum
+{
+    START,
+    COMMAND,
+    STATUS,
+    DATA_LENGTH_L,
+    DATA_LENGTH_H,
+    CO2_DATA,
+    PRIMITIVE_TYPE,
+    COUNT,
+    WAIT_DATA
+}State;
+int state = START;
+
+
+PUBLIC int CMD(){ //送信する関数(SendData関数)を制御する．cmdが3でSendData関数を実行する．
+  if(cmd == 3){
+	  cmd = 0;
+ 	return 3;
+  }else{
+	return 0;
+  }
+}
+
+//void vReadCharInterrupt ()//円筒形容器と合体している温度センサ
+//{
+// uint8_t rxByte =  u8AHI_UartReadData (DBG_E_UART_0);
+// switch(state){
+//
+//case START:
+//	  if(rxByte == 0xAA){ //データの先頭を表す文字
+//		  state = PRIMITIVE_TYPE;
+//		  break;
+//	  }
+//	  break;
+//  case PRIMITIVE_TYPE:
+//	  if(rxByte == 2){ //センサの種類(センサごとに値を変化させる)
+//		  RxByte[i] = rxByte;
+//		  i++;
+//		  state = COUNT;
+//		  break;
+//	  }
+//	  break;
+//  case COUNT:
+//	  if(rxByte >= 1){  //各センサの通し番号
+//	  		  RxByte[i] = rxByte;
+//	  		  i++;
+//	  		  state = WAIT_DATA;
+//	  		  break;
+//	  	  }
+//	  break;
+//  case WAIT_DATA:
+//	  RxByte[i] = rxByte; //センサデータ
+//	  i++;
+//	  if(i == 4){
+//	  		  cmd = 3;
+//	  		  i = 0;
+//	  		  state = START;
+//	  }
+//	   	  break;
+//  default:
+//	 break;
+//
+//	 }
+//
+//}
+
+// okayama
+void vReadCharInterrupt()
+{
+    uint8 rxByte = u8AHI_UartReadData(DBG_E_UART_0);
+    DBG_vPrintf(TRUE, "INT: 0x%02x\n", rxByte);
+	//デバッグ用
+        	static int loopCounter = 0;
+            if (++loopCounter >= 1000) {
+
+                loopCounter = 0;
+            }
+
+    if (rxByte == '\r' || rxByte == '\n') {
+        // コマンド文字列の終端を追加
+        command[cmd_index] = '\0';
+        cmd_index = 0;
+    } else if (cmd_index < COMMAND_SIZE - 1) {
+        command[cmd_index++] = rxByte;
+    } else {
+        // バッファオーバーフロー時はリセット
+        cmd_index = 0;
+    }
+}
+
+
+
+
+//以下はコマンドを管理する．例えばキーボードで"start"と入力されたら処理できるようにもできる
+PUBLIC commandType vReadCommand ()
+{
+  if (strlen(command) == 0)
+    {
+	  return NO_COMMAND;
+    }
+
+  else if (strcmp(command,"send") == 0)
+      {
+  	  //DBG_vPrintf(TRUE,"%s Send command \n",command);
+  	  memset(command,0,sizeof(command));
+        return SEND_COMMAND;
+      }
+  else if (strcmp(command,"start") == 0)
+    {
+	 // DBG_vPrintf(TRUE,"\n: %s Valid command START \n",command);
+	  memset(command,0,sizeof(command));
+      return START_COMMAND;
+    }
+  else if (strcmp(command,"results") == 0)
+    {
+	  //DBG_vPrintf(TRUE,"%s Results command \n",command);
+	  memset(command,0,sizeof(command));
+      return RESULTS_COMMAND;
+    }
+  else
+    {
+	  //DBG_vPrintf(TRUE,"\n: %s is an invalid command \n",command);
+	  memset(command,0,sizeof(command));
+	  return NO_COMMAND;
+    }
+}
+
+//wrote by okayama
+
+//void vReadCommandFromUart()
+//{
+//    while (DBG_bUartCharAvailable()) {
+//        char ch = DBG_u8UartChar();
+//
+//        if (ch == '\r' || ch == '\n') {
+//            command[l] = '\0';  // 終端文字
+//            DBG_vPrintf(TRUE, "\n[UART CMD] Received: %s\n", command);
+//            l = 0;
+//        } else if (l < sizeof(command) - 1) {
+//            command[l++] = ch;
+//        }
+//    }
+//}

@@ -1,0 +1,12 @@
+Release Name: JN-AN-1229 ZPS Application Template
+Release Version: v1002
+
+Locations shown are after application note has been installed into workspace
+
+JN-AN-1229 ZPS             Author: NXP
+Application Template       Name: JN-AN-1229 ZPS Application Template
+                           Version: v1002
+                           Location: <workspace>/JN-AN-1229-ZPS-Application-Template
+                           Description: ZPS Application Template
+                           License: Proprietary. See EULA LA_OPT_Base_License
+                           Format: source code, make files, documentation

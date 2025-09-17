@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="completion_proposal_size">
+	</section>
+	<section name="PDOMSearchPage">
+		<item value="227191" key="searchFlags"/>
+		<item value="false" key="caseSensitive"/>
+		<list key="previousPatterns">
+			<item value="currentCommand"/>
+			<item value="ZPS_u64AplZdoGetIeeeAddr"/>
+			<item value="EUI64"/>
+			<item value="ZPS_EVENT_APS_DATA_INDICATION"/>
+			<item value="SendData"/>
+			<item value="81"/>
+			<item value="ERROR:Extendedstatus81"/>
+			<item value="SEND_COMMAND"/>
+			<item value="vAHI_UartSetRTSCTS"/>
+			<item value="vAHI_UartEnable"/>
+			<item value="commad"/>
+			<item value="vReadCharInterrupt"/>
+			<item value="vInitialiseApp"/>
+			<item value="APP_vtaskCoordinator"/>
+			<item value="app_vMainloop"/>
+			<item value="au8DefaultTCLinkKey"/>
+			<item value="vReadInputCommand"/>
+			<item value="APP_vSetCommand"/>
+			<item value="START"/>
+			<item value="okayama"/>
+			<item value="input"/>
+		</list>
+	</section>
+	<section name="org.eclipse.cdt.ui.text.hover.CMacroExpansionExploration">
+	</section>
+</section>

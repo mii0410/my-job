@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<item value="COM3" key="jmp.prog.port"/>
+	<item value="ERASE_ALL" key="jmp.prog.eeprom.mode"/>
+	<item value="115200" key="jmp.prog.baud"/>
+	<list key="jmp.prog.image.filelist">
+		<item value="C:\NXP\bstudio_nxp\workspace\JN-AN-1229\AN1229_ZBP_Coordinator\Build\AN1229_ZBP_Coordinator_JN5169.bin"/>
+		<item value="C:\NXP\bstudio_nxp\workspace\JN-AN-1229\AN1229_ZBP_SleepingEndDevice\Build\AN1229_ZBP_SleepingEndDevice_JN5169.bin"/>
+	</list>
+	<list key="jmp.prog.eeprom.filelist">
+		<item value=""/>
+	</list>
+</section>

@@ -1,0 +1,106 @@
+ Sensor 1 | count: 136 | 11.90°C | LQI: 100 |dbm: -63.5| short addr: 00:8f
+ Sensor 1 | count: 137 | 11.90°C | LQI: 103 |dbm: -62.45| short addr: 00:8f
+ Sensor 1 | count: 138 | 11.90°C | LQI: 106 |dbm: -61.4| short addr: 00:8f
+ Sensor 1 | count: 139 | 11.90°C | LQI: 124 |dbm: -55.1| short addr: 00:8f
+ Sensor 1 | count: 140 | 11.90°C | LQI: 124 |dbm: -55.1| short addr: 00:8f
+ Sensor 1 | count: 141 | 11.90°C | LQI: 124 |dbm: -55.1| short addr: 00:8f
+ Sensor 1 | count: 142 | 11.90°C | LQI: 121 |dbm: -56.15| short addr: 00:8f
+ Sensor 1 | count: 143 | 11.90°C | LQI: 124 |dbm: -55.1| short addr: 00:8f
+ Sensor 1 | count: 144 | 11.90°C | LQI: 124 |dbm: -55.1| short addr: 00:8f
+ Sensor 1 | count: 145 | 11.90°C | LQI: 124 |dbm: -55.1| short addr: 00:8f
+ Sensor 1 | count: 146 | 11.90°C | LQI: 124 |dbm: -55.1| short addr: 00:8f
+ Sensor 1 | count: 147 | 11.90°C | LQI: 124 |dbm: -55.1| short addr: 00:8f
+ Sensor 1 | count: 148 | 11.90°C | LQI: 124 |dbm: -55.1| short addr: 00:8f
+ Sensor 1 | count: 149 | 11.90°C | LQI: 124 |dbm: -55.1| short addr: 00:8f
+ Sensor 1 | count: 150 | 11.90°C | LQI: 124 |dbm: -55.1| short addr: 00:8f
+ Sensor 1 | count: 151 | 11.90°C | LQI: 124 |dbm: -55.1| short addr: 00:8f
+ Sensor 1 | count: 152 | 11.90°C | LQI: 124 |dbm: -55.1| short addr: 00:8f
+ Sensor 1 | count: 153 | 11.90°C | LQI: 124 |dbm: -55.1| short addr: 00:8f
+ Sensor 1 | count: 154 | 11.90°C | LQI: 124 |dbm: -55.1| short addr: 00:8f
+ Sensor 1 | count: 155 | 11.90°C | LQI: 124 |dbm: -55.1| short addr: 00:8f
+ Sensor 1 | count: 156 | 11.90°C | LQI: 91 |dbm: -66.65| short addr: 00:8f
+ Sensor 1 | count: 157 | 11.90°C | LQI: 124 |dbm: -55.1| short addr: 00:8f
+ Sensor 1 | count: 158 | 11.90°C | LQI: 124 |dbm: -55.1| short addr: 00:8f
+ Sensor 1 | count: 159 | 11.90°C | LQI: 124 |dbm: -55.1| short addr: 00:8f
+ Sensor 1 | count: 160 | 11.90°C | LQI: 121 |dbm: -56.15| short addr: 00:8f
+ Sensor 1 | count: 161 | 11.90°C | LQI: 124 |dbm: -55.1| short addr: 00:8f
+ Sensor 1 | count: 162 | 11.90°C | LQI: 124 |dbm: -55.1| short addr: 00:8f
+ Sensor 1 | count: 163 | 11.90°C | LQI: 124 |dbm: -55.1| short addr: 00:8f
+ Sensor 1 | count: 164 | 11.90°C | LQI: 124 |dbm: -55.1| short addr: 00:8f
+ Sensor 1 | count: 165 | 11.90°C | LQI: 124 |dbm: -55.1| short addr: 00:8f
+ Sensor 1 | count: 166 | 11.90°C | LQI: 124 |dbm: -55.1| short addr: 00:8f
+ Sensor 1 | count: 167 | 11.90°C | LQI: 124 |dbm: -55.1| short addr: 00:8f
+ Sensor 1 | count: 168 | 11.90°C | LQI: 121 |dbm: -56.15| short addr: 00:8f
+ Sensor 1 | count: 169 | 11.90°C | LQI: 124 |dbm: -55.1| short addr: 00:8f
+ Sensor 1 | count: 170 | 11.90°C | LQI: 121 |dbm: -56.15| short addr: 00:8f
+
+ Sensor 1 | count: 1 | 20.01°C | LQI: 109 |dbm: -60.35| short addr: 00:43
+ Sensor 1 | count: 2 | 20.01°C | LQI: 139 |dbm: -49.85| short addr: 00:43
+ Sensor 1 | count: 3 | 20.01°C | LQI: 127 |dbm: -54.05| short addr: 00:43
+ Sensor 1 | count: 4 | 20.01°C | LQI: 133 |dbm: -51.95| short addr: 00:43
+ Sensor 1 | count: 5 | 20.01°C | LQI: 130 |dbm: -53.0| short addr: 00:43
+ Sensor 1 | count: 6 | 20.01°C | LQI: 124 |dbm: -55.1| short addr: 00:43
+ Sensor 1 | count: 7 | 20.01°C | LQI: 118 |dbm: -57.2| short addr: 00:43
+ Sensor 1 | count: 8 | 20.01°C | LQI: 118 |dbm: -57.2| short addr: 00:43
+ Sensor 1 | count: 9 | 20.01°C | LQI: 118 |dbm: -57.2| short addr: 00:43
+ Sensor 1 | count: 10 | 20.01°C | LQI: 118 |dbm: -57.2| short addr: 00:43
+
+ Sensor 1 | count: 1 | 20.01°C | LQI: 109 |dbm: -60.35| short addr: 00:43
+ Sensor 1 | count: 2 | 20.01°C | LQI: 106 |dbm: -61.4| short addr: 00:43
+ Sensor 1 | count: 3 | 20.01°C | LQI: 118 |dbm: -57.2| short addr: 00:43
+ Sensor 1 | count: 4 | 20.01°C | LQI: 118 |dbm: -57.2| short addr: 00:43
+ Sensor 1 | count: 5 | 20.01°C | LQI: 124 |dbm: -55.1| short addr: 00:43
+ Sensor 1 | count: 6 | 20.01°C | LQI: 124 |dbm: -55.1| short addr: 00:43
+ Sensor 1 | count: 7 | 20.01°C | LQI: 112 |dbm: -59.3| short addr: 00:43
+ Sensor 1 | count: 8 | 20.01°C | LQI: 106 |dbm: -61.4| short addr: 00:43
+ Sensor 1 | count: 9 | 20.01°C | LQI: 103 |dbm: -62.45| short addr: 00:43
+ Sensor 1 | count: 10 | 20.01°C | LQI: 88 |dbm: -67.7| short addr: 00:43
+
+ Sensor 1 | count: 1 | 20.01°C | LQI: 106 |dbm: -61.4| short addr: 00:43
+ Sensor 1 | count: 2 | 20.01°C | LQI: 112 |dbm: -59.3| short addr: 00:43
+ Sensor 1 | count: 3 | 20.01°C | LQI: 112 |dbm: -59.3| short addr: 00:43
+ Sensor 1 | count: 4 | 20.01°C | LQI: 124 |dbm: -55.1| short addr: 00:43
+ Sensor 1 | count: 5 | 20.01°C | LQI: 118 |dbm: -57.2| short addr: 00:43
+ Sensor 1 | count: 6 | 20.01°C | LQI: 124 |dbm: -55.1| short addr: 00:43
+ Sensor 1 | count: 7 | 20.01°C | LQI: 124 |dbm: -55.1| short addr: 00:43
+ Sensor 1 | count: 8 | 20.01°C | LQI: 124 |dbm: -55.1| short addr: 00:43
+ Sensor 1 | count: 9 | 20.01°C | LQI: 124 |dbm: -55.1| short addr: 00:43
+ Sensor 1 | count: 10 | 20.01°C | LQI: 106 |dbm: -61.4| short addr: 00:43
+
+ Sensor 1 | count: 2 | 20.01°C | LQI: 112 |dbm: -59.3| short addr: 00:27
+ Sensor 1 | count: 3 | 20.01°C | LQI: 115 |dbm: -58.25| short addr: 00:27
+ Sensor 1 | count: 4 | 20.01°C | LQI: 112 |dbm: -59.3| short addr: 00:27
+ Sensor 1 | count: 5 | 20.01°C | LQI: 106 |dbm: -61.4| short addr: 00:27
+ Sensor 1 | count: 6 | 20.01°C | LQI: 112 |dbm: -59.3| short addr: 00:27
+ Sensor 1 | count: 7 | 20.01°C | LQI: 112 |dbm: -59.3| short addr: 00:27
+ Sensor 1 | count: 8 | 20.01°C | LQI: 112 |dbm: -59.3| short addr: 00:27
+ Sensor 1 | count: 9 | 20.01°C | LQI: 115 |dbm: -58.25| short addr: 00:27
+ Sensor 1 | count: 10 | 20.01°C | LQI: 115 |dbm: -58.25| short addr: 00:27
+ Sensor 1 | count: 11 | 20.01°C | LQI: 109 |dbm: -60.35| short addr: 00:27
+
+
+Sensor 1 | count: 4 | 20.01°C | LQI: 118 |dbm: -57.2| short addr: 00:43
+ Sensor 1 | count: 5 | 20.01°C | LQI: 112 |dbm: -59.3| short addr: 00:43
+ Sensor 1 | count: 6 | 20.01°C | LQI: 133 |dbm: -51.95| short addr: 00:43
+ Sensor 1 | count: 7 | 20.01°C | LQI: 133 |dbm: -51.95| short addr: 00:43
+ Sensor 1 | count: 8 | 20.01°C | LQI: 115 |dbm: -58.25| short addr: 00:43
+ Sensor 1 | count: 9 | 20.01°C | LQI: 112 |dbm: -59.3| short addr: 00:43
+ Sensor 1 | count: 10 | 20.01°C | LQI: 112 |dbm: -59.3| short addr: 00:43
+ Sensor 1 | count: 11 | 20.01°C | LQI: 115 |dbm: -58.25| short addr: 00:43
+ Sensor 1 | count: 12 | 20.01°C | LQI: 112 |dbm: -59.3| short addr: 00:43
+ Sensor 1 | count: 13 | 20.01°C | LQI: 100 |dbm: -63.5| short addr: 00:43
+
+ Sensor 1 | count: 73 | 11.90°C | LQI: 112 |dbm: -59.3| short addr: 00:8f
+ Sensor 1 | count: 74 | 11.90°C | LQI: 115 |dbm: -58.25| short addr: 00:8f
+ Sensor 1 | count: 75 | 11.90°C | LQI: 112 |dbm: -59.3| short addr: 00:8f
+ Sensor 1 | count: 76 | 11.90°C | LQI: 112 |dbm: -59.3| short addr: 00:8f
+ Sensor 1 | count: 77 | 11.90°C | LQI: 115 |dbm: -58.25| short addr: 00:8f
+ Sensor 1 | count: 78 | 11.90°C | LQI: 112 |dbm: -59.3| short addr: 00:8f
+ Sensor 1 | count: 79 | 11.90°C | LQI: 115 |dbm: -58.25| short addr: 00:8f
+ Sensor 1 | count: 80 | 11.90°C | LQI: 115 |dbm: -58.25| short addr: 00:8f
+ Sensor 1 | count: 81 | 11.90°C | LQI: 124 |dbm: -55.1| short addr: 00:8f
+ Sensor 1 | count: 82 | 11.90°C | LQI: 112 |dbm: -59.3| short addr: 00:8f
+
+
+
+
