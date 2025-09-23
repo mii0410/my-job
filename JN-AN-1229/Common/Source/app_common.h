@@ -1,41 +1,17 @@
 /*****************************************************************************
  *
- * MODULE:				JN-AN-1184 ZigBeePro Application Template
+ * モジュール:JN-AN-1184 ZigBeePro Application Template
  *
- * COMPONENT:			app_common.h
+ * コンポーネント:app_common.h
  *
- * DESCRIPTION:			Application Device Type Includes
+ * 概要:アプリケーション共通定義
  *
- *****************************************************************************
- *
- * This software is owned by NXP B.V. and/or its supplier and is protected
- * under applicable copyright laws. All rights are reserved. We grant You,
- * and any third parties, a license to use this software solely and
- * exclusively on NXP products [NXP Microcontrollers such as JN5169, JN5168,
- * JN5164, JN5161].
- * You, and any third parties must reproduce the copyright and warranty notice
- * and any other legend of ownership on each copy or partial copy of the
- * software.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- *
- * Copyright NXP B.V. 2015. All rights reserved
- *
- ****************************************************************************/
+ *****************************************************************************/
+
 #ifndef APP_COMMON_H_
 #define APP_COMMON_H_
 
-/* Device specific includes */
+/* デバイスごとのインクルード */
 #ifdef Coordinator
     #include "App_Coordinator.h"
 #endif
@@ -51,28 +27,30 @@
 #include "ZQueue.h"
 #include "ZTimer.h"
 /****************************************************************************/
-/***        Macro Definitions                                             ***/
+/***        マクロ定義                                                                                                                                ***/
 /****************************************************************************/
 //#define POLL_TIME               APP_TIME_MS(1000)
 //#define POLL_TIME_FAST          APP_TIME_MS(100)
 //#define TEN_HZ_TICK_TIME        APP_TIME_MS(100)
 
 /****************************************************************************/
-/***        Type Definitions                                              ***/
+/***        型定義                                                                                                                                     ***/
 /****************************************************************************/
 typedef enum
 {
-    E_STARTUP, // 0
-    E_LEAVE_WAIT, // 1
-    E_LEAVE_RESET, // 2
-    E_NFN_START, // 3
-    E_DISCOVERY, //4
-    E_NETWORK_FORMATION, //5
-    E_JOINING_NETWORK, //6
-    E_REJOINING, // 7
-    E_NETWORK_INIT, // 8
-    E_RESCAN, // 9
-    E_RUNNING // 10
+    E_STARTUP, /* 0: 起動直後 */
+    E_LEAVE_WAIT, /* 1: 離脱要求待ち */
+    E_LEAVE_RESET, /* 2: 離脱後のリセット処理 */
+    E_NFN_START, /* 3: ネットワーク生成開始 */
+    E_DISCOVERY, /* 4: ネットワーク探索 */
+    E_NETWORK_FORMATION, /* 5: ネットワーク生成 */
+    E_JOINING_NETWORK, /* 6: ネットワーク参加 */
+    E_REJOINING, /* 7: ネットワーク再参加 */
+    E_NETWORK_INIT, /* 8: ネットワーク初期化 */
+    E_RESCAN, /* 9: 再探索処理 */
+    E_RUNNING, /* 10: 通常動作 */
+    E_ROUTE_RECOVERY, /* 11: ルート再探索待機 (new)*/
+    E_ROUTE_REJOIN /* 12: 再参加待機 (new)*/
 } teNODE_STATES;
 
 typedef struct
@@ -82,7 +60,7 @@ typedef struct
 }tsDeviceDesc;
 
 /****************************************************************************/
-/***        Exported Functions                                            ***/
+/***       グローバル関数                                                                                                                           ***/
 /****************************************************************************/
 void APP_vtaskMyEndPoint ( void );
 /****************************************************************************/
