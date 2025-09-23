@@ -16,7 +16,7 @@ extern "C" {
 
 PUBLIC void vInitTimer();
 PUBLIC uint32 vGetMicroSeconds();
-//PRIVATE void vTimer0Callback(uint32 u32Device, uint32 u32ItemBitmap);
+PRIVATE void vTimer0Callback(uint32 u32Device, uint32 u32ItemBitmap);
 
 
 #if defined __cplusplus

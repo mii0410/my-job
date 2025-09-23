@@ -675,7 +675,8 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
                     "APP: vCheckStackEvent: ZPS_EVENT_APS_DATA_CONFIRM Status %d, Address 0x%04x\n",
                     u8Status,
                     u16Dst);
-        if (u8Status != ZPS_E_SUCCESS)
+        if ((u8Status == ZPS_APL_APS_E_NO_ROUTE_AVAILABLE) ||
+            (u8Status == ZPS_APL_APS_E_ROUTE_DISCOVERY_FAILED))
         {
         	vRecordRouteFailure(u16Dst, u8Status, "APSƒf[ƒ^‘—MŽ¸”s");
             if (s_eDeviceState.eNodeState == E_RUNNING)
@@ -750,23 +751,23 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
 
     case ZPS_EVENT_NWK_ROUTE_DISCOVERY_CONFIRM:
     {
-        const uint8 u8Status = *((uint8 *)&sStackEvent.uEvent.sNwkRouteDiscoveryConfirmEvent);
-        uint16 u16Dst = s_sRouteMonitor.u16LastFailedShortAddr;
-        s_sRouteMonitor.u8LastNwkStatus = u8Status;
+        ZPS_teNwkEnum eStatus = sStackEvent.uEvent.sNwkRouteDiscoveryConfirmEvent.eStatus;
+        uint16 u16Dst = sStackEvent.uEvent.sNwkRouteDiscoveryConfirmEvent.u16RouteDst;
+        s_sRouteMonitor.u8LastNwkStatus = (uint8)eStatus;
 
         DBG_vPrintf(TRACE_APP,
                     "APP: ƒ‹[ƒg’TõŒ‹‰Ê status=%d ˆ¶æ=0x%04x\n",
-                    u8Status,
+                    eStatus,
                     u16Dst);
 
-        if (u8Status == (uint8)ZPS_NWK_ENUM_SUCCESS){
+        if (eStatus == ZPS_NWK_ENUM_SUCCESS){
             DBG_vPrintf(TRUE, "APP: ƒ‹[ƒgÄ’Tõ‚ª¬Œ÷‚µ‚Ü‚µ‚½\n");
             vResetRouteMonitor();
             s_eDeviceState.eNodeState = E_RUNNING;
         }
         else
         {
-            vRecordRouteFailure(u16Dst, u8Status, "ƒ‹[ƒg’TõŽ¸”s");
+            vRecordRouteFailure(u16Dst, (uint8)eStatus, "ƒ‹[ƒg’TõŽ¸”s");
             if (s_sRouteMonitor.u8RecoveryAttempts >= ROUTE_MONITOR_MAX_ROUTE_RETRY)
             {
                 s_sRouteMonitor.bRejoinScheduled = TRUE;
