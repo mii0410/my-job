@@ -80,14 +80,6 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent);
 PRIVATE void vClearDiscNT(void);
 
 // ’Ç‰Á
-#ifndef ZPS_APL_AF_ACK_REQ
-#define APP_TX_OPTION_ACK_REQUIRED (1U << 2)
-#else
-#define APP_TX_OPTION_ACK_REQUIRED ZPS_APL_AF_ACK_REQ
-#endif
-
-#define APP_ROUTE_MONITOR_STATUS_SEND_FAIL 0xFF
-
 PRIVATE bool_t bTriggerRouteProbe(uint16 u16ShortAddr);
 PRIVATE void vAttemptRouteRecovery(void);
 PRIVATE void vAttemptRejoin(void);
@@ -230,7 +222,7 @@ PRIVATE bool_t bTriggerRouteProbe(uint16 u16ShortAddr)
                                         AN1229_ZBP_ROUTER_MYENDPOINT_ENDPOINT,
                                         u16ShortAddr,
                                         ZPS_E_APL_AF_UNSECURE,
-                                        APP_TX_OPTION_ACK_REQUIRED,
+                                        ZPS_APL_AF_ACK_REQ,
                                         &u8TransactionSequenceNumber);
 
     if (ZPS_E_SUCCESS != eStatus)
@@ -1093,7 +1085,7 @@ PRIVATE void vAttemptRouteRecovery(void)
     else
     {
         vRecordRouteFailure(s_sRouteMonitor.u16LastFailedShortAddr,
-        					APP_ROUTE_MONITOR_STATUS_SEND_FAIL,
+                            (uint8)ZPS_E_FAIL,
                             "RouteProbeSendFail");
     }
 
