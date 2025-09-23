@@ -26,7 +26,7 @@
 #include "Utils.h"
 #include "Time.h"
 #include "config.h"
-#include "zps_gen.h"
+
 
 // 追加
 #include <zps_apl_aps.h>
@@ -80,7 +80,6 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent);
 PRIVATE void vClearDiscNT(void);
 
 // 追加
-PRIVATE bool_t bTriggerRouteProbe(uint16 u16ShortAddr);
 PRIVATE void vAttemptRouteRecovery(void);
 PRIVATE void vAttemptRejoin(void);
 PRIVATE void vResetRouteMonitor(void);
@@ -194,53 +193,6 @@ PUBLIC void SendData(void)
                     0,
                     &u8TransactionSequenceNumber);
     */
-}
-
-/* Route probe helper */
-PRIVATE bool_t bTriggerRouteProbe(uint16 u16ShortAddr)
-{
-    PDUM_thAPduInstance hAPduInst;
-    uint8 u8TransactionSequenceNumber = 0;
-    ZPS_teStatus eStatus;
-
-    DBG_vPrintf(TRUE,
-                "APP: Route probe send start -> 0x%04x\n",
-                u16ShortAddr);
-
-    hAPduInst = PDUM_hAPduAllocateAPduInstance(apduZDP);
-    if (PDUM_INVALID_HANDLE == hAPduInst)
-    {
-        DBG_vPrintf(TRUE, "APP: Route probe APDU allocate failed\n");
-        return FALSE;
-    }
-
-    PDUM_eAPduInstanceSetPayloadSize(hAPduInst, 0);
-
-    eStatus = ZPS_eAplAfUnicastDataReq(hAPduInst,
-                                        MYPROFILE_PROFILE_ID,
-                                        MYPROFILE_MYCLUSTER_CLUSTER_ID,
-                                        AN1229_ZBP_ROUTER_MYENDPOINT_ENDPOINT,
-                                        u16ShortAddr,
-                                        ZPS_E_APL_AF_UNSECURE,
-                                        ZPS_APL_AF_ACK_REQ,
-                                        &u8TransactionSequenceNumber);
-
-    if (ZPS_E_SUCCESS != eStatus)
-    {
-        DBG_vPrintf(TRUE,
-                    "APP: Route probe send failed status=%d dest=0x%04x\n",
-                    eStatus,
-                    u16ShortAddr);
-        PDUM_eAPduFreeAPduInstance(hAPduInst);
-        return FALSE;
-    }
-
-    DBG_vPrintf(TRUE,
-                "APP: Route probe sent (tsn=%d) dest=0x%04x\n",
-                u8TransactionSequenceNumber,
-                u16ShortAddr);
-
-    return TRUE;
 }
 
 ////追加関数
@@ -724,19 +676,12 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
                     "APP: vCheckStackEvent: ZPS_EVENT_APS_DATA_CONFIRM Status %d, Address 0x%04x\n",
                     u8Status,
                     u16Dst);
-        if (s_sRouteMonitor.bRouteDiscoveryInProgress &&
-            (u16Dst == s_sRouteMonitor.u16LastFailedShortAddr))
+        if (u8Status != ZPS_E_SUCCESS)
         {
-            if (u8Status != ZPS_E_SUCCESS)
+        	vRecordRouteFailure(u16Dst, u8Status, "APSデータ送信失敗");
+            if (s_eDeviceState.eNodeState == E_RUNNING)
             {
-                vRecordRouteFailure(u16Dst, u8Status, "APSデータ送信失敗");
-                ZTIMER_eStop(u8RouteRecoveryTimer);
-                ZTIMER_eStart(u8RouteRecoveryTimer, ROUTE_MONITOR_RETRY_INTERVAL);
-                s_sRouteMonitor.bTimerArmed = TRUE;
-                if (s_eDeviceState.eNodeState == E_RUNNING)
-                {
-                    s_eDeviceState.eNodeState = E_ROUTE_RECOVERY;
-                }
+                s_eDeviceState.eNodeState = E_ROUTE_RECOVERY;
             }
         }
     }
@@ -751,28 +696,17 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
                     "APP: vCheckStackEvent: ZPS_EVENT_APS_DATA_ACK Status %d, Address 0x%04x\n",
                     u8Status,
                     u16Dst);
-        if (s_sRouteMonitor.bRouteDiscoveryInProgress &&
-            (u16Dst == s_sRouteMonitor.u16LastFailedShortAddr))
+        if (u8Status == ZPS_E_SUCCESS)
         {
-            if (u8Status == ZPS_E_SUCCESS)
-            {
-                vResetRouteMonitor();
-                if (s_eDeviceState.eNodeState != E_RUNNING)
-                {
-                    s_eDeviceState.eNodeState = E_RUNNING;
-                }
-            }
-            else
-            {
-                vRecordRouteFailure(u16Dst, u8Status, "APS ACK ERROR");
-                ZTIMER_eStop(u8RouteRecoveryTimer);
-                ZTIMER_eStart(u8RouteRecoveryTimer, ROUTE_MONITOR_RETRY_INTERVAL);
-                s_sRouteMonitor.bTimerArmed = TRUE;
-                if (s_eDeviceState.eNodeState == E_RUNNING)
-                {
-                    s_eDeviceState.eNodeState = E_ROUTE_RECOVERY;
-                }
-            }
+        	 vResetRouteMonitor();
+        	 if (s_eDeviceState.eNodeState != E_RUNNING)
+        	 {
+        		 s_eDeviceState.eNodeState = E_RUNNING;
+        	 }
+        }
+        else
+        {
+        	vRecordRouteFailure(u16Dst, u8Status, "APS ACK ERROR");
         }
     }
     break;
@@ -1075,7 +1009,14 @@ PRIVATE void vAttemptRouteRecovery(void)
 
     s_sRouteMonitor.bTimerArmed = FALSE;
 
-    if (bTriggerRouteProbe(s_sRouteMonitor.u16LastFailedShortAddr))
+    ZPS_teStatus eStatus = ZPS_eAplZdoRouteDiscoveryRequestDefault(s_sRouteMonitor.u16LastFailedShortAddr);
+
+    if (ZPS_E_SUCCESS != eStatus)
+    {
+        eStatus = ZPS_eAplZdoRouteDiscoveryRequest(s_sRouteMonitor.u16LastFailedShortAddr, 0, FALSE);
+    }
+
+    if (ZPS_E_SUCCESS == eStatus)
     {
         s_sRouteMonitor.u8RecoveryAttempts++;
         s_sRouteMonitor.bRouteDiscoveryInProgress = TRUE;
@@ -1084,9 +1025,7 @@ PRIVATE void vAttemptRouteRecovery(void)
     }
     else
     {
-        vRecordRouteFailure(s_sRouteMonitor.u16LastFailedShortAddr,
-                            (uint8)ZPS_E_FAIL,
-                            "RouteProbeSendFail");
+        DBG_vPrintf(TRUE, "APP: ルート再探索要求送信失敗 status=%d\n", eStatus);
     }
 
     ZTIMER_eStart(u8RouteRecoveryTimer, ROUTE_MONITOR_RETRY_INTERVAL);
