@@ -1,11 +1,11 @@
 /*****************************************************************************
- * ƒ‚ƒWƒ…[ƒ‹:    JN-AN-1184 ZigBeePro Application Template
- * ƒRƒ“ƒ|[ƒlƒ“ƒg: app_router.c
- * ŠT—v:       ƒ‹[ƒ^ƒAƒvƒŠƒP[ƒVƒ‡ƒ“
+ * ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«:    JN-AN-1184 ZigBeePro Application Template
+ * ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆ: app_router.c
+ * æ¦‚è¦:       ãƒ«ãƒ¼ã‚¿ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³
 ******************************************************************************/
 
 /****************************************************************************/
-/***        ƒCƒ“ƒNƒ‹[ƒhƒtƒ@ƒCƒ‹                                                                                                                   ***/
+/***        ã‚¤ãƒ³ã‚¯ãƒ«ãƒ¼ãƒ‰ãƒ•ã‚¡ã‚¤ãƒ«                                                                                                                   ***/
 /****************************************************************************/
 #include <jendefs.h>
 #include <string.h>
@@ -17,7 +17,7 @@
 #include "app_common.h"
 #include "app_router.h"
 
-//’Ç‰ÁƒR[ƒh
+//è¿½åŠ ã‚³ãƒ¼ãƒ‰
 #include "DBG.h"
 #include "dbg_jtag.h"
 #include "DBG_Uart.h"
@@ -28,7 +28,7 @@
 #include "config.h"
 #include "zps_gen.h"
 
-// ’Ç‰Á
+// è¿½åŠ 
 #include <zps_apl_aps.h>
 #include <zps_apl_zdo.h>
 #include <zps_nwk_pub.h>
@@ -43,7 +43,7 @@
 	#define TRACE_APP 	TRUE
 #endif
 
-// ’Ç‰Á
+// è¿½åŠ 
 #define ROUTE_MONITOR_INVALID_ADDRESS     0xFFFF
 #define ROUTE_MONITOR_RECOVERY_INTERVAL   ZTIMER_TIME_SEC(5)
 #define ROUTE_MONITOR_RETRY_INTERVAL      ZTIMER_TIME_SEC(10)
@@ -53,7 +53,7 @@
 
 
 /****************************************************************************/
-/***        Œ^’è‹`                                                       @@@@@@@@@@@@@@@@@@@@@@@@@@@@@***/
+/***        å‹å®šç¾©                                                       ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€***/
 /****************************************************************************/
 typedef struct
 {
@@ -71,7 +71,15 @@ typedef struct
 } tsRouteMonitor;
 
 /****************************************************************************/
-/***        ƒ[ƒJƒ‹ŠÖ”ƒvƒƒgƒ^ƒCƒv                                                                                                           ***/
+#ifndef ZPS_APL_AF_ACK_REQ
+#define APP_TX_OPTION_ACK_REQUIRED (1U << 2)
+#else
+#define APP_TX_OPTION_ACK_REQUIRED ZPS_APL_AF_ACK_REQ
+#endif
+
+#define APP_ROUTE_MONITOR_STATUS_SEND_FAIL 0xFF
+
+/***        ãƒ­ãƒ¼ã‚«ãƒ«é–¢æ•°ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—                                                                                                           ***/
 /****************************************************************************/
 PRIVATE void vStartup(void);
 PRIVATE void vWaitForNetworkDiscovery(ZPS_tsAfEvent sStackEvent);
@@ -79,7 +87,7 @@ PRIVATE void vWaitForNetworkJoin(ZPS_tsAfEvent sStackEvent);
 PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent);
 PRIVATE void vClearDiscNT(void);
 
-// ’Ç‰Á
+// è¿½åŠ 
 PRIVATE bool_t bTriggerRouteProbe(uint16 u16ShortAddr);
 PRIVATE void vAttemptRouteRecovery(void);
 PRIVATE void vAttemptRejoin(void);
@@ -90,11 +98,11 @@ PRIVATE void vHandleManualRouteRecoveryRequest(void);
 PRIVATE void vShowRouteMonitorStatus(void);
 
 /****************************************************************************/
-/***        ƒ[ƒJƒ‹•Ï”                                                                                                                            ***/
+/***        ãƒ­ãƒ¼ã‚«ãƒ«å¤‰æ•°                                                                                                                            ***/
 /****************************************************************************/
 PRIVATE tsDeviceDesc s_eDeviceState;
 
-// ’Ç‰Á
+// è¿½åŠ 
 PRIVATE tsRouteMonitor s_sRouteMonitor;
 PRIVATE uint32 u32SystemTimeSeconds = 0;
 PUBLIC uint8_t count1 = 1;
@@ -107,7 +115,7 @@ PUBLIC void  APP_vSetCommand(uint8 command);
 PUBLIC void SendData();*/
 
 /****************************************************************************/
-/***        ’Ç‰ÁŠÖ”okayama                                                ***?                                                                            ***/
+/***        è¿½åŠ é–¢æ•°okayama                                                ***?                                                                            ***/
 /****************************************************************************/
 PRIVATE void vReadInputCommand(void)
 {
@@ -117,7 +125,7 @@ PRIVATE void vReadInputCommand(void)
     {
         case SEND_COMMAND:
         {
-            /* Šù‘¶‚Ì‘—M—v‹‚Í‚±‚±‚Åˆ—‚·‚é */
+            /* æ—¢å­˜ã®é€ä¿¡è¦æ±‚ã¯ã“ã“ã§å‡¦ç†ã™ã‚‹ */
         }
         break;
 
@@ -135,7 +143,7 @@ PRIVATE void vReadInputCommand(void)
 
         default:
         {
-            /* óMƒRƒ}ƒ“ƒh‚ª–³‚¢ê‡‚Í‰½‚à‚µ‚È‚¢ */
+            /* å—ä¿¡ã‚³ãƒãƒ³ãƒ‰ãŒç„¡ã„å ´åˆã¯ä½•ã‚‚ã—ãªã„ */
         }
         break;
     }
@@ -143,7 +151,7 @@ PRIVATE void vReadInputCommand(void)
 
 PUBLIC void SendData(void)
 {
-    /* ƒfƒ‚—p‚Ì‘—Mˆ— */
+    /* ãƒ‡ãƒ¢ç”¨ã®é€ä¿¡å‡¦ç† */
     uint8 u8TransactionSequenceNumber = 0;
     PDUM_thAPduInstance hAPduInst = PDUM_hAPduAllocateAPduInstance(apduZDP);
     uint16 u16Offset = 0;
@@ -157,18 +165,18 @@ PUBLIC void SendData(void)
 
     if (hAPduInst == PDUM_INVALID_HANDLE)
     {
-        DBG_vPrintf(TRUE, "APP: APDUƒCƒ“ƒXƒ^ƒ“ƒX‚ÌŠm•Û‚É¸”s‚µ‚Ü‚µ‚½\n");
+        DBG_vPrintf(TRUE, "APP: APDUã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ç¢ºä¿ã«å¤±æ•—ã—ã¾ã—ãŸ\n");
         return;
     }
 
     u16Offset += PDUM_u16APduInstanceWriteNBO(hAPduInst, u16Offset, "a", au8Payload);///////////mojibake
     PDUM_eAPduInstanceSetPayloadSize(hAPduInst, u16Offset);
 
-    /* ˆÈ‰º‚Í‘—M—v‹‚ÌƒTƒ“ƒvƒ‹ƒR[ƒhBÀÛ‚Ég—p‚·‚éÛ‚Í•K—v‚Èˆ—‚ğ’Ç‰Á‚·‚éB */
+    /* ä»¥ä¸‹ã¯é€ä¿¡è¦æ±‚ã®ã‚µãƒ³ãƒ—ãƒ«ã‚³ãƒ¼ãƒ‰ã€‚å®Ÿéš›ã«ä½¿ç”¨ã™ã‚‹éš›ã¯å¿…è¦ãªå‡¦ç†ã‚’è¿½åŠ ã™ã‚‹ã€‚ */
     ZPS_teStatus eStatus;
     ZPS_teAplAfSecurityMode eSecurityMode = ZPS_E_APL_AF_UNSECURE;
 
-    /* ˆê—á‚Æ‚µ‚Ä IEEE ƒAƒhƒŒƒXw’è‚Å‘—M‚·‚éê‡‚ÌQlƒR[ƒh */
+    /* ä¸€ä¾‹ã¨ã—ã¦ IEEE ã‚¢ãƒ‰ãƒ¬ã‚¹æŒ‡å®šã§é€ä¿¡ã™ã‚‹å ´åˆã®å‚è€ƒã‚³ãƒ¼ãƒ‰ */
     /*
     uint64 u64UnicastMacAddr  = 0x001BC50122016BD5ULL;
     eStatus = ZPS_eAplAfUnicastIeeeDataReq(
@@ -182,7 +190,7 @@ PUBLIC void SendData(void)
                     &u8TransactionSequenceNumber);
     */
 
-    /* ƒuƒ[ƒhƒLƒƒƒXƒg‘—M‚ÌƒTƒ“ƒvƒ‹ */
+    /* ãƒ–ãƒ­ãƒ¼ãƒ‰ã‚­ãƒ£ã‚¹ãƒˆé€ä¿¡ã®ã‚µãƒ³ãƒ—ãƒ« */
     /*
     eStatus = ZPS_eAplAfBroadcastDataReq(
                     hAPduInst,
@@ -222,7 +230,7 @@ PRIVATE bool_t bTriggerRouteProbe(uint16 u16ShortAddr)
                                         AN1229_ZBP_ROUTER_MYENDPOINT_ENDPOINT,
                                         u16ShortAddr,
                                         ZPS_E_APL_AF_UNSECURE,
-                                        ZPS_APL_AF_ACK_REQ,
+                                        APP_TX_OPTION_ACK_REQUIRED,
                                         &u8TransactionSequenceNumber);
 
     if (ZPS_E_SUCCESS != eStatus)
@@ -243,7 +251,7 @@ PRIVATE bool_t bTriggerRouteProbe(uint16 u16ShortAddr)
     return TRUE;
 }
 
-////’Ç‰ÁŠÖ”
+////è¿½åŠ é–¢æ•°
 //PUBLIC void  APP_vSetCommand(uint8 command)
 //{
 // switch(command)
@@ -261,19 +269,19 @@ PRIVATE bool_t bTriggerRouteProbe(uint16 u16ShortAddr)
 //PRIVATE void vReadInputCommand()
 //{
 //  commandType currentCommand = NO_COMMAND;
-// // currentCommand = vReadCommand (); //Utils.c‚ÌŠÖ”
+// // currentCommand = vReadCommand (); //Utils.cã®é–¢æ•°
 //
 //  if (currentCommand == SEND_COMMAND)
 //     {
 //
-// 	  //SendData();//ƒf[ƒ^‘—M‚ÌŠÖ”
+// 	  //SendData();//ãƒ‡ãƒ¼ã‚¿é€ä¿¡ã®é–¢æ•°
 // 	  currentCommand = NO_COMMAND;
 //     }
 //}
 
 
 //PUBLIC void SendData(){
-//	  /*‚±‚±‚©‚ç’Ç‰ÁƒR[ƒh*/
+//	  /*ã“ã“ã‹ã‚‰è¿½åŠ ã‚³ãƒ¼ãƒ‰*/
 //
 //	 	         uint8 u8TransactionSequenceNumber;
 //	             ZPS_tsNwkNib * thisNib;
@@ -301,10 +309,10 @@ PRIVATE bool_t bTriggerRouteProbe(uint16 u16ShortAddr)
 //	              } else {
 //
 //	                   ZPS_teStatus eStatus;
-//	                   ZPS_teAplAfSecurityMode  eSecurityMode = (ZPS_E_APL_AF_UNSECURE);//ƒZƒLƒ…ƒŠƒeƒB–³Œø
+//	                   ZPS_teAplAfSecurityMode  eSecurityMode = (ZPS_E_APL_AF_UNSECURE);//ã‚»ã‚­ãƒ¥ãƒªãƒ†ã‚£ç„¡åŠ¹
 //
 //	    /*    uint64 unicastMacAddr  = 0x001BC50122016BD5;
-//	        eStatus=ZPS_eAplAfUnicastIeeeDataReq( //ƒ†ƒjƒLƒƒƒXƒg’ÊM
+//	        eStatus=ZPS_eAplAfUnicastIeeeDataReq( //ãƒ¦ãƒ‹ã‚­ãƒ£ã‚¹ãƒˆé€šä¿¡
 //	                 		  hAPduInst,
 //	                           0x1337,
 //	                           0x01,
@@ -316,7 +324,7 @@ PRIVATE bool_t bTriggerRouteProbe(uint16 u16ShortAddr)
 //	                           );
 //*/
 //
-//	    /*               eStatus = ZPS_eAplAfBroadcastDataReq( //ƒuƒ[ƒhƒLƒƒƒXƒg’ÊM
+//	    /*               eStatus = ZPS_eAplAfBroadcastDataReq( //ãƒ–ãƒ­ãƒ¼ãƒ‰ã‚­ãƒ£ã‚¹ãƒˆé€šä¿¡
 //	                                                              hAPduInst,
 //	                 		                                     0x1337,
 //	                 		                                     0x01,
@@ -330,29 +338,29 @@ PRIVATE bool_t bTriggerRouteProbe(uint16 u16ShortAddr)
 //
 //	               }
 //	              //currentCommand = NO_COMMAND;
-//      // ƒ^ƒCƒ}[‚ğÄƒXƒ^[ƒg‚µ‚Ä5•bŒã‚ÉÄ“xSendData‚ğŒÄ‚Ño‚·
+//      // ã‚¿ã‚¤ãƒãƒ¼ã‚’å†ã‚¹ã‚¿ãƒ¼ãƒˆã—ã¦5ç§’å¾Œã«å†åº¦SendDataã‚’å‘¼ã³å‡ºã™
 //      //ZTIMER_eStart(u8SecondTimer, ZTIMER_TIME_MSEC(5000));
 //
-//	   /*‚±‚±‚Ü‚Å*/
+//	   /*ã“ã“ã¾ã§*/
 //}
 
 
 /****************************************************************************/
-/***        ƒOƒ[ƒoƒ‹ŠÖ”                                                                                                                         ***/
+/***        ã‚°ãƒ­ãƒ¼ãƒãƒ«é–¢æ•°                                                                                                                         ***/
 /****************************************************************************/
 
 /****************************************************************************
  *
- * ŠÖ”–¼: APP_vInitialiseRouter
+ * é–¢æ•°å: APP_vInitialiseRouter
  *
- * ŠT—v: ƒ‹[ƒ^ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‘S‘Ì‚ğ‰Šú‰»‚µAƒf[ƒ^‚ğ•œŒ³‚·‚é
+ * æ¦‚è¦: ãƒ«ãƒ¼ã‚¿ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³å…¨ä½“ã‚’åˆæœŸåŒ–ã—ã€ãƒ‡ãƒ¼ã‚¿ã‚’å¾©å…ƒã™ã‚‹
  *
- * –ß‚è’l: void
+ * æˆ»ã‚Šå€¤: void
  *
  ****************************************************************************/
 PUBLIC void APP_vInitialiseRouter(void)
 {
-    // ’Ç‰Á
+    // è¿½åŠ 
     vResetRouteMonitor();
     u32SystemTimeSeconds = 0;
 
@@ -360,19 +368,19 @@ PUBLIC void APP_vInitialiseRouter(void)
 	bool_t bDeleteRecords = TRUE /*FALSE*/;
     uint16 u16DataBytesRead;
 
-    /* •K—v‚É‰‚¶‚Äƒlƒbƒgƒ[ƒNƒRƒ“ƒeƒLƒXƒg‚ğƒtƒ‰ƒbƒVƒ…‚©‚çíœ‚·‚éB
-     * ‚½‚Æ‚¦‚ÎƒŠƒZƒbƒg‚Éƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚Ä‚¢‚é‚©‚ğ”»’è‚µA‰Ÿ‰º‚Ì‚İ
-     * PDM ‚É‘SƒŒƒR[ƒhíœ‚ğ—v‹‚·‚é‚æ‚¤‚È—˜—p‚ª‘z’è‚³‚ê‚éB
-     * ‰i‘±‰»‚ª•s—v‚Èê‡‚Íí‚É PDM_vDeleteAllDataRecords() ‚ğŒÄ‚Ño‚µ‚Ä‚à‚æ‚¢B
+    /* å¿…è¦ã«å¿œã˜ã¦ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã‚’ãƒ•ãƒ©ãƒƒã‚·ãƒ¥ã‹ã‚‰å‰Šé™¤ã™ã‚‹ã€‚
+     * ãŸã¨ãˆã°ãƒªã‚»ãƒƒãƒˆæ™‚ã«ãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚Œã¦ã„ã‚‹ã‹ã‚’åˆ¤å®šã—ã€æŠ¼ä¸‹æ™‚ã®ã¿
+     * PDM ã«å…¨ãƒ¬ã‚³ãƒ¼ãƒ‰å‰Šé™¤ã‚’è¦æ±‚ã™ã‚‹ã‚ˆã†ãªåˆ©ç”¨ãŒæƒ³å®šã•ã‚Œã‚‹ã€‚
+     * æ°¸ç¶šåŒ–ãŒä¸è¦ãªå ´åˆã¯å¸¸ã« PDM_vDeleteAllDataRecords() ã‚’å‘¼ã³å‡ºã—ã¦ã‚‚ã‚ˆã„ã€‚
      */
     if (bDeleteRecords)
     {
-        DBG_vPrintf(TRACE_APP, "APP: ƒtƒ‰ƒbƒVƒ…‚©‚ç‚·‚×‚Ä‚ÌƒŒƒR[ƒh‚ğíœ‚µ‚Ü‚·\n");
+        DBG_vPrintf(TRACE_APP, "APP: ãƒ•ãƒ©ãƒƒã‚·ãƒ¥ã‹ã‚‰ã™ã¹ã¦ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’å‰Šé™¤ã—ã¾ã™\n");
         PDM_vDeleteAllDataRecords();
     }
 
-    /* ‰ß‹‚Éƒtƒ‰ƒbƒVƒ…‚Ö•Û‘¶‚µ‚½ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒf[ƒ^‚ğ•œŒ³‚·‚éB
-     * ZPS_eAplAfInit ‚ğŒÄ‚Ño‚·‘O‚É•K—v‚ÈƒŒƒR[ƒh‚ğ‚·‚×‚Ä“Ç‚İ‚ñ‚Å‚¨‚­B
+    /* éå»ã«ãƒ•ãƒ©ãƒƒã‚·ãƒ¥ã¸ä¿å­˜ã—ãŸã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ãƒ‡ãƒ¼ã‚¿ã‚’å¾©å…ƒã™ã‚‹ã€‚
+     * ZPS_eAplAfInit ã‚’å‘¼ã³å‡ºã™å‰ã«å¿…è¦ãªãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’ã™ã¹ã¦èª­ã¿è¾¼ã‚“ã§ãŠãã€‚
      */
     s_eDeviceState.eNodeState = E_STARTUP;
     PDM_eReadDataFromRecord(PDM_ID_APP_ROUTER,
@@ -380,47 +388,47 @@ PUBLIC void APP_vInitialiseRouter(void)
                     		sizeof(s_eDeviceState),
                     		&u16DataBytesRead);
 
-    /* ZBPro ƒXƒ^ƒbƒN‚Ì‰Šú‰» */
+    /* ZBPro ã‚¹ã‚¿ãƒƒã‚¯ã®åˆæœŸåŒ– */
     ZPS_eAplAfInit();
     ZPS_vAplSecSetInitialSecurityState(ZPS_ZDO_PRECONFIGURED_LINK_KEY,
                                        au8DefaultTCLinkKey,
                                        0x00,
                                        ZPS_APS_GLOBAL_LINK_KEY);
-    /* •K—v‚Èƒ\ƒtƒgƒEƒFƒAƒ‚ƒWƒ…[ƒ‹‚Ì‰Šú‰»‚ğ‚±‚±‚Ås‚¤ */
+    /* å¿…è¦ãªã‚½ãƒ•ãƒˆã‚¦ã‚§ã‚¢ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã®åˆæœŸåŒ–ã‚’ã“ã“ã§è¡Œã† */
 
-    /* ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ª—˜—p‚·‚éü•Ó‹@Ší‚Ì‰Šú‰»‚à‚±‚±‚ÅÀ{‚·‚é */
+    /* ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ãŒåˆ©ç”¨ã™ã‚‹å‘¨è¾ºæ©Ÿå™¨ã®åˆæœŸåŒ–ã‚‚ã“ã“ã§å®Ÿæ–½ã™ã‚‹ */
 
-    /* ƒtƒ‰ƒbƒVƒ…‚©‚ç•œŒ³‚µ‚½Œ‹‰ÊAƒlƒbƒgƒ[ƒNQ‰ÁŒã‚Ìó‘Ô‚Å‚ ‚ê‚Î
-     * ƒXƒ^ƒbƒN‚ğÄn“®‚µ‚ÄƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ğÄŠJ‚·‚éB
-     * ó‘Ô‚ª•¡”‘¶İ‚·‚éê‡‚Í•K—v‚É‰‚¶‚ÄğŒ•ªŠò‚ğŠg’£‚·‚éB
+    /* ãƒ•ãƒ©ãƒƒã‚·ãƒ¥ã‹ã‚‰å¾©å…ƒã—ãŸçµæœã€ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯å‚åŠ å¾Œã®çŠ¶æ…‹ã§ã‚ã‚Œã°
+     * ã‚¹ã‚¿ãƒƒã‚¯ã‚’å†å§‹å‹•ã—ã¦ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚’å†é–‹ã™ã‚‹ã€‚
+     * çŠ¶æ…‹ãŒè¤‡æ•°å­˜åœ¨ã™ã‚‹å ´åˆã¯å¿…è¦ã«å¿œã˜ã¦æ¡ä»¶åˆ†å²ã‚’æ‹¡å¼µã™ã‚‹ã€‚
      */
     if (E_RUNNING ==s_eDeviceState.eNodeState)
     {
         ZPS_teStatus eStatus = ZPS_eAplZdoStartStack();
-        DBG_vPrintf(TRACE_APP, "APP: ƒXƒ^ƒbƒN‚ğÄn“®‚µ‚Ü‚·\r\n");
+        DBG_vPrintf(TRACE_APP, "APP: ã‚¹ã‚¿ãƒƒã‚¯ã‚’å†å§‹å‹•ã—ã¾ã™\r\n");
         if (ZPS_E_SUCCESS != eStatus)
         {
-            DBG_vPrintf(TRACE_APP, "APP: ZPS_eZdoStartStack() ‚ª¸”s‚µ‚Ü‚µ‚½ ƒGƒ‰[=%d", eStatus);
+            DBG_vPrintf(TRACE_APP, "APP: ZPS_eZdoStartStack() ãŒå¤±æ•—ã—ã¾ã—ãŸ ã‚¨ãƒ©ãƒ¼=%d", eStatus);
         }
-        /* Q‰Á—v‹‚ğ‹–‰Â */
+        /* å‚åŠ è¦æ±‚ã‚’è¨±å¯ */
         ZPS_eAplZdoPermitJoining(0xff);
 
-        /* ‚»‚Ì‘¼‚ÌƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒ‚ƒWƒ…[ƒ‹‚àÄŠJ‚·‚éê‡‚Í‚±‚±‚ÅÀ{‚·‚é */
+        /* ãã®ä»–ã®ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã‚‚å†é–‹ã™ã‚‹å ´åˆã¯ã“ã“ã§å®Ÿæ–½ã™ã‚‹ */
     }
     else
     {
-    	/* ƒlƒbƒgƒ[ƒNŒ`¬’†‚ÉƒŠƒZƒbƒg‚³‚ê‚½ê‡‚Å‚àŠJnó‘Ô‚Ö–ß‚· */
+    	/* ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯å½¢æˆä¸­ã«ãƒªã‚»ãƒƒãƒˆã•ã‚ŒãŸå ´åˆã§ã‚‚é–‹å§‹çŠ¶æ…‹ã¸æˆ»ã™ */
        s_eDeviceState.eNodeState = E_STARTUP;
     }
 }
 
 /****************************************************************************
  *
- * ŠÖ”–¼: APP_vtaskRouter
+ * é–¢æ•°å: APP_vtaskRouter
  *
- * ŠT—v: ƒ‹[ƒ^‚ÌƒƒCƒ“ƒXƒe[ƒgƒ}ƒVƒ“‚ğˆ—‚·‚é
+ * æ¦‚è¦: ãƒ«ãƒ¼ã‚¿ã®ãƒ¡ã‚¤ãƒ³ã‚¹ãƒ†ãƒ¼ãƒˆãƒã‚·ãƒ³ã‚’å‡¦ç†ã™ã‚‹
  *
- * –ß‚è’l: void
+ * æˆ»ã‚Šå€¤: void
  *
  ****************************************************************************/
 PUBLIC void APP_vtaskRouter(void)
@@ -430,12 +438,12 @@ PUBLIC void APP_vtaskRouter(void)
     sStackEvent.eType = ZPS_EVENT_NONE;
     if (ZQ_bQueueReceive(&APP_msgZpsEvents, &sStackEvent) )
     {
-        DBG_vPrintf(TRACE_APP, "ˆ—‘ÎÛ‚ÌƒCƒxƒ“ƒg‚ª‚ ‚è‚Ü‚¹‚ñ\n");
+        DBG_vPrintf(TRACE_APP, "å‡¦ç†å¯¾è±¡ã®ã‚¤ãƒ™ãƒ³ãƒˆãŒã‚ã‚Šã¾ã›ã‚“\n");
     }
 
     if (ZTIMER_eGetState(u8App_tmr1sec) == E_ZTIMER_STATE_EXPIRED)
     {
-    	/* 1 •bƒ^ƒCƒ}–—¹‚É“à•”Œv‚ğXV */
+    	/* 1 ç§’ã‚¿ã‚¤ãƒæº€äº†æ™‚ã«å†…éƒ¨æ™‚è¨ˆã‚’æ›´æ–° */
     	ZTIMER_eStart(u8App_tmr1sec, ZTIMER_TIME_SEC(1));
     	u32SystemTimeSeconds++;
     }
@@ -463,18 +471,18 @@ PUBLIC void APP_vtaskRouter(void)
         case E_RUNNING:
         {
         	vHandleStackEvent(sStackEvent);
-        	vReadInputCommand(); //’Ç‰ÁŠÖ”
+        	vReadInputCommand(); //è¿½åŠ é–¢æ•°
 
-        	// ’Ç‰Á
+        	// è¿½åŠ 
         	if (s_sRouteMonitor.bRecoveryNeeded && !s_sRouteMonitor.bRejoinScheduled)
         	{
-        		DBG_vPrintf(TRUE, "APP: ƒ‹[ƒgÄ’Tõó‘Ô‚Ö‘JˆÚ\n");
+        		DBG_vPrintf(TRUE, "APP: ãƒ«ãƒ¼ãƒˆå†æ¢ç´¢çŠ¶æ…‹ã¸é·ç§»\n");
         	    s_eDeviceState.eNodeState = E_ROUTE_RECOVERY;
         	}
         }
         break;
 
-        // ’Ç‰Á
+        // è¿½åŠ 
         case E_ROUTE_RECOVERY:
         {
         	vHandleStackEvent(sStackEvent);
@@ -483,7 +491,7 @@ PUBLIC void APP_vtaskRouter(void)
         }
         break;
 
-        // ’Ç‰Á
+        // è¿½åŠ 
         case E_ROUTE_REJOIN:
         {
             vHandleStackEvent(sStackEvent);
@@ -494,23 +502,23 @@ PUBLIC void APP_vtaskRouter(void)
 
         default:
         {
-            /* ‚»‚Ì‘¼‚Ìó‘Ô‚Å‚Í“Á•Ê‚Èˆ—‚Ís‚í‚È‚¢ */
+            /* ãã®ä»–ã®çŠ¶æ…‹ã§ã¯ç‰¹åˆ¥ãªå‡¦ç†ã¯è¡Œã‚ãªã„ */
         }
         break;
     }
 }
 
 /****************************************************************************/
-/***        ƒ[ƒJƒ‹ŠÖ”                                                                                                                            ***/
+/***        ãƒ­ãƒ¼ã‚«ãƒ«é–¢æ•°                                                                                                                            ***/
 /****************************************************************************/
 
 /****************************************************************************
  *
- * ŠÖ”–¼: vStartup
+ * é–¢æ•°å: vStartup
  *
- * ŠT—v: ƒlƒbƒgƒ[ƒN’Tõ‚ğŠJn‚·‚é
+ * æ¦‚è¦: ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯æ¢ç´¢ã‚’é–‹å§‹ã™ã‚‹
  *
- * –ß‚è’l: void
+ * æˆ»ã‚Šå€¤: void
  *
  ****************************************************************************/
 PRIVATE void vStartup(void)
@@ -519,7 +527,7 @@ PRIVATE void vStartup(void)
 
     vClearDiscNT();
 
-    /* ƒXƒLƒƒƒ“‚·‚éƒ`ƒƒƒlƒ‹‚ğİ’è‚µƒXƒ^ƒbƒN‚ğ‹N“® */
+    /* ã‚¹ã‚­ãƒ£ãƒ³ã™ã‚‹ãƒãƒ£ãƒãƒ«ã‚’è¨­å®šã—ã‚¹ã‚¿ãƒƒã‚¯ã‚’èµ·å‹• */
     ZPS_psAplAibGetAib()->pau32ApsChannelMask[0] = 1 << u8Channel;
 
     ZPS_teStatus eStatus = ZPS_eAplZdoStartStack();
@@ -527,7 +535,7 @@ PRIVATE void vStartup(void)
     {
        s_eDeviceState.eNodeState = E_DISCOVERY;
 
-       /* Ÿ‚É’Tõ‚·‚éƒ`ƒƒƒlƒ‹‚Öi‚ß‚é */
+       /* æ¬¡ã«æ¢ç´¢ã™ã‚‹ãƒãƒ£ãƒãƒ«ã¸é€²ã‚ã‚‹ */
        u8Channel++;
 
        if (27 == u8Channel)
@@ -539,18 +547,18 @@ PRIVATE void vStartup(void)
 
 /****************************************************************************
  *
- * ŠÖ”–¼: vWaitForNetworkDiscovery
+ * é–¢æ•°å: vWaitForNetworkDiscovery
  *
- * ŠT—v:ƒlƒbƒgƒ[ƒN’Tõ’†‚ÌƒXƒ^ƒbƒNƒCƒxƒ“ƒg‚ğŠm”F‚µ•K—v‚Èˆ—‚ğs‚¤
+ * æ¦‚è¦:ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯æ¢ç´¢ä¸­ã®ã‚¹ã‚¿ãƒƒã‚¯ã‚¤ãƒ™ãƒ³ãƒˆã‚’ç¢ºèªã—å¿…è¦ãªå‡¦ç†ã‚’è¡Œã†
  *
- * ˆø”:         –¼‘O           		 RW  —p“r
- *               sStackEvent     R   ƒXƒ^ƒbƒNƒCƒxƒ“ƒg‚ÌÚ×
- * –ß‚è’l: void
+ * å¼•æ•°:         åå‰           		 RW  ç”¨é€”
+ *               sStackEvent     R   ã‚¹ã‚¿ãƒƒã‚¯ã‚¤ãƒ™ãƒ³ãƒˆã®è©³ç´°
+ * æˆ»ã‚Šå€¤: void
  *
  ****************************************************************************/
 PRIVATE void vWaitForNetworkDiscovery(ZPS_tsAfEvent sStackEvent)
 {
-    /* ƒm[ƒh‚ªƒlƒbƒgƒ[ƒN’Tõ‚ğŠ®—¹‚·‚é‚Ü‚Å‘Ò‹@ */
+    /* ãƒãƒ¼ãƒ‰ãŒãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯æ¢ç´¢ã‚’å®Œäº†ã™ã‚‹ã¾ã§å¾…æ©Ÿ */
     if (ZPS_EVENT_NONE != sStackEvent.eType)
     {
         if (ZPS_EVENT_NWK_DISCOVERY_COMPLETE == sStackEvent.eType)
@@ -571,7 +579,7 @@ PRIVATE void vWaitForNetworkDiscovery(ZPS_tsAfEvent sStackEvent)
             {
                 if (0 != sStackEvent.uEvent.sNwkDiscoveryEvent.u32UnscannedChannels)
                 {
-                	/* –¢’Tõƒ`ƒƒƒlƒ‹‚ªc‚Á‚Ä‚¢‚éê‡‚Í’Tõ‚ğŒp‘± */
+                	/* æœªæ¢ç´¢ãƒãƒ£ãƒãƒ«ãŒæ®‹ã£ã¦ã„ã‚‹å ´åˆã¯æ¢ç´¢ã‚’ç¶™ç¶š */
                     DBG_vPrintf(TRACE_APP, "APP: No networks found, continue scanning ...\n");
                     ZPS_eAplZdoDiscoverNetworks(sStackEvent.uEvent.sNwkDiscoveryEvent.u32UnscannedChannels);
                 }
@@ -605,7 +613,7 @@ PRIVATE void vWaitForNetworkDiscovery(ZPS_tsAfEvent sStackEvent)
                 }
                 else
                 {
-                	/* Ä“xƒXƒLƒƒƒ“‚ğŠJn */
+                	/* å†åº¦ã‚¹ã‚­ãƒ£ãƒ³ã‚’é–‹å§‹ */
                     DBG_vPrintf(TRACE_APP, "APP: Failed to join network reason = %02x\n", eStatus);
                     s_eDeviceState.eNodeState = E_STARTUP;
                 }
@@ -625,8 +633,8 @@ PRIVATE void vWaitForNetworkDiscovery(ZPS_tsAfEvent sStackEvent)
             vResetRouteMonitor();
             s_sRouteMonitor.bTimerArmed = FALSE;
 
-            /* ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ó‘Ô‚ğƒtƒ‰ƒbƒVƒ…‚Ö•Û‘¶‚·‚éB
-             * PDM_vSaveRecord() ŒÄ‚Ño‚µ‚É‹ó‚«—Ìˆæ‚ª•s‘«‚·‚é‚ÆAPDM ‚Í‘SƒŒƒR[ƒh‚ğÁ‹EÄ‘‚İ‚·‚é“_‚É’ˆÓB
+            /* ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³çŠ¶æ…‹ã‚’ãƒ•ãƒ©ãƒƒã‚·ãƒ¥ã¸ä¿å­˜ã™ã‚‹ã€‚
+             * PDM_vSaveRecord() å‘¼ã³å‡ºã—æ™‚ã«ç©ºãé ˜åŸŸãŒä¸è¶³ã™ã‚‹ã¨ã€PDM ã¯å…¨ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’æ¶ˆå»ãƒ»å†æ›¸è¾¼ã¿ã™ã‚‹ç‚¹ã«æ³¨æ„ã€‚
              */
             PDM_eSaveRecordData(PDM_ID_APP_ROUTER,
             					&s_eDeviceState,
@@ -641,31 +649,31 @@ PRIVATE void vWaitForNetworkDiscovery(ZPS_tsAfEvent sStackEvent)
 
 /****************************************************************************
  *
- * ŠÖ”–¼: vWaitForNetworkJoin
+ * é–¢æ•°å: vWaitForNetworkJoin
  *
- * ŠT—v: ƒlƒbƒgƒ[ƒNQ‰Áˆ—’†‚ÌƒXƒ^ƒbƒNƒCƒxƒ“ƒg‚ğŠÄ‹‚·‚é
+ * æ¦‚è¦: ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯å‚åŠ å‡¦ç†ä¸­ã®ã‚¹ã‚¿ãƒƒã‚¯ã‚¤ãƒ™ãƒ³ãƒˆã‚’ç›£è¦–ã™ã‚‹
  *
- * ˆø”:         –¼‘O            		 RW  —p“r
- *               sStackEvent     R   ƒXƒ^ƒbƒNƒCƒxƒ“ƒg‚ÌÚ×
- * –ß‚è’l:void
+ * å¼•æ•°:         åå‰            		 RW  ç”¨é€”
+ *               sStackEvent     R   ã‚¹ã‚¿ãƒƒã‚¯ã‚¤ãƒ™ãƒ³ãƒˆã®è©³ç´°
+ * æˆ»ã‚Šå€¤:void
  *
  *****************************************************************************/
 PRIVATE void vWaitForNetworkJoin(ZPS_tsAfEvent sStackEvent)
 {
 	uint64 u64ExtPANID;
-    /* ƒm[ƒh‚ªƒlƒbƒgƒ[ƒNQ‰Á‚ğŠ®—¹‚·‚é‚Ü‚Å‘Ò‹@ */
+    /* ãƒãƒ¼ãƒ‰ãŒãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯å‚åŠ ã‚’å®Œäº†ã™ã‚‹ã¾ã§å¾…æ©Ÿ */
     if (ZPS_EVENT_NONE != sStackEvent.eType)
     {
         if (ZPS_EVENT_NWK_JOINED_AS_ROUTER == sStackEvent.eType)
         {
             DBG_vPrintf(TRACE_APP, "APP: Node joined network with Addr 0x%04x\n",
                         sStackEvent.uEvent.sNwkJoinedEvent.u16Addr);
-            /* ÄQ‰Á—p‚É EPID ‚ğ•Û‘¶  */
+            /* å†å‚åŠ ç”¨ã« EPID ã‚’ä¿å­˜  */
             u64ExtPANID = ZPS_u64NwkNibGetEpid(ZPS_pvAplZdoGetNwkHandle());
             ZPS_eAplAibSetApsUseExtendedPanId(u64ExtPANID);
             s_eDeviceState.eNodeState = E_RUNNING;
 
-            // ’Ç‰Á
+            // è¿½åŠ 
             vResetRouteMonitor();
             s_sRouteMonitor.bTimerArmed = FALSE;
 
@@ -673,15 +681,15 @@ PRIVATE void vWaitForNetworkJoin(ZPS_tsAfEvent sStackEvent)
             					&s_eDeviceState,
                             	sizeof(s_eDeviceState));
 
-            /* 1 •bƒ^ƒCƒ}‚ğ‹N“®‚µ APP_vtaskRouter ‚ğ’èŠúÀs */
+            /* 1 ç§’ã‚¿ã‚¤ãƒã‚’èµ·å‹•ã— APP_vtaskRouter ã‚’å®šæœŸå®Ÿè¡Œ */
             ZTIMER_eStart (u8App_tmr1sec, ZTIMER_TIME_SEC(1));
         }
         else if (ZPS_EVENT_NWK_FAILED_TO_JOIN == sStackEvent.eType)
         {
             DBG_vPrintf(TRACE_APP, "APP: Node failed to join network. Retrying ...\n");
             s_eDeviceState.eNodeState = E_STARTUP;
-            /* •K—v‚Å‚ ‚ê‚Î‚±‚±‚ÅƒAƒvƒŠƒP[ƒVƒ‡ƒ“ó‘Ô‚ğƒtƒ‰ƒbƒVƒ…‚Ö•Û‘¶‚·‚éB
-             * PDM_vSaveRecord() ŒÄ‚Ño‚µ‚Í‘SƒŒƒR[ƒh‚ªÄ‘‚İ‚³‚ê‚é‰Â”\«‚ª‚ ‚é“_‚É’ˆÓB
+            /* å¿…è¦ã§ã‚ã‚Œã°ã“ã“ã§ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³çŠ¶æ…‹ã‚’ãƒ•ãƒ©ãƒƒã‚·ãƒ¥ã¸ä¿å­˜ã™ã‚‹ã€‚
+             * PDM_vSaveRecord() å‘¼ã³å‡ºã—æ™‚ã¯å…¨ãƒ¬ã‚³ãƒ¼ãƒ‰ãŒå†æ›¸è¾¼ã¿ã•ã‚Œã‚‹å¯èƒ½æ€§ãŒã‚ã‚‹ç‚¹ã«æ³¨æ„ã€‚
              */
         }
         else
@@ -693,13 +701,13 @@ PRIVATE void vWaitForNetworkJoin(ZPS_tsAfEvent sStackEvent)
 
 /****************************************************************************
  *
- * ŠÖ”–¼: vHandleStackEvent
+ * é–¢æ•°å: vHandleStackEvent
  *
- * ŠT—v: ƒlƒbƒgƒ[ƒNQ‰ÁŒã‚É”­¶‚·‚éƒXƒ^ƒbƒNƒCƒxƒ“ƒg‚ğˆ—‚·‚é
+ * æ¦‚è¦: ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯å‚åŠ å¾Œã«ç™ºç”Ÿã™ã‚‹ã‚¹ã‚¿ãƒƒã‚¯ã‚¤ãƒ™ãƒ³ãƒˆã‚’å‡¦ç†ã™ã‚‹
  *
- * ˆø”:         –¼‘O            		@RW  —p“r
- *               sStackEvent     R   ƒXƒ^ƒbƒNƒCƒxƒ“ƒg‚ÌÚ×
- * –ß‚è’l: void
+ * å¼•æ•°:         åå‰            		ã€€RW  ç”¨é€”
+ *               sStackEvent     R   ã‚¹ã‚¿ãƒƒã‚¯ã‚¤ãƒ™ãƒ³ãƒˆã®è©³ç´°
+ * æˆ»ã‚Šå€¤: void
  *
  ****************************************************************************/
 PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
@@ -712,7 +720,7 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
 	switch (sStackEvent.eType)
 	{
 	case ZPS_EVENT_APS_DATA_INDICATION:
-		/* óM‚µ‚½ APDU ‚Í‘¦À‚É‰ğ•ú‚·‚é */
+		/* å—ä¿¡ã—ãŸ APDU ã¯å³åº§ã«è§£æ”¾ã™ã‚‹ */
 		PDUM_eAPduFreeAPduInstance(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
     break;
 
@@ -729,7 +737,7 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
         {
             if (u8Status != ZPS_E_SUCCESS)
             {
-                vRecordRouteFailure(u16Dst, u8Status, "APSƒf[ƒ^‘—M¸”s");
+                vRecordRouteFailure(u16Dst, u8Status, "APSãƒ‡ãƒ¼ã‚¿é€ä¿¡å¤±æ•—");
                 ZTIMER_eStop(u8RouteRecoveryTimer);
                 ZTIMER_eStart(u8RouteRecoveryTimer, ROUTE_MONITOR_RETRY_INTERVAL);
                 s_sRouteMonitor.bTimerArmed = TRUE;
@@ -793,7 +801,7 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
 
     case ZPS_EVENT_NWK_LEAVE_CONFIRM:
     {
-        DBG_vPrintf(TRACE_APP, "APP: ƒm[ƒh—£’EŠm”F\n");
+        DBG_vPrintf(TRACE_APP, "APP: ãƒãƒ¼ãƒ‰é›¢è„±ç¢ºèª\n");
     }
     break;
 
@@ -803,14 +811,14 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
         s_sRouteMonitor.u8LastNwkStatus = u8Status;
 
         DBG_vPrintf(TRACE_APP,
-                    "APP: NWKƒXƒe[ƒ^ƒX’Ê’m status=%d\n",
+                    "APP: NWKã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹é€šçŸ¥ status=%d\n",
                     u8Status);
 
         if (u8Status != ZPS_NWK_ENUM_SUCCESS)
         {
             vRecordRouteFailure(s_sRouteMonitor.u16LastFailedShortAddr,
                                 u8Status,
-                                "NWKƒXƒe[ƒ^ƒX’Ê’m");
+                                "NWKã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹é€šçŸ¥");
         }
     }
     break;
@@ -822,18 +830,18 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
         s_sRouteMonitor.u8LastNwkStatus = u8Status;
 
         DBG_vPrintf(TRACE_APP,
-                    "APP: ƒ‹[ƒg’TõŒ‹‰Ê status=%d ˆ¶æ=0x%04x\n",
+                    "APP: ãƒ«ãƒ¼ãƒˆæ¢ç´¢çµæœ status=%d å®›å…ˆ=0x%04x\n",
                     u8Status,
                     u16Dst);
 
         if (u8Status == (uint8)ZPS_NWK_ENUM_SUCCESS){
-            DBG_vPrintf(TRUE, "APP: ƒ‹[ƒgÄ’Tõ‚ª¬Œ÷‚µ‚Ü‚µ‚½\n");
+            DBG_vPrintf(TRUE, "APP: ãƒ«ãƒ¼ãƒˆå†æ¢ç´¢ãŒæˆåŠŸã—ã¾ã—ãŸ\n");
             vResetRouteMonitor();
             s_eDeviceState.eNodeState = E_RUNNING;
         }
         else
         {
-            vRecordRouteFailure(u16Dst, u8Status, "ƒ‹[ƒg’Tõ¸”s");
+            vRecordRouteFailure(u16Dst, u8Status, "ãƒ«ãƒ¼ãƒˆæ¢ç´¢å¤±æ•—");
             if (s_sRouteMonitor.u8RecoveryAttempts >= ROUTE_MONITOR_MAX_ROUTE_RETRY)
             {
                 s_sRouteMonitor.bRejoinScheduled = TRUE;
@@ -983,7 +991,7 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
 //}
 
 /****************************************************************************
-***           V‹K’Ç‰ÁŠÖ”                                                                                                                    ***
+***           æ–°è¦è¿½åŠ é–¢æ•°                                                                                                                    ***
 ****************************************************************************/
 PRIVATE void vResetRouteMonitor(void)
 {
@@ -1004,7 +1012,7 @@ PRIVATE void vResetRouteMonitor(void)
 PRIVATE void vLogRouteMonitor(const char *pcPrefix)
 {
     DBG_vPrintf(TRUE,
-                "APP: [ƒ‹[ƒgŠÄ‹] %s ˆ¶æ0x%04x APS=0x%02x NWK=0x%02x Ä’Tõ‰ñ”=%d ÄQ‰Á‰ñ”=%d ÅIŒŸ’m=%lu•b\n",
+                "APP: [ãƒ«ãƒ¼ãƒˆç›£è¦–] %s å®›å…ˆ0x%04x APS=0x%02x NWK=0x%02x å†æ¢ç´¢å›æ•°=%d å†å‚åŠ å›æ•°=%d æœ€çµ‚æ¤œçŸ¥=%luç§’\n",
                 pcPrefix,
                 s_sRouteMonitor.u16LastFailedShortAddr,
                 s_sRouteMonitor.u8LastApsStatus,
@@ -1045,7 +1053,7 @@ PRIVATE void vAttemptRouteRecovery(void)
 
     if (s_sRouteMonitor.u16LastFailedShortAddr == ROUTE_MONITOR_INVALID_ADDRESS)
     {
-        DBG_vPrintf(TRUE, "APP: Ä’Tõ‘ÎÛƒAƒhƒŒƒX‚ª–¢İ’è‚Ì‚½‚ßˆ—‚ğI—¹‚µ‚Ü‚·\n");
+        DBG_vPrintf(TRUE, "APP: å†æ¢ç´¢å¯¾è±¡ã‚¢ãƒ‰ãƒ¬ã‚¹ãŒæœªè¨­å®šã®ãŸã‚å‡¦ç†ã‚’çµ‚äº†ã—ã¾ã™\n");
         vResetRouteMonitor();
         s_eDeviceState.eNodeState = E_RUNNING;
         return;
@@ -1080,7 +1088,7 @@ PRIVATE void vAttemptRouteRecovery(void)
         s_sRouteMonitor.u8RecoveryAttempts++;
         s_sRouteMonitor.bRouteDiscoveryInProgress = TRUE;
         s_sRouteMonitor.u32LastAttemptTimeSec = u32SystemTimeSeconds;
-        vLogRouteMonitor("Ä’TõÀs");
+                            APP_ROUTE_MONITOR_STATUS_SEND_FAIL,
     }
     else
     {
@@ -1117,7 +1125,7 @@ PRIVATE void vAttemptRejoin(void)
 
     if (s_sRouteMonitor.u8RejoinAttempts >= ROUTE_MONITOR_MAX_REJOIN_ATTEMPT)
     {
-        DBG_vPrintf(TRUE, "APP: ÄQ‰Ás‰ñ”‚ªãŒÀ‚É’B‚µ‚½‚½‚ßƒXƒ^[ƒgƒAƒbƒv‚Ö–ß‚è‚Ü‚·\n");
+        DBG_vPrintf(TRUE, "APP: å†å‚åŠ è©¦è¡Œå›æ•°ãŒä¸Šé™ã«é”ã—ãŸãŸã‚ã‚¹ã‚¿ãƒ¼ãƒˆã‚¢ãƒƒãƒ—ã¸æˆ»ã‚Šã¾ã™\n");
         vResetRouteMonitor();
         s_eDeviceState.eNodeState = E_STARTUP;
         return;
@@ -1133,7 +1141,7 @@ PRIVATE void vAttemptRejoin(void)
     s_sRouteMonitor.u32LastAttemptTimeSec = u32SystemTimeSeconds;
 
     DBG_vPrintf(TRUE,
-                "APP: ÄQ‰Á‚ğs status=%d s‰ñ”=%d\n",
+                "APP: å†å‚åŠ ã‚’è©¦è¡Œ status=%d è©¦è¡Œå›æ•°=%d\n",
                 eStatus,
                 s_sRouteMonitor.u8RejoinAttempts);
 
@@ -1145,11 +1153,11 @@ PRIVATE void vHandleManualRouteRecoveryRequest(void)
 {
     if (s_sRouteMonitor.u16LastFailedShortAddr == ROUTE_MONITOR_INVALID_ADDRESS)
     {
-        DBG_vPrintf(TRUE, "APP: ŠÄ‹î•ñ‚ª‘¶İ‚µ‚È‚¢‚½‚ßÄ’Tõ‚ğŠJn‚Å‚«‚Ü‚¹‚ñ\n");
+        DBG_vPrintf(TRUE, "APP: ç›£è¦–æƒ…å ±ãŒå­˜åœ¨ã—ãªã„ãŸã‚å†æ¢ç´¢ã‚’é–‹å§‹ã§ãã¾ã›ã‚“\n");
         return;
     }
 
-    DBG_vPrintf(TRUE, "APP: è“®ƒ‹[ƒgÄ’Tõ—v‹‚ğóM\n");
+    DBG_vPrintf(TRUE, "APP: æ‰‹å‹•ãƒ«ãƒ¼ãƒˆå†æ¢ç´¢è¦æ±‚ã‚’å—ä¿¡\n");
 
     s_sRouteMonitor.bRecoveryNeeded = TRUE;
     s_sRouteMonitor.bRejoinScheduled = FALSE;
@@ -1163,14 +1171,14 @@ PRIVATE void vHandleManualRouteRecoveryRequest(void)
     s_sRouteMonitor.bTimerArmed = TRUE;
     s_eDeviceState.eNodeState = E_ROUTE_RECOVERY;
 
-    vLogRouteMonitor("è“®Ä’Tõ");
+    vLogRouteMonitor("æ‰‹å‹•å†æ¢ç´¢");
 }
 
 PRIVATE void vShowRouteMonitorStatus(void)
 {
-    vLogRouteMonitor("ó‘ÔÆ‰ï");
+    vLogRouteMonitor("çŠ¶æ…‹ç…§ä¼š");
     DBG_vPrintf(TRUE,
-                "APP: [ƒ‹[ƒgŠÄ‹] ƒ^ƒCƒ}‰Ò“­=%d Ä’Tõ•K—v=%d ÄQ‰Á‘Ò‹@=%d\n",
+                "APP: [ãƒ«ãƒ¼ãƒˆç›£è¦–] ã‚¿ã‚¤ãƒç¨¼åƒ=%d å†æ¢ç´¢å¿…è¦=%d å†å‚åŠ å¾…æ©Ÿ=%d\n",
                 s_sRouteMonitor.bTimerArmed ? 1 : 0,
                 s_sRouteMonitor.bRecoveryNeeded ? 1 : 0,
                 s_sRouteMonitor.bRejoinScheduled ? 1 : 0);
