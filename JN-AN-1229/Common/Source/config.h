@@ -71,6 +71,21 @@ extern "C" {
 /* Duration (ms) = 15.36ms x (2^ENERGY_SCAN_DURATION + 1) */
 #define ENERGY_SCAN_DURATION        3
 
+/*
+ * Some newer SDK releases no longer expose the legacy
+ * ZPS_eAplZdoRouteDiscoveryRequest* APIs used by the original
+ * AN1229 examples.  When those symbols are absent the linker
+ * fails unless the route discovery recovery path is disabled.
+ *
+ * Setting the flag below to 1 keeps the previous behaviour for
+ * SDKs that still provide the APIs.  For SDKs where the APIs are
+ * missing leave it at 0 so that the application falls back to the
+ * rejoin based recovery flow instead of failing to link.
+ */
+#ifndef APP_ROUTE_MONITOR_ENABLE_ROUTE_DISCOVERY
+#define APP_ROUTE_MONITOR_ENABLE_ROUTE_DISCOVERY   0
+#endif
+
 /****************************************************************************/
 /***        Type Definitions                                              ***/
 /****************************************************************************/
