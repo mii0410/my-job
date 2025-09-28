@@ -51,7 +51,8 @@ app_coordinator.o: ../../AN1229_ZBP_Coordinator/Source/app_coordinator.c \
  ../../../../sdk/JN-SW-4170/Components/DBG/Include/DBG_Uart.h \
  ../../AN1229_ZBP_Coordinator/Source/pdum_gen.h \
  ../../Common/Source/Utils.h ../../Common/Source/Time.h \
- ../../Common/Source/config.h
+ ../../Common/Source/config.h \
+ ../../AN1229_ZBP_Coordinator/Source/zps_gen.h
 
 ../../../../sdk/JN-SW-4170/Components/Common/Include/jendefs.h:
 
@@ -162,3 +163,5 @@ app_coordinator.o: ../../AN1229_ZBP_Coordinator/Source/app_coordinator.c \
 ../../Common/Source/Time.h:
 
 ../../Common/Source/config.h:
+
+../../AN1229_ZBP_Coordinator/Source/zps_gen.h:

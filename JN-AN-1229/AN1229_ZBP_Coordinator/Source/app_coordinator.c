@@ -55,6 +55,7 @@
 #include "Utils.h"
 #include "Time.h"
 #include "config.h"
+#include "zps_gen.h"
 
 /****************************************************************************/
 /***        Macro Definitions                                             ***/
@@ -63,6 +64,12 @@
 	#define TRACE_APP 	FALSE
 #else
 	#define TRACE_APP 	TRUE
+#endif
+
+#ifndef ZPS_APL_AF_ACK_REQ
+#define APP_TX_OPTION_ACK_REQUIRED (1U << 2)
+#else
+#define APP_TX_OPTION_ACK_REQUIRED ZPS_APL_AF_ACK_REQ
 #endif
 
 /****************************************************************************/
@@ -110,10 +117,10 @@ typedef struct
 /****************************************************************************/
 PRIVATE tsDeviceDesc s_eDeviceState;
 PUBLIC uint8 au8DefaultTCLinkKey[16] = {0x5a, 0x69, 0x67, 0x42, 0x65, 0x65, 0x41, 0x6c, 0x6c, 0x69, 0x61, 0x6e, 0x63, 0x65, 0x30, 0x39};
-
+PRIVATE uint16 u16LastKnownNodeAddr = 0xFFFF;
 //追加関数
 
-// 元コードAPP_vSetCommandが怪しいので修正（okayama）
+// 元コードAPP_vSetCommandが怪しいので修正
 //{
 // switch(command)
 // {
@@ -348,19 +355,23 @@ PUBLIC void SendData(){//データを送信する関数
 
 
     ZPS_teAplAfSecurityMode eSecurityMode = ZPS_E_APL_AF_UNSECURE;  // 必要なら変更
+    if (0xFFFF == u16LastKnownNodeAddr) {
+    		DBG_vPrintf(TRUE, "APP: No known destination for unicast\n");
+    		PDUM_eAPduFreeAPduInstance(hAPduInst);
+    		return;
+    }
 
-    //ユニキャスト
-    uint64 unicastMacAddrCOM4 = 0x001bc50122016bc6;
-    ZPS_teStatus eStatus = ZPS_eAplAfUnicastIeeeDataReq(
-            hAPduInst,
-            0x1337,     // Profile ID（アプリ）
-            0x1234,     // Cluster ID（EP1のクラスタ）
-            0x01,       // Dst EP
-            unicastMacAddrCOM4,		// COM4addr
-            eSecurityMode,
-            0,          // Tx options（必要ならAPS ACK等のビットを設定）
-            &u8TransactionSequenceNumber
-    );
+	ZPS_teStatus eStatus = ZPS_eAplAfUnicastDataReq(
+					hAPduInst,
+					0x1337,     // Profile ID
+					0x1234,     // Cluster ID
+					AN1229_ZBP_COORDINATOR_MYENDPOINT_ENDPOINT,
+					u16LastKnownNodeAddr,
+					eSecurityMode,
+					APP_TX_OPTION_ACK_REQUIRED,
+					&u8TransactionSequenceNumber
+	);
+
 
     if (eStatus != ZPS_E_SUCCESS) {
         // エラー時のみAPDUをここで解放（成功時はスタックが管理）
@@ -369,6 +380,18 @@ PUBLIC void SendData(){//データを送信する関数
     } else {
     	DBG_vPrintf(TRUE, "Unicast OK (tsn=%d)\n", u8TransactionSequenceNumber);
     }
+//    //ユニキャスト
+//    uint64 unicastMacAddrCOM4 = 0x001bc50122016bc6;
+//    ZPS_teStatus eStatus = ZPS_eAplAfUnicastIeeeDataReq(
+//            hAPduInst,
+//            0x1337,     // Profile ID（アプリ）
+//            0x1234,     // Cluster ID（EP1のクラスタ）
+//            0x01,       // Dst EP
+//            unicastMacAddrCOM4,		// COM4addr
+//            eSecurityMode,
+//            0,          // Tx options（必要ならAPS ACK等のビットを設定）
+//            &u8TransactionSequenceNumber
+//    );
 
 //	uint8 u8TransactionSequenceNumber;
 //	ZPS_tsNwkNib * thisNib;
@@ -571,6 +594,7 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
                //DBG_vPrintf(TRACE_APP, "        EndPoint:%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u8DstEndpoint);
 
                 /* free the application protocol data unit (APDU) once it has been dealt with */
+                u16LastKnownNodeAddr = sStackEvent.uEvent.sApsDataIndEvent.uSrcAddress.u16Addr;
                 PDUM_eAPduFreeAPduInstance(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
             }
             break;
@@ -597,12 +621,14 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
             	/*コメントアウト*/
             	// DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: vCheckStackEvent: ZPS_EVENT_NEW_NODE_HAS_JOINED, NwkAddr=0x%04x\n",
             	// sStackEvent.uEvent.sNwkJoinIndicationEvent.u16NwkAddr);
+            	u16LastKnownNodeAddr = sStackEvent.uEvent.sNwkJoinIndicationEvent.u16NwkAddr;
             }
             break;
 
             case ZPS_EVENT_NWK_LEAVE_INDICATION:
             {
             	DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_LEAVE_INDICATION\n");
+                u16LastKnownNodeAddr = 0xFFFF;
             }
             break;
 

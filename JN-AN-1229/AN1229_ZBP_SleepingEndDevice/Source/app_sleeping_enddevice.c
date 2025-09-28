@@ -57,6 +57,7 @@
 #include "Utils.h"
 #include "Time.h"
 #include "config.h"
+#include "zps_gen.h"
 
 /****************************************************************************/
 /***        Macro Definitions                                             ***/
@@ -70,6 +71,15 @@
 #define RESTART_TIME    APP_TIME_MS(1000)
 #define SLEEP_TIME      5 * 32000  /* sets a sleep period of 5 seconds */
 
+#ifndef ZPS_APL_AF_ACK_REQ
+#define APP_TX_OPTION_ACK_REQUIRED (1U << 2)
+#else
+#define APP_TX_OPTION_ACK_REQUIRED ZPS_APL_AF_ACK_REQ
+#endif
+
+#ifndef PDM_E_STATUS_OK_RESTORED
+#define PDM_E_STATUS_OK_RESTORED PDM_E_STATUS_OK
+#endif
 /****************************************************************************/
 /***        Type Definitions                                              ***/
 /****************************************************************************/
@@ -83,6 +93,7 @@ PRIVATE void vWaitForNetworkDiscovery(ZPS_tsAfEvent sStackEvent);
 PRIVATE void vWaitForNetworkJoin(ZPS_tsAfEvent sStackEvent);
 PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent);
 PRIVATE void vClearDiscNT(void);
+PRIVATE bool_t bLoadDeviceState(void);
 
 /****************************************************************************/
 /***        Exported Variables                                            ***/
@@ -154,18 +165,40 @@ PRIVATE void vReadInputCommand()
 
 }
 
+PRIVATE bool_t bLoadDeviceState(void)
+{
+	uint16 u16DataBytesRead = 0;
+	PDM_teStatus eStatus;
+
+	memset(&s_eDeviceState, 0, sizeof(s_eDeviceState));
+	s_eDeviceState.eNodeState = E_STARTUP;
+
+	eStatus = PDM_eReadDataFromRecord(PDM_ID_APP_SED,
+					&s_eDeviceState,
+					sizeof(s_eDeviceState),
+					&u16DataBytesRead);
+
+	if ((PDM_E_STATUS_OK == eStatus) || (PDM_E_STATUS_OK_RESTORED == eStatus))
+	{
+		DBG_vPrintf(TRACE_APP,
+				"APP: Warm start - restored SED state %d\n",
+				s_eDeviceState.eNodeState);
+		return TRUE;
+	}
+
+	DBG_vPrintf(TRACE_APP,
+			"APP: No persisted SED context (status=%d)\n",
+			eStatus);
+	memset(&s_eDeviceState, 0, sizeof(s_eDeviceState));
+	s_eDeviceState.eNodeState = E_STARTUP;
+	return FALSE;
+}
 
 PUBLIC void SendData(){ //データを送信する関数
-	uint8 u8TransactionSequenceNumber;
-	ZPS_tsNwkNib * thisNib;
-	thisNib = ZPS_psNwkNibGetHandle(ZPS_pvAplZdoGetNwkHandle());
-	PDUM_thAPduInstance hAPduInst;
-	hAPduInst = PDUM_hAPduAllocateAPduInstance(apduZDP);
+	uint8 u8TransactionSequenceNumber = 0;
+	PDUM_thAPduInstance hAPduInst = PDUM_hAPduAllocateAPduInstance(apduZDP);
 
 	uint16 u16Offset = 0;
-	uint16 i = 0;
-
-
 	u16Offset += PDUM_u16APduInstanceWriteNBO(hAPduInst, u16Offset,"a\x10", RxByte); //16進数センサデータ
 
 	//ダミーデータを生成（ラズパイ無し）
@@ -181,29 +214,22 @@ PUBLIC void SendData(){ //データを送信する関数
 
 	PDUM_eAPduInstanceSetPayloadSize(hAPduInst, u16Offset);
 
-	if (hAPduInst == PDUM_INVALID_HANDLE)
+	ZPS_teStatus eStatus;
+	ZPS_teAplAfSecurityMode eSecurityMode = ZPS_E_APL_AF_UNSECURE;
+
+	eStatus = ZPS_eAplAfUnicastDataReq(hAPduInst,
+							0x1337,
+							0x1234,
+							AN1229_ZBP_SLEEPINGENDDEVICE_MYENDPOINT_ENDPOINT,
+							COORDINATOR_ADR,
+							eSecurityMode,
+							APP_TX_OPTION_ACK_REQUIRED,
+							&u8TransactionSequenceNumber);
+	if (ZPS_E_SUCCESS != eStatus)
 	{
-		DBG_vPrintf(TRUE, "PDUM_INVALID_HANDLE\n");
-	} else {
-
-		ZPS_teStatus eStatus;
-		ZPS_teAplAfSecurityMode  eSecurityMode = (ZPS_E_APL_AF_UNSECURE);//セキュリティ無効
-
-		uint64 unicastMacAddr  = 0x001BC50122037F98;  //COM3コーディネーター
-		eStatus=ZPS_eAplAfUnicastIeeeDataReq(
-				hAPduInst,
-				0x1337,
-				0x1234, //0x01元
-				0x01,
-				unicastMacAddr,  //Dest: 64bit-coordinator
-				eSecurityMode,
-				0,
-				&u8TransactionSequenceNumber
-		);
+		DBG_vPrintf(TRUE, "APP: Unicast failed: %x\n", eStatus);
+		PDUM_eAPduFreeAPduInstance(hAPduInst);
 	}
-	//currentCommand = NO_COMMAND;
-
-
 }
 
 
@@ -232,31 +258,58 @@ PUBLIC void vWakeCallBack(void)
  ****************************************************************************/
 PUBLIC void APP_vInitialiseSleepingEndDevice(void)
 {
-	bool_t bDeleteRecords = TRUE /*FALSE*/;
-	uint16 u16DataBytesRead;
+	(void)bLoadDeviceState();
 
-	/* If required, at this point delete the network context from flash, perhaps upon some condition
-	 * For example, check if a button is being held down at reset, and if so request the Persistent
-	 * Data Manager to delete all its records:
-	 * e.g. bDeleteRecords = vCheckButtons();
-	 * Alternatively, always call PDM_vDelete() if context saving is not required.
-	 */
-	if (bDeleteRecords)
-	{
-		DBG_vPrintf(TRACE_APP, "APP: Deleting all records from flash\n");
-		PDM_vDeleteAllDataRecords();
-	}
-
-
-	/* Restore any application data previously saved to flash
-	 * All Application records must be loaded before the call to
-	 * ZPS_eAplAfInit
-	 */
-	s_eDeviceState.eNodeState = E_STARTUP;
-	PDM_eReadDataFromRecord(PDM_ID_APP_SED,
-			&s_eDeviceState,
-			sizeof(s_eDeviceState),
-			&u16DataBytesRead);
+	// 下記の機能はbLoadDeviceStateに格納
+//		/* Initialise ZBPro stack */
+//		ZPS_eAplAfInit();
+//
+//		ZPS_vAplSecSetInitialSecurityState(ZPS_ZDO_PRECONFIGURED_LINK_KEY,
+//				au8DefaultTCLinkKey,
+//				0x00,
+//				ZPS_APS_GLOBAL_LINK_KEY);
+//		/* Initialise other software modules
+//		 * HERE
+//		 */
+//
+//		 /* Always initialise any peripherals used by the application
+//		  * HERE
+//		  */
+//
+//		/* If the device state has been restored from flash, re-start the stack
+//		 * and set the application running again. Note that if there is more than 1 state
+//		 * where the network has already joined, then the other states should also be included
+//		 * in the test below
+//		 * E.g. E_RUNNING_1, E_RUNNING_2......
+//		 * if (E_RUNNING_1 == s_eDeviceState || E_RUNNING_2 == s_eDeviceState)
+//		 */
+//		if (E_RUNNING == s_eDeviceState.eNodeState)
+//		{
+//
+//	uint16 u16DataBytesRead;
+//
+//	/* If required, at this point delete the network context from flash, perhaps upon some condition
+//	 * For example, check if a button is being held down at reset, and if so request the Persistent
+//	 * Data Manager to delete all its records:
+//	 * e.g. bDeleteRecords = vCheckButtons();
+//	 * Alternatively, always call PDM_vDelete() if context saving is not required.
+//	 */
+//	if (bDeleteRecords)
+//	{
+//		DBG_vPrintf(TRACE_APP, "APP: Deleting all records from flash\n");
+//		PDM_vDeleteAllDataRecords();
+//	}
+//
+//
+//	/* Restore any application data previously saved to flash
+//	 * All Application records must be loaded before the call to
+//	 * ZPS_eAplAfInit
+//	 */
+//	s_eDeviceState.eNodeState = E_STARTUP;
+//	PDM_eReadDataFromRecord(PDM_ID_APP_SED,
+//			&s_eDeviceState,
+//			sizeof(s_eDeviceState),
+//			&u16DataBytesRead);
 
 	/* Initialise ZBPro stack */
 	ZPS_eAplAfInit();

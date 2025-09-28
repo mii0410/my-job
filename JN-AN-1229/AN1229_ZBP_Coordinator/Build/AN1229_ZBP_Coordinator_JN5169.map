@@ -421,25 +421,25 @@ Archive member included because of file (symbol)
 ../../../../sdk/JN-SW-4170/Components/Library\libAes_JN516x.a(AEScoprocessorECB.o)
                               aes_sw_mmo.o (symbol from plugin) (bACI_ECBencodeStripe)
 c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/../../../../ba-elf/lib/mcpu_jn51xx_sizeopt\libc.a(lib_a-memcmp.o)
-                              C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans2.ltrans.o (memcmp)
+                              C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans2.ltrans.o (memcmp)
 c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/../../../../ba-elf/lib/mcpu_jn51xx_sizeopt\libc.a(lib_a-memcpy.o)
-                              C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans0.ltrans.o (memcpy)
+                              C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans0.ltrans.o (memcpy)
 c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/../../../../ba-elf/lib/mcpu_jn51xx_sizeopt\libc.a(lib_a-memset.o)
-                              C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans0.ltrans.o (memset)
+                              C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans0.ltrans.o (memset)
 c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/../../../../ba-elf/lib/mcpu_jn51xx_sizeopt\libc.a(lib_a-strcmp.o)
-                              C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans9.ltrans.o (strcmp)
+                              C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans7.ltrans.o (strcmp)
 c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/mcpu_jn51xx_sizeopt\libgcc.a(__udivsi3.o)
-                              C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans14.ltrans.o (__udivsi3)
+                              C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans12.ltrans.o (__udivsi3)
 c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/mcpu_jn51xx_sizeopt\libgcc.a(__umodsi3.o)
-                              C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans7.ltrans.o (__umodsi3)
+                              C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans6.ltrans.o (__umodsi3)
 c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/mcpu_jn51xx_sizeopt\libgcc.a(__modsi3.o)
-                              C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans14.ltrans.o (__modsi3)
+                              C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans12.ltrans.o (__modsi3)
 c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/mcpu_jn51xx_sizeopt\libgcc.a(_udivdi3.o)
-                              C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans9.ltrans.o (__udivdi3)
+                              C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans7.ltrans.o (__udivdi3)
 ../../../../sdk/JN-SW-4170/Components/Library\libZPSAPL_JN516x.a(zps_apl_version_lc.o)
-                              C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans4.ltrans.o (ZPS_APL_Version_3v0)
+                              C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans4.ltrans.o (ZPS_APL_Version_3v0)
 ../../../../sdk/JN-SW-4170/Components/Library\libZPSNWK_JN516x.a(zps_nwk_version_lc.o)
-                              C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans4.ltrans.o (ZPS_NWK_Version_3v0)
+                              C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans4.ltrans.o (ZPS_NWK_Version_3v0)
 
 Allocating common symbols
 Common symbol       size              file
@@ -476,39 +476,43 @@ Discarded input sections
  .data          0x0000000000000000        0x0 portasm_JN516x.o
  .bss           0x0000000000000000        0x0 portasm_JN516x.o
  .text          0x0000000000000000        0x0 port_JN516x.o (symbol from plugin)
- .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans2.ltrans.o
- .rodata        0x0000000000000000        0x2 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans2.ltrans.o
- .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans4.ltrans.o
- .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans5.ltrans.o
- .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans6.ltrans.o
- .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans7.ltrans.o
- .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans11.ltrans.o
- .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans12.ltrans.o
- .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans13.ltrans.o
- .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans14.ltrans.o
- .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans15.ltrans.o
- .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans16.ltrans.o
- .rodata        0x0000000000000000        0x8 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans16.ltrans.o
- .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans17.ltrans.o
- .rodata        0x0000000000000000        0x1 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans17.ltrans.o
- .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans18.ltrans.o
- .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans19.ltrans.o
- .bss           0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans19.ltrans.o
- .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans20.ltrans.o
- .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans21.ltrans.o
- .rodata        0x0000000000000000        0x4 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans21.ltrans.o
- .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans22.ltrans.o
- .rodata        0x0000000000000000        0x4 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans22.ltrans.o
- .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans23.ltrans.o
- .rodata        0x0000000000000000        0x2 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans23.ltrans.o
- .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans25.ltrans.o
- .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans27.ltrans.o
- .bss           0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans27.ltrans.o
- .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans28.ltrans.o
- .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans29.ltrans.o
- .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans30.ltrans.o
- .bss           0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans30.ltrans.o
- .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans31.ltrans.o
+ .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans2.ltrans.o
+ .rodata        0x0000000000000000        0x2 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans2.ltrans.o
+ .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans4.ltrans.o
+ .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans5.ltrans.o
+ .bss           0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans5.ltrans.o
+ .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans6.ltrans.o
+ .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans8.ltrans.o
+ .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans9.ltrans.o
+ .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans11.ltrans.o
+ .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans12.ltrans.o
+ .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans13.ltrans.o
+ .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans14.ltrans.o
+ .rodata        0x0000000000000000        0x4 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans14.ltrans.o
+ .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans15.ltrans.o
+ .rodata        0x0000000000000000        0x4 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans15.ltrans.o
+ .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans16.ltrans.o
+ .rodata        0x0000000000000000        0x1 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans16.ltrans.o
+ .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans18.ltrans.o
+ .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans19.ltrans.o
+ .rodata        0x0000000000000000        0x1 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans19.ltrans.o
+ .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans20.ltrans.o
+ .rodata        0x0000000000000000        0x1 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans20.ltrans.o
+ .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans21.ltrans.o
+ .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans22.ltrans.o
+ .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans23.ltrans.o
+ .bss           0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans23.ltrans.o
+ .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans24.ltrans.o
+ .rodata        0x0000000000000000        0x2 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans25.ltrans.o
+ .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans26.ltrans.o
+ .bss           0x0000000000000000        0x8 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans26.ltrans.o
+ .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans28.ltrans.o
+ .bss           0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans28.ltrans.o
+ .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans29.ltrans.o
+ .rodata        0x0000000000000000        0x1 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans29.ltrans.o
+ .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans30.ltrans.o
+ .bss           0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans30.ltrans.o
+ .data          0x0000000000000000        0x0 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans31.ltrans.o
  .data          0x0000000000000000        0x0 c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/../../../../ba-elf/lib/mcpu_jn51xx_sizeopt\libc.a(lib_a-memcmp.o)
  .bss           0x0000000000000000        0x0 c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/../../../../ba-elf/lib/mcpu_jn51xx_sizeopt\libc.a(lib_a-memcmp.o)
  .data          0x0000000000000000        0x0 c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/../../../../ba-elf/lib/mcpu_jn51xx_sizeopt\libc.a(lib_a-memcpy.o)
@@ -776,38 +780,38 @@ START GROUP
 LOAD irq_JN516x.o
 LOAD portasm_JN516x.o
 LOAD port_JN516x.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans0.ltrans.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans1.ltrans.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans2.ltrans.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans3.ltrans.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans4.ltrans.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans5.ltrans.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans6.ltrans.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans7.ltrans.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans8.ltrans.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans9.ltrans.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans10.ltrans.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans11.ltrans.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans12.ltrans.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans13.ltrans.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans14.ltrans.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans15.ltrans.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans16.ltrans.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans17.ltrans.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans18.ltrans.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans19.ltrans.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans20.ltrans.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans21.ltrans.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans22.ltrans.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans23.ltrans.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans24.ltrans.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans25.ltrans.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans26.ltrans.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans27.ltrans.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans28.ltrans.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans29.ltrans.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans30.ltrans.o
-LOAD C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans31.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans0.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans1.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans2.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans3.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans4.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans5.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans6.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans7.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans8.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans9.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans10.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans11.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans12.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans13.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans14.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans15.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans16.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans17.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans18.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans19.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans20.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans21.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans22.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans23.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans24.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans25.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans26.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans27.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans28.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans29.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans30.ltrans.o
+LOAD C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans31.ltrans.o
 LOAD c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/../../../../ba-elf/lib/mcpu_jn51xx_sizeopt\libc.a
 LOAD c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/mcpu_jn51xx_sizeopt\libgcc.a
 LOAD c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/../../../../ba-elf/lib/mcpu_jn51xx_sizeopt\libc.a
@@ -880,14 +884,14 @@ LOAD c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/
                 0x000000000008001c        0x2 SHORT 0x0
                 0x000000000008001e        0x2 SHORT 0x0 ABSOLUTE (_SwConfig)
                 0x0000000000080020                _enc_start = ABSOLUTE (.)
-                0x0000000000080020        0x4 LONG 0x1c990 ABSOLUTE (_image_len)
-                0x0000000000080024        0x4 LONG 0x9c47c ABSOLUTE (_flash_data_start)
+                0x0000000000080020        0x4 LONG 0x1ca00 ABSOLUTE (_image_len)
+                0x0000000000080024        0x4 LONG 0x9c4e8 ABSOLUTE (_flash_data_start)
                 0x0000000000080028        0x2 SHORT 0x13 ((ABSOLUTE (_ram_data_start) / 0x4) & 0xffff)
-                0x000000000008002a        0x2 SHORT 0x145 ((ABSOLUTE (_ram_data_len) / 0x4) & 0xffff)
-                0x000000000008002c        0x2 SHORT 0x158 ((ABSOLUTE (_bss_start) / 0x4) & 0xffff)
-                0x000000000008002e        0x2 SHORT 0xbed ((ABSOLUTE (_bss_len) / 0x4) & 0xffff)
-                0x0000000000080030        0x4 LONG 0x9bc54 ABSOLUTE (AppWarmStart)
-                0x0000000000080034        0x4 LONG 0x811a8 ABSOLUTE (AppColdStart)
+                0x000000000008002a        0x2 SHORT 0x146 ((ABSOLUTE (_ram_data_len) / 0x4) & 0xffff)
+                0x000000000008002c        0x2 SHORT 0x159 ((ABSOLUTE (_bss_start) / 0x4) & 0xffff)
+                0x000000000008002e        0x2 SHORT 0xbf0 ((ABSOLUTE (_bss_len) / 0x4) & 0xffff)
+                0x0000000000080030        0x4 LONG 0x9bcc1 ABSOLUTE (AppWarmStart)
+                0x0000000000080034        0x4 LONG 0x811d4 ABSOLUTE (AppColdStart)
                 0x0000000000000000                _enc_offset = (_enc_start & 0xf)
 
 .ro_mac_address
@@ -906,12 +910,12 @@ LOAD c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/
  *(.ro_se_lnkKey)
                 0x0000000000080040                . = ALIGN (0x10)
 
-.rodata         0x0000000000080038     0x104e
+.rodata         0x0000000000080038     0x1079
  *(.rodata*)
  .rodata.str1.1
-                0x0000000000080038       0xa5 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans0.ltrans.o
+                0x0000000000080038       0xa5 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans0.ltrans.o
  *fill*         0x00000000000800dd        0x3 00
- .rodata        0x00000000000800e0      0x3f0 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans0.ltrans.o
+ .rodata        0x00000000000800e0      0x3f0 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans0.ltrans.o
                 0x0000000000080100                psAplDefaultDistributedAPSLinkKey
                 0x0000000000080104                au32UartAddrOffset
                 0x000000000008010c                g_u32ApsFcSaveCountBitShift
@@ -921,921 +925,918 @@ LOAD c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/
                 0x000000000008011c                zps_g_pvApl
                 0x0000000000080120                pwrm_psWakeupCallbacks
  .rodata.str1.1
-                0x00000000000804d0      0x3e0 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans1.ltrans.o
-                                        0x420 (size before relaxing)
- .rodata        0x00000000000808b0      0x1cc C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans1.ltrans.o
-                0x00000000000808b0                zps_pacNwkFrmStdByteFmt
-                0x00000000000808b4                zps_pacNwkFrmStdLongFmt
-                0x00000000000808b8                zps_pacNwkFrmStdHalfFmt
+                0x00000000000804d0      0x407 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans1.ltrans.o
+                                        0x447 (size before relaxing)
+ *fill*         0x00000000000808d7        0x1 00
+ .rodata        0x00000000000808d8      0x1cc C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans1.ltrans.o
+                0x00000000000808d8                zps_pacNwkFrmStdByteFmt
+                0x00000000000808dc                zps_pacNwkFrmStdLongFmt
+                0x00000000000808e0                zps_pacNwkFrmStdHalfFmt
  .rodata.str1.1
-                0x0000000000080a7c       0x1c C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans2.ltrans.o
+                0x0000000000080aa4       0x1c C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans2.ltrans.o
                                          0x34 (size before relaxing)
- .rodata        0x0000000000080a98       0x30 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans3.ltrans.o
+ .rodata        0x0000000000080ac0       0x30 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans3.ltrans.o
  .rodata.str1.1
-                0x0000000000000000        0x8 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans3.ltrans.o
- .rodata        0x0000000000080ac8       0x10 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans4.ltrans.o
-                0x0000000000080ac8                au8FlashWaitStatesHSRCO.156905
-                0x0000000000080ad0                au8FlashWaitStates32MXO.156904
+                0x0000000000000000        0x8 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans3.ltrans.o
+ .rodata        0x0000000000080af0       0x10 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans4.ltrans.o
+                0x0000000000080af0                au8FlashWaitStatesHSRCO.156907
+                0x0000000000080af8                au8FlashWaitStates32MXO.156906
  .rodata.str1.1
-                0x0000000000080ad8        0x6 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans5.ltrans.o
+                0x0000000000080b00        0x6 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans5.ltrans.o
                                           0x9 (size before relaxing)
- .rodata        0x0000000000080ade       0x77 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans6.ltrans.o
  .rodata.str1.1
-                0x0000000000080b55      0x133 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans8.ltrans.o
-                                        0x137 (size before relaxing)
+                0x0000000000000000        0x3 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans6.ltrans.o
  .rodata.str1.1
-                0x0000000000080c88       0xdd C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans9.ltrans.o
- *fill*         0x0000000000080d65        0x3 00
- .rodata        0x0000000000080d68       0x14 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans9.ltrans.o
-                0x0000000000080d68                u8MacNwkTriesTimeout
-                0x0000000000080d69                u8ZpsAplSecurityOverrideLevel
-                0x0000000000080d6a                bOverrideApsSecurity
+                0x0000000000080b06       0x28 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans7.ltrans.o
+ *fill*         0x0000000000080b2e        0x2 00
+ .rodata        0x0000000000080b30       0x14 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans7.ltrans.o
+                0x0000000000080b30                u8MacNwkTriesTimeout
+ .rodata        0x0000000000080b44       0x77 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans8.ltrans.o
  .rodata.str1.1
-                0x0000000000080d7c        0x3 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans10.ltrans.o
+                0x0000000000080bbb        0x6 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans10.ltrans.o
+                                         0x15 (size before relaxing)
+ .rodata.str1.1
+                0x0000000000080bc1        0x6 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans12.ltrans.o
+ *fill*         0x0000000000080bc7        0x1 00
+ .rodata        0x0000000000080bc8       0x18 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans12.ltrans.o
+                0x0000000000080bc8                au32NwkPdmRecordOffsets
+ .rodata.str1.1
+                0x0000000000000000        0xb C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans14.ltrans.o
+ .rodata.str1.1
+                0x0000000000080be0        0x5 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans16.ltrans.o
+                                          0x8 (size before relaxing)
+ .rodata.str1.1
+                0x0000000000080be5        0x3 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans17.ltrans.o
                                           0x7 (size before relaxing)
  .rodata.str1.1
-                0x0000000000080d7f        0x6 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans11.ltrans.o
+                0x0000000000080be8        0xb C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans18.ltrans.o
+                                         0x17 (size before relaxing)
  .rodata.str1.1
-                0x0000000000080d85        0x7 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans12.ltrans.o
-                                         0x13 (size before relaxing)
- .rodata        0x0000000000080d8c       0x18 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans14.ltrans.o
-                0x0000000000080d8c                au32NwkPdmRecordOffsets
- .rodata        0x0000000000080da4       0x40 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans15.ltrans.o
-                0x0000000000080da4                au32EndDeviceTimeoutConstants
-                0x0000000000080de0                pLocalTclkStruct
+                0x0000000000000000        0xb C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans19.ltrans.o
+                                          0x4 (size before relaxing)
  .rodata.str1.1
-                0x0000000000000000        0xf C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans16.ltrans.o
- .rodata.str1.1
-                0x0000000000080de4        0xc C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans17.ltrans.o
+                0x0000000000080bf3        0xc C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans20.ltrans.o
                                          0x2b (size before relaxing)
+ *fill*         0x0000000000080bff        0x1 00
+ .rodata        0x0000000000080c00       0xa8 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans21.ltrans.o
+                0x0000000000080c00                s_aprIdleStHandleCme.147879
+                0x0000000000080c14                s_aprActvStHandleCme.143781
+                0x0000000000080c40                CSWTCH.16.7341.7341
+                0x0000000000080c60                g_bExternalPermitJoinControl
+                0x0000000000080c64                u32ScanAttemptDelayTime
+                0x0000000000080c68                CSWTCH.19.7342.7342
+                0x0000000000080c88                CSWTCH.22.7343.7343
  .rodata.str1.1
-                0x0000000000080df0       0x2b C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans18.ltrans.o
-                                         0x50 (size before relaxing)
+                0x0000000000080ca8       0x27 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans22.ltrans.o
+                                         0x4e (size before relaxing)
  .rodata.str1.1
-                0x0000000000000000       0x2b C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans19.ltrans.o
+                0x0000000000000000       0x27 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans23.ltrans.o
                                           0x4 (size before relaxing)
- *fill*         0x0000000000080e1b        0x1 00
- .rodata        0x0000000000080e1c       0x30 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans19.ltrans.o
-                0x0000000000080e1c                s_aprActvStHandleCme.143779
-                0x0000000000080e48                bDisableSourceRouting
  .rodata.str1.1
-                0x0000000000000000       0x2b C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans20.ltrans.o
-                                          0x4 (size before relaxing)
- .rodata        0x0000000000080e4c       0x74 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans20.ltrans.o
-                0x0000000000080e4c                s_aprIdleStHandleCme.147877
-                0x0000000000080e60                CSWTCH.19.7340.7340
-                0x0000000000080e80                CSWTCH.22.7341.7341
-                0x0000000000080ea0                CSWTCH.16.7339.7339
+                0x0000000000000000        0x3 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans24.ltrans.o
+ *fill*         0x0000000000080ccf        0x1 00
+ .rodata        0x0000000000080cd0       0x5c C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans24.ltrans.o
+                0x0000000000080cd0                g_u32NwkFcSaveCountBitShift
  .rodata.str1.1
-                0x0000000000000000       0x2b C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans23.ltrans.o
-                                          0x3 (size before relaxing)
+                0x0000000000080d2c      0x1e8 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans25.ltrans.o
+                                        0x1ec (size before relaxing)
+ .rodata        0x0000000000080f14       0x40 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans26.ltrans.o
+                0x0000000000080f14                au32EndDeviceTimeoutConstants
+                0x0000000000080f50                pLocalTclkStruct
+ .rodata        0x0000000000080f54       0x8c C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans27.ltrans.o
+                0x0000000000080f54                ZPS_g_u32MacVersion
+                0x0000000000080f58                PDUM_g_u32Version
+                0x0000000000080f5c                ZPS_g_u32TsvVersion
  .rodata.str1.1
-                0x0000000000080ec0        0x6 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans24.ltrans.o
-                                         0x13 (size before relaxing)
+                0x0000000000080fe0       0x20 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans28.ltrans.o
+                                         0x42 (size before relaxing)
  .rodata.str1.1
-                0x0000000000000000        0x3 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans25.ltrans.o
- *fill*         0x0000000000080ec6        0x2 00
- .rodata        0x0000000000080ec8       0x5c C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans25.ltrans.o
-                0x0000000000080ec8                g_u32NwkFcSaveCountBitShift
+                0x0000000000000000        0x6 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans29.ltrans.o
  .rodata.str1.1
-                0x0000000000000000        0x3 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans26.ltrans.o
- .rodata        0x0000000000080f24       0x8c C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans26.ltrans.o
-                0x0000000000080f24                ZPS_g_u32MacVersion
-                0x0000000000080f28                PDUM_g_u32Version
-                0x0000000000080f2c                ZPS_g_u32TsvVersion
- .rodata.str1.1
-                0x0000000000080fb0       0x20 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans27.ltrans.o
-                                         0x40 (size before relaxing)
- .rodata.str1.1
-                0x0000000000000000        0x6 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans28.ltrans.o
- .rodata.str1.1
-                0x0000000000080fd0        0x5 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans29.ltrans.o
- .rodata.str1.1
-                0x0000000000080fd5       0xb1 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans30.ltrans.o
+                0x0000000000081000       0xb1 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans30.ltrans.o
 
-.text           0x0000000000081088    0x1b3f3
+.text           0x00000000000810b4    0x1b433
  *(.text*)
- .text          0x0000000000081088       0x50 irq_JN516x.o
-                0x0000000000081088                PIC_ChannelPriorities
-                0x0000000000081098                PIC_SwVectTable
- .text          0x00000000000810d8       0xd0 portasm_JN516x.o
-                0x00000000000810d8                OSMIUM_HwVectTable
-                0x0000000000081114                vExternalException
- .text          0x00000000000811a8     0x1a14 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans0.ltrans.o
-                0x00000000000811a8                AppColdStart
- .text          0x0000000000082bbc     0x1748 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans1.ltrans.o
-                0x0000000000082bbc                app_vMainloop
- .text          0x0000000000084304     0x11dc C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans2.ltrans.o
-                0x0000000000084304                vPostNldeDcfmInd.12469
- .text          0x00000000000854e0     0x124a C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans3.ltrans.o
-                0x00000000000854e0                vMMAC_IntHandlerBbc
-                0x00000000000854fa                eBasicTxCompleteHandler
-                0x00000000000854ff                vTxRxTimeout.155204
-                0x000000000008555c                eSmeUDNTScanDcfm.145115
-                0x0000000000085578                vMacMlmeCallBackHandler.5371
-                0x000000000008584e                zps_eNwkHandleSmePollDcfm
-                0x0000000000085878                eSmeGenlScanDcfm.145678
-                0x00000000000858d6                zps_eNwkHandleSmeDutyCycleInd
-                0x00000000000858ff                eSmeEdScScanDcfm.145674
-                0x0000000000085948                ZPS_vGetDeviceCurrentData.constprop.76
-                0x00000000000859c7                zps_bAplZdoServerHandleConfirmAcks.constprop.9
-                0x0000000000085a11                ZPS_eTsvStop
-                0x0000000000085a50                zps_vAplApsStopPollTimer.part.2.14955
-                0x0000000000085ad7                ZPS_vDefaultApsdeResources
-                0x0000000000085b45                ZPS_vResetBoundServerContext
-                0x0000000000085b48                eEdTimeoutRequestDataDcfm.134909
-                0x0000000000085b69                ZPS_u8GetChannelOffset
-                0x0000000000085b9b                pvHeap_Alloc
-                0x0000000000085b9e                vMicroIntRestoreState
-                0x0000000000085baa                PDM_vExitCriticalSection
-                0x0000000000085bcd                bAHI_WriteEEPROMfixSegmentData
-                0x0000000000085c2b                bAHI_InitialiseEEPROM
-                0x0000000000085c73                vAHI_ReadDataFromEEPROMregister
-                0x0000000000085ca0                vAHI_WriteDataIntoEEPROMregister
-                0x0000000000085cd0                iPDM_WriteSegmentHeaderDataIntoEEPROMsegment
-                0x0000000000085cff                u8AHI_WakeTimerFiredStatus
-                0x0000000000085d13                vAHI_WakeTimerStop.part.3.157399
-                0x0000000000085d33                vAHI_UartReset.part.4.157153
-                0x0000000000085d6b                vAHI_UartEnable.part.7.157280
-                0x0000000000085e32                vAHI_OptimiseWaitStates
-                0x0000000000085e7e                bAHI_GetClkSource
-                0x0000000000085e8b                bIssueACIcommand
-                0x0000000000085f21                vACI_CmdWaitBusy
-                0x0000000000085f2e                vEcbEncodeStripe.156653
-                0x0000000000085f85                i16JPT_ConvertEnergyTodBm
-                0x0000000000085f97                MAC_u64GetExtAddr
-                0x0000000000085fb2                ZPS_u64NwkNibFindExtAddr
-                0x0000000000086058                psSearchForFrameToSend
-                0x00000000000860af                eMiniMac_FrameInProgress
-                0x00000000000860da                vRemoveFromTxQueue
-                0x0000000000086116                vAddToTxQueue
-                0x000000000008614c                u8GetHeaderSize
-                0x0000000000086174                vMiniMac_PLME_SetReq_CcaMode
-                0x0000000000086188                vMiniMac_MLME_SetReq_MaxCsmaBackoffs
-                0x00000000000861a8                vMiniMac_MLME_SetReq_MaxBe
-                0x00000000000861cb                vMiniMac_MLME_SetReq_MinBe
-                0x00000000000861ee                zps_vSendJoinInd
-                0x000000000008625d                zps_psFormatCmdFrameGeneral
-                0x0000000000086309                zps_eNwkFormStInit
-                0x0000000000086335                vSendDcfm.146418
-                0x000000000008635a                bCheckMatchingEntry.145867
-                0x0000000000086380                psAddToDiscNt.145663
-                0x000000000008651c                eSmeUDNTBeaconInd.145670
-                0x0000000000086541                zps_psNwkSlistRemoveFromHead
-                0x0000000000086558                zps_psNwkSlistRemove
-                0x0000000000086590                zps_bNwkMcpsMgrRemoveDescrFromLists
-                0x00000000000865ce                zps_vNwkSlistAddToTail
-                0x00000000000865e8                zps_vNwkMcpsMgrFreeReqDescr
-                0x000000000008661d                zps_vNwkRemoveConflictedBroadcast
-                0x0000000000086672                ZPS_vNwkSecResetDevice
-                0x00000000000866ba                ZPS_bNwkSecHaveNetworkKey
-                0x00000000000866ee                ZPS_bNwkSecFindMatSet
- .text          0x000000000008672a     0x1011 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans4.ltrans.o
-                0x0000000000086786                vZdoServersInit.2361
-                0x00000000000868c5                ZPS_vMacIFTGetChannelMaskFromMacId
-                0x0000000000086947                u8PDM_CalculateLargestDataRecordStored
-                0x0000000000086978                iPDM_FilterDuplicateAppendedSegmentsOnList.130761
-                0x00000000000869bf                ZPS_bIsMacAddressUsedInApsTable
-                0x0000000000086a90                ZPS_eTsvOpen
-                0x0000000000086aad                zps_vNwkBttMgrInit
-                0x0000000000086adb                ZPS_u8GrabMutexLock.constprop.169
-                0x0000000000086b1e                ZPS_u8ReleaseMutexLock.constprop.168
-                0x0000000000086b49                vEnableReceive.155206
-                0x0000000000086b82                psGetTxFrameBuffer
-                0x0000000000086bbe                PDUM_vInit
-                0x0000000000086c67                vMicroIntEnableOnly.constprop.130
-                0x0000000000086c93                TSV_eStart
-                0x0000000000086ce3                ZPS_eTsvStart
-                0x0000000000086d20                zps_eNwkHandleSceNwkUpdate
-                0x0000000000086d44                vNwkMcpsSendTimedDfcm
-                0x0000000000086d88                vProcessTimedList.135976
-                0x0000000000086dce                zps_vNwkMcpsMgrPostTimed
-                0x0000000000086de1                zps_vAplAfPostTimerEvent
-                0x0000000000086e80                zps_vExpireOldRoutes
-                0x0000000000086f09                zps_eNwkBtrMatch
-                0x0000000000087006                PDM_vEnterCriticalSection
-                0x0000000000087035                iAHI_WriteDataIntoEEPROMsegment.constprop.125
-                0x0000000000087083                vACI_OptimisedCcmStar.constprop.123
-                0x000000000008726e                zps_eNwkRtDiscMatch.constprop.120
-                0x00000000000872c1                AESSW_vMMOFinalUpdate
-                0x0000000000087383                AESSW_vHMAC_MMO.constprop.113
-                0x000000000008741b                zps_pvAesGetKeyFromInstallCode
-                0x00000000000874a1                zps_vAplSecSetInitialSecurityState.constprop.56
-                0x00000000000875c6                bAHI_FullFlashRead.constprop.107
-                0x0000000000087681                vMiniMac_MLME_SetReq_PanId
-                0x00000000000876be                vMiniMac_MLME_SetReq_ShortAddr
-                0x00000000000876cc                ZTIMER_eStart.part.3.5288.constprop.81
-                0x000000000008771f                ZPS_u8MacPibGetBeaconPayload.constprop.77
+ .text          0x00000000000810b4       0x50 irq_JN516x.o
+                0x00000000000810b4                PIC_ChannelPriorities
+                0x00000000000810c4                PIC_SwVectTable
+ .text          0x0000000000081104       0xd0 portasm_JN516x.o
+                0x0000000000081104                OSMIUM_HwVectTable
+                0x0000000000081140                vExternalException
+ .text          0x00000000000811d4     0x1a14 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans0.ltrans.o
+                0x00000000000811d4                AppColdStart
+ .text          0x0000000000082be8     0x1788 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans1.ltrans.o
+                0x0000000000082be8                app_vMainloop
+ .text          0x0000000000084370     0x11dc C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans2.ltrans.o
+                0x0000000000084370                vPostNldeDcfmInd.12471
+ .text          0x000000000008554c     0x1266 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans3.ltrans.o
+                0x000000000008554c                vMMAC_IntHandlerBbc
+                0x0000000000085566                eBasicTxCompleteHandler
+                0x000000000008556b                vTxRxTimeout.155206
+                0x00000000000855c8                eSmeUDNTScanDcfm.145117
+                0x00000000000855e4                vMacMlmeCallBackHandler.5373
+                0x00000000000858ba                zps_eNwkHandleSmePollDcfm
+                0x00000000000858e4                eSmeGenlScanDcfm.145680
+                0x0000000000085942                zps_eNwkHandleSmeDutyCycleInd
+                0x000000000008596b                eSmeEdScScanDcfm.145676
+                0x00000000000859b4                ZPS_u8MacPibGetBeaconPayload.constprop.77
+                0x00000000000859d0                ZPS_vGetDeviceCurrentData.constprop.76
+                0x0000000000085a4f                zps_bAplZdoServerHandleConfirmAcks.constprop.9
+                0x0000000000085a99                ZPS_eTsvStop
+                0x0000000000085ad8                zps_vAplApsStopPollTimer.part.2.14957
+                0x0000000000085b5f                ZPS_vDefaultApsdeResources
+                0x0000000000085bcd                ZPS_vResetBoundServerContext
+                0x0000000000085bd0                eEdTimeoutRequestDataDcfm.134911
+                0x0000000000085bf1                ZPS_u8GetChannelOffset
+                0x0000000000085c23                pvHeap_Alloc
+                0x0000000000085c26                vMicroIntRestoreState
+                0x0000000000085c32                PDM_vExitCriticalSection
+                0x0000000000085c55                bAHI_WriteEEPROMfixSegmentData
+                0x0000000000085cb3                bAHI_InitialiseEEPROM
+                0x0000000000085cfb                vAHI_ReadDataFromEEPROMregister
+                0x0000000000085d28                vAHI_WriteDataIntoEEPROMregister
+                0x0000000000085d58                iPDM_WriteSegmentHeaderDataIntoEEPROMsegment
+                0x0000000000085d87                u8AHI_WakeTimerFiredStatus
+                0x0000000000085d9b                vAHI_WakeTimerStop.part.3.157401
+                0x0000000000085dbb                vAHI_UartReset.part.4.157155
+                0x0000000000085df3                vAHI_UartEnable.part.7.157282
+                0x0000000000085eba                vAHI_OptimiseWaitStates
+                0x0000000000085f06                bAHI_GetClkSource
+                0x0000000000085f13                bIssueACIcommand
+                0x0000000000085fa9                vACI_CmdWaitBusy
+                0x0000000000085fb6                vEcbEncodeStripe.156655
+                0x000000000008600d                i16JPT_ConvertEnergyTodBm
+                0x000000000008601f                MAC_u64GetExtAddr
+                0x000000000008603a                ZPS_u64NwkNibFindExtAddr
+                0x00000000000860e0                psSearchForFrameToSend
+                0x0000000000086137                eMiniMac_FrameInProgress
+                0x0000000000086162                vRemoveFromTxQueue
+                0x000000000008619e                vAddToTxQueue
+                0x00000000000861d4                u8GetHeaderSize
+                0x00000000000861fc                vMiniMac_PLME_SetReq_CcaMode
+                0x0000000000086210                vMiniMac_MLME_SetReq_MaxCsmaBackoffs
+                0x0000000000086230                vMiniMac_MLME_SetReq_MaxBe
+                0x0000000000086253                vMiniMac_MLME_SetReq_MinBe
+                0x0000000000086276                zps_vSendJoinInd
+                0x00000000000862e5                zps_psFormatCmdFrameGeneral
+                0x0000000000086391                zps_eNwkFormStInit
+                0x00000000000863bd                vSendDcfm.146420
+                0x00000000000863e2                bCheckMatchingEntry.145869
+                0x0000000000086408                psAddToDiscNt.145665
+                0x00000000000865a4                eSmeUDNTBeaconInd.145672
+                0x00000000000865c9                zps_psNwkSlistRemoveFromHead
+                0x00000000000865e0                zps_psNwkSlistRemove
+                0x0000000000086618                zps_bNwkMcpsMgrRemoveDescrFromLists
+                0x0000000000086656                zps_vNwkSlistAddToTail
+                0x0000000000086670                zps_vNwkMcpsMgrFreeReqDescr
+                0x00000000000866a5                zps_vNwkRemoveConflictedBroadcast
+                0x00000000000866fa                ZPS_vNwkSecResetDevice
+                0x0000000000086742                ZPS_bNwkSecHaveNetworkKey
+                0x0000000000086776                ZPS_bNwkSecFindMatSet
+ .text          0x00000000000867b2      0xfed C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans4.ltrans.o
+                0x000000000008680e                vPostMlmeDcfmInd.30058
+                0x00000000000868bd                vZdoServersInit.2361
+                0x00000000000869fc                ZPS_u8MacIFTGetChannelMaskCount
+                0x0000000000086a3c                ZPS_u8MacIFTGetIntfState
+                0x0000000000086a59                u32GetScanChannels.isra.3.20993
+                0x0000000000086a8e                ZPS_vMacIFTGetChannelMaskFromMacId
+                0x0000000000086b10                ZPS_eTsvOpen
+                0x0000000000086b2d                zps_vNwkBttMgrInit
+                0x0000000000086b5b                ZPS_u8GrabMutexLock.constprop.170
+                0x0000000000086b9e                ZPS_u8ReleaseMutexLock.constprop.169
+                0x0000000000086bc9                vEnableReceive.155208
+                0x0000000000086c02                psGetTxFrameBuffer
+                0x0000000000086c3e                PDUM_vInit
+                0x0000000000086ce7                vMicroIntEnableOnly.constprop.131
+                0x0000000000086d13                TSV_eStart
+                0x0000000000086d63                ZPS_eTsvStart
+                0x0000000000086da0                zps_eNwkHandleSceNwkUpdate
+                0x0000000000086dc4                vNwkMcpsSendTimedDfcm
+                0x0000000000086e08                vProcessTimedList.135978
+                0x0000000000086e4e                zps_vNwkMcpsMgrPostTimed
+                0x0000000000086e61                zps_vAplAfPostTimerEvent
+                0x0000000000086f00                zps_vExpireOldRoutes
+                0x0000000000086f89                zps_eNwkBtrMatch
+                0x0000000000087086                PDM_vEnterCriticalSection
+                0x00000000000870b5                iAHI_WriteDataIntoEEPROMsegment.constprop.126
+                0x0000000000087103                vACI_OptimisedCcmStar.constprop.124
+                0x00000000000872ee                zps_eNwkRtDiscMatch.constprop.121
+                0x0000000000087341                AESSW_vMMOFinalUpdate
+                0x0000000000087403                AESSW_vHMAC_MMO.constprop.114
+                0x000000000008749b                zps_pvAesGetKeyFromInstallCode
+                0x0000000000087521                zps_vAplSecSetInitialSecurityState.constprop.56
+                0x0000000000087646                bAHI_FullFlashRead.constprop.108
+                0x0000000000087701                vMiniMac_MLME_SetReq_PanId
+                0x000000000008773e                vMiniMac_MLME_SetReq_ShortAddr
+                0x000000000008774c                ZTIMER_eStart.part.3.5290.constprop.81
  .text.unlikely
-                0x000000000008773b       0xc8 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans4.ltrans.o
-                0x0000000000087750                vAHI_MemoryHold.156831
- .text          0x0000000000087803      0xfe1 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans5.ltrans.o
-                0x0000000000087803                vPermitJoinHandleExpiry.139512
-                0x000000000008780c                zps_bAplZdoNodeDescServer
-                0x000000000008797e                zps_bAplZdoPowerDescServer
-                0x0000000000087aa2                zps_bAplZdoActiveEpServer
-                0x0000000000087b8b                boIdValueSearchMatch.129695
-                0x0000000000087be5                zps_bAplZdoSimpleDescServer
-                0x0000000000087e33                vPostVsMcpsDcfmInd.30070
-                0x0000000000087e86                vPostMlmeDcfmInd.30056
-                0x0000000000087f35                ZPS_vMacPibSetBeaconPayload.constprop.87
-                0x0000000000087f6a                zps_vInitBeaconPayload
-                0x0000000000087fc5                u8ZdoEndDeviceBindServerUnpackApdu
-                0x0000000000088055                vZdoEndDeviceBindStateWaitSecondRequest
-                0x0000000000088281                PWRM_vWakeInterruptCallback
-                0x0000000000088308                u16PDM_CalculateRecordChecksum
-                0x00000000000883ab                vPDM_WriteFileSystemRecordAndSegmentDataIntoEEPROMsegment
-                0x00000000000883e6                psGetAndBuildCoordRealignment
-                0x000000000008843e                ZPS_u16NwkNibFindNwkAddr
-                0x00000000000884df                ZPS_vNwkNibClearTables
-                0x0000000000088606                ZPS_u8MacIFTGetChannelMaskCount
-                0x0000000000088646                ZPS_u8MacIFTGetIntfState
-                0x0000000000088663                zps_vNwkHandleCmeGetInterface
-                0x00000000000887af                u32GetScanChannels.isra.3.20991
- .text          0x00000000000887e4      0xed6 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans6.ltrans.o
-                0x00000000000887e4                eSmeASFlBeaconInd.145686
-                0x0000000000088806                DBG_vUartFlush
-                0x0000000000088833                DBG_vUartPutch
-                0x0000000000088879                DBG_vUartInitHardware
-                0x000000000008890e                eSmeAcScBeaconInd.145694
-                0x0000000000088a1e                zps_vNwkHandleCmePermitJoinReq
-                0x0000000000088a86                vZdoEndDeviceBindStateIdle
-                0x0000000000088b85                ZPS_u8MacIFTAddUpdateChannelMask.part.3.158289
-                0x0000000000088c13                zps_psAllocateAndFormatMacHdr
-                0x0000000000088f76                zps_psNwkInitCmdFrame
-                0x0000000000088ff5                eSendLinkStatusDataDcfm.part.1.133651
-                0x000000000008911c                iPDM_SearchForBufferIdInList
-                0x0000000000089151                iPDM_SearchForBufferIdInFileSystem
-                0x0000000000089164                iPDM_SearchForSpecificSegmentInList
-                0x0000000000089196                bPDM_FindLastMarkerSegment.129984
-                0x00000000000891e3                vMiniMac_ReturnRxBufferCallback
-                0x000000000008920f                vMMAC_RadioToOffAndWait
-                0x000000000008922c                vStartReceive
-                0x0000000000089248                vSetChannelAndPower
-                0x00000000000893d1                vMiniMac_PLME_SetReq_Power
-                0x00000000000893e5                vMiniMac_PLME_SetReq_Channel
-                0x00000000000893ed                iPDM_ReadSegmentHeaderDataFromEEPROMsegment
-                0x0000000000089446                iPDM_ReadUserDataFromEEPROMsegment
-                0x00000000000894c0                iPDM_ReCalculateWearCountAndChecksumAndWriteFileSystemHeader
-                0x000000000008950a                vPDM_SetEEPROMandFileSystemValidState
-                0x0000000000089531                iPDM_ReadUserDataFromFileSystemRecord
-                0x0000000000089551                iPDM_ReadUserDataFromSegmentOnListWithId
-                0x000000000008958f                iPDM_ReadUserDataFromSegmentWithId
-                0x00000000000895c4                PDM_eReadDataFromRecord.part.0.128952
-                0x000000000008964b                vLoadAplRecord.20975
-                0x000000000008967f                iPDM_CompareDataInFileRecords.129955
- .text          0x00000000000896ba     0x154c C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans7.ltrans.o
-                0x00000000000896ba                vNwkMcpsTimerCallback
-                0x00000000000896d4                zps_eSceGenlIllegal
-                0x00000000000896db                zps_eSmeGenlIllegal
-                0x00000000000896e2                DBG_vUartFailedAssert
-                0x00000000000896e6                vZdoEndDeviceBindTimeoutSecondMessage
-                0x00000000000896fa                vPostMcpsDcfmInd.30063
-                0x00000000000896fd                psGetVsMcpsBuf.30067
-                0x0000000000089706                psGetMlmeBuf.30053
-                0x000000000008970f                psGetMcpsBuf.30060
-                0x0000000000089718                zps_vExpireRequestKeyReq.20914
-                0x0000000000089792                zps_bAplZdoEndDeviceBindServer
-                0x000000000008984a                zps_eNwkRctMatchNwkAddr
-                0x00000000000898b4                ZPS_u8NwkCalcNldeReqOverhead
-                0x00000000000898ef                zps_vRemoveNextHop
-                0x00000000000899a4                zps_vRemoveRoute
-                0x0000000000089a3b                zps_psNwkRtMatchNwkAddr
-                0x0000000000089ab1                zps_vNwkFreeMcpsHandle
-                0x0000000000089adb                zps_u8NwkAllocateMcpsHandle
-                0x0000000000089b2c                zps_psNwkMcpsMgrFindPendingByNwkDstAddr
-                0x0000000000089b42                ZPS_u64NwkNibGetMappedIeeeAddr
-                0x0000000000089b72                ZPS_bNwkNibNtActvMatch
-                0x0000000000089c24                bCheckNwkAddr
-                0x0000000000089c6d                zps_eAplTrustCenterFindDevice
-                0x0000000000089cb1                ZPS_vSetExtendedStatus
-                0x0000000000089cc3                zps_eNwkRtMatch
-                0x0000000000089dd0                eAllocateNPDU.7602
-                0x0000000000089e33                PDUM_eNPduClone
-                0x0000000000089e7f                PDUM_hAPduAllocateAPduInstance
-                0x0000000000089ed9                zps_eAplZdoSendZdpResponse
-                0x0000000000089f22                zps_bAplZdoMgmtLqiServer
-                0x000000000008a157                zps_bAplZdoSystemServerDiscoveryServer
-                0x000000000008a1e3                zps_bAplZdoMgmtRtgServer
-                0x000000000008a323                bSendResponse.50805
-                0x000000000008a366                zps_psApsApsAllocateDcfmRecord
-                0x000000000008a3d4                zps_u8CalcLinkCost
-                0x000000000008a410                ZPS_u8NwkNibNtDiscMatch
-                0x000000000008a4f4                zps_u8NwkLibChannelLow
-                0x000000000008a503                zps_u64NwkLibFromPayload
-                0x000000000008a542                zps_vNwkLibU64ToPayload
-                0x000000000008a56f                zps_eNwkDcfmIndPost
-                0x000000000008a591                zps_psNwkDcfmIndGetBuf
-                0x000000000008a5b3                eRouteRequestDataDcfm.140734
-                0x000000000008a607                eNldeDataDcfm.138452
-                0x000000000008a637                zps_vSendNwkStatusInd
-                0x000000000008a667                eLeaveDataDcfmRemoteLeave.131960
-                0x000000000008a6c2                psSLISTsearch
-                0x000000000008a702                psSLISTremove
-                0x000000000008a780                psSLISTgetNext
-                0x000000000008a7a4                iSLISTnumberOfNodes
-                0x000000000008a7bb                u8PDM_CalculateFileSystemCapacity
-                0x000000000008a7d0                u8PDM_ReadSequenceNumber
-                0x000000000008a7f3                boSegmentNumberDeleteSearchMatch.130142
-                0x000000000008a80e                u8PDM_ReadSegmentDataSize
-                0x000000000008a822                u32PDM_ReadFileSystemHeaderWearCount
-                0x000000000008a838                boSearchForWearCountSubstitute.130462
-                0x000000000008a85e                boSearchForWearCountInsertPoint.129691
-                0x000000000008a87c                vPDM_WriteFileSystemHeaderWearCount
-                0x000000000008a88e                vPDM_ReadBitmapHeader.128602
-                0x000000000008a8ad                RND_u32GetRand256
-                0x000000000008a8ca                RND_u32GetRand
-                0x000000000008a8f1                u16CalculateFailedTxCount
-                0x000000000008a921                vZdoIeeeAddrServerSendExtendResponse.part.0.35513
-                0x000000000008a985                vZdoNwkAddrServerSendExtendResponse.part.0.34247
-                0x000000000008a9e9                vReset_StateMachine.32939
-                0x000000000008aa2d                bFindMatch.32896
-                0x000000000008aa8b                zps_bPerformLeaveActionDecider
-                0x000000000008aa90                vHandleUpdateDeviceIndication.20946
-                0x000000000008aaba                zps_vByteCopy.part.2.18334
-                0x000000000008aad6                bDuplicateCheck.18142
-                0x000000000008abe3                zps_vAplApsInitDuplicateTable
- *fill*         0x000000000008ac06        0x2 00
- .text          0x000000000008ac08      0xd24 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans8.ltrans.o
-                0x000000000008ac08                zps_bAplZdoIeeeAddrServer
-                0x000000000008ad64                zps_bAplZdoNwkAddrServer
-                0x000000000008afbc                eBeaconReqSent.154851
-                0x000000000008afe3                vPdmEventHandlerCallback
-                0x000000000008b091                vPDM_AddFileSystemElementToListInAscendingWearCountOrder
-                0x000000000008b1b9                vPDM_MoveFileRecordFromListToList
-                0x000000000008b1db                vPDM_MoveRecordToDeAllocList
-                0x000000000008b1fb                iPDM_GetWearLevelledBuffer
-                0x000000000008b2ce                iPDM_WriteSegmentHeaderAndData
-                0x000000000008b41c                iPDM_ReconstructAtRunTimeReplacedDataTable
-                0x000000000008b55c                PWRM_vManagePower
-                0x000000000008b6a6                zps_u8AplApsConstructAndPostLoopBackDataInd.15069
-                0x000000000008b7df                u8PostUnicastMsgToNHLE.15077
-                0x000000000008b818                boPDM_IsBitmapSaturated.128637
-                0x000000000008b861                vFreePendingReqDescr
-                0x000000000008b8cb                vHandleRouteDiscoveryExpiry.140273
- .text          0x000000000008b92c     0x111c C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans9.ltrans.o
-                0x000000000008b92c                eSmeAcScBeaconInd.145872
-                0x000000000008ba05                vRetryCcaFailure
-                0x000000000008ba51                zps_vSendJoinDcfm
-                0x000000000008ba97                vGiveUp.149206
-                0x000000000008bacf                ZPS_bSecEncrypt
-                0x000000000008bc8a                zps_vNwkMcpsMgrTidyBtrReqDescr
-                0x000000000008bcce                vNwkBttTimerExpiry.143827
-                0x000000000008bdef                vLoadNwkRecord.136952
-                0x000000000008be2d                dbg_vPrintfImplNoneVerbose
-                0x000000000008c2b4                vShowException
-                0x000000000008c376                vfExtendedStatusCallBack.3094
-                0x000000000008c381                vReadCharInterrupt
-                0x000000000008c3fe                vReadCommand.part.1.5197
-                0x000000000008c483                zps_vSocMacHandleMcpsVsReqRsp.constprop.128
-                0x000000000008c612                vMiniMac_Init
-                0x000000000008c9d3                eBuildAndSend.154857
- .text          0x000000000008ca48      0xf0f C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans10.ltrans.o
-                0x000000000008ca48                DBG_iUartGetChar
-                0x000000000008ca98                eOrphanNotificationSent.154847
-                0x000000000008ce12                zps_bAplZdoMatchDescServer
-                0x000000000008ce26                vMiniMac_ReturnTxBufferCallback
-                0x000000000008cfe8                vMiniMac_NextTransaction
-                0x000000000008d052                eTransmit
-                0x000000000008d120                vMiniMac_TxComplete
-                0x000000000008d212                ZPS_vMacPibSetRxOnWhenIdle
-                0x000000000008d21b                zps_vDefaultNwkLayer
-                0x000000000008d450                vTimerFired
-                0x000000000008d525                vMiniMac_McpsCallback
-                0x000000000008d7d7                eMcpsTxCompleteHandler.154172
-                0x000000000008d805                ZPS_bSecDecrypt
-                0x000000000008d912                ZPS_u16MacIFTGetIDByChannelMask
- .text          0x000000000008d957      0xd82 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans11.ltrans.o
-                0x000000000008d957                zps_vNwkHandleCmeSetInterface
-                0x000000000008db0f                zps_vAplSaveRecord
-                0x000000000008dbb0                ZPS_vSwapApsTableEntries
-                0x000000000008dc8a                zps_bNwkFindAddIeeeAddr
-                0x000000000008de12                vAplSecRemoveLinkKey.21031
-                0x000000000008dee2                ZPS_vRemoveEntryFromAddressMap
-                0x000000000008df2b                ZPS_vNwkPurgeMacAddressAndRelatedEntries.part.5.137565
-                0x000000000008e03d                ZPS_vNtSetUsedStatus
-                0x000000000008e10a                zps_vBuildSortedActvNTList
-                0x000000000008e1d6                zps_vCleanUnAuthenHandleExpiry
-                0x000000000008e302                eUnsolicitedRejoinRspDataDcfm.134783
-                0x000000000008e32d                eRejoinRspDataDcfm.148376
-                0x000000000008e3d9                ZPS_vNwkNibSetNwkAddr
-                0x000000000008e403                zps_eNwkHandleSceRejnResponse
-                0x000000000008e460                ZPS_vNwkNibSetExtPanId
-                0x000000000008e490                vFinish.149664
-                0x000000000008e4e5                ZPS_vNwkNibSetKeySeqNum
-                0x000000000008e4f9                ZPS_vNwkNibSetDepth
-                0x000000000008e52e                ZPS_vNwkNibSetUpdateId
-                0x000000000008e559                vSendNetworkUpdate.134771
-                0x000000000008e68e                ZPS_vNwkNibSetPanId
-                0x000000000008e6ac                ZPS_vNwkNibSetCapabilityInfo
- .text          0x000000000008e6d9      0xfa7 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans12.ltrans.o
-                0x000000000008e6d9                vProcessListsForSubmission.136072
-                0x000000000008e923                zps_vNwkMcpsMgrPost
-                0x000000000008ea59                zps_eNwkHandleSceRouteRequest
-                0x000000000008ef2d                zps_eNwkHandleSceRouteReply
-                0x000000000008f200                zps_psSendNetworkLinkPowerDelta.142142
-                0x000000000008f292                zps_eNwkHandleSceNwkLinkPowerDelta
-                0x000000000008f2ac                zps_psNwkSendRejoinReqCmd
-                0x000000000008f32a                zps_u8NwkHandleRejoinReq
-                0x000000000008f3ea                vContinueRejoin.148372
-                0x000000000008f491                zps_eNwkHandleSdeActvDcfmData
-                0x000000000008f616                vMcpsMgrTimeoutExpiry
- .text          0x000000000008f680      0xec2 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans13.ltrans.o
-                0x000000000008f680                zps_vAplTrustCenterInit
-                0x000000000008f715                zps_eNwkHandleSceLinkStatus
-                0x000000000008f849                vIncrementFrameCounterInPdm.isra.0.137404
-                0x000000000008fa28                zps_eNwkSecEncryptPacket
-                0x000000000008fb3e                vInitUnknownNeighbor.135983.constprop.68
-                0x000000000008fb97                zps_eAplZdoAddReplaceLinkKey_W
-                0x000000000008fc5b                ZPS_bNwkNibAddrMapAddEntry
-                0x000000000008fe10                zps_vAgeRouter
-                0x000000000008fe49                zps_sNwkNibNtCheckJoin.part.8.137698
-                0x0000000000090102                zps_vNwkHandleCmeDirectJoinReq
-                0x00000000000901ab                zps_vJoinInitNtParent
-                0x000000000009038f                zps_vCheckActvNtForDuplicate
-                0x000000000009042f                eSmeOrphScanDcfm.149677
-                0x00000000000904a7                eCheckAddrConflict.isra.7.135038
- .text          0x0000000000090542      0xbea C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans14.ltrans.o
-                0x0000000000090542                vPDM_MoveAllDataFromListToList
-                0x0000000000090580                vPDM_MoveAllDataToDeAllocList.constprop.119
-                0x00000000000905ab                iPDM_ReplaceChangedSegmentInSequence
-                0x000000000009079a                iPDM_VerifyDataSequenceWithBufferId
-                0x0000000000090836                iPDM_ReconstructReplacedDataTable
-                0x000000000009092d                vPDM_MoveAllDataWithBufferIdAndStateFromListToList
-                0x00000000000909b8                iPDM_CreateCandidateBufferList
-                0x0000000000090abc                vPDM_MoveAllDataWithBufferIdFromListToList
-                0x0000000000090b41                vPDM_DeleteAppendedSequence
-                0x0000000000090be3                PDM_eSaveRecordData
-                0x0000000000090f7f                ZPS_vNwkSaveRecord
-                0x0000000000090fab                ZPS_vNwkNibSetChannel
-                0x0000000000090fc9                ZPS_vNwkNibSetAuxChannel
-                0x0000000000090fe2                ZPS_vNwkSaveNt
-                0x000000000009101d                zps_eNwkHandleSmeCommStatusInd
-                0x00000000000910d7                ZPS_vNwkSaveSecMat
-                0x00000000000910ea                vPDM_DeleteAllSegmentsWithIdFromFileSystemList.129039.constprop.16
- .text          0x000000000009112c      0xbc9 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans15.ltrans.o
-                0x0000000000091464                zps_eNwkHandleSmeAssocInd
-                0x0000000000091492                zps_eNwkHandleSceRejnRequest
-                0x000000000009151f                vBbcIntHandler.153743
-                0x0000000000091816                eAssocRespSent.154060
-                0x0000000000091835                zps_bGetFlashCredential
-                0x000000000009183a                zps_psFindKeyDescr
-                0x000000000009195b                vTransformKey.isra.0.18329
-                0x00000000000919bc                ZPS_vNwkHandleNldeReqRsp
-                0x0000000000091beb                zps_eAplApsmeCmdMgrSendCommand
-                0x0000000000091cc8                zps_vAplApsmeCmdMgrRetryTimeout.16586
- *fill*         0x0000000000091cf5        0x3 00
- .text          0x0000000000091cf8     0x1018 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans16.ltrans.o
-                0x0000000000091cf8                vMcpsMgrExpiry.135899
-                0x0000000000091d57                ZPS_vNwkMacDataPollRequest
-                0x0000000000091eee                zps_vNwkHandleCmeRouteDiscoveryReq
-                0x0000000000091f74                zps_eNwkHandleSceRouteRecord
-                0x000000000009206b                vMiniMac_MlmeCallback
-                0x0000000000092264                bBeaconNotify.154861
-                0x00000000000923a1                vPostDcfm.154868
-                0x0000000000092410                vScanNextChannel.154855
-                0x00000000000925c1                ZPS_vNwkSaveAllRecords
-                0x00000000000925eb                zps_vSaveAllZpsRecords
-                0x000000000009260a                ZPS_vSetDevicePreviousData.constprop.17
-                0x0000000000092788                ZPS_vNMPurgeEntry
-                0x0000000000092948                zps_psSendFrm
-                0x0000000000092ca6                zps_psSendBroadcastFrm.part.0.147107
- .text          0x0000000000092d10      0xd4c C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans17.ltrans.o
-                0x0000000000092d10                zps_eAplSecEncryptPacket
-                0x00000000000930dc                ZPS_vAplHandleApsdeReqRsp
-                0x00000000000934f5                zps_eAplZdpApsdeReqInternal
-                0x0000000000093564                zps_eAplZdpGenStatusOnlyResponse
-                0x00000000000936b5                zps_eAplSendApsmeCmdFrame
-                0x0000000000093829                zps_eAplApsmeTransportKeyReqRsp.constprop.18
-                0x00000000000939c4                vApsmeResendTimeOutHandler
-                0x00000000000939f3                zps_eAplApsmeRemoveDeviceReqRsp
- .text          0x0000000000093a5c      0xece C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans18.ltrans.o
-                0x0000000000093a5c                zps_eAplZdpMgmtRtgResponse
-                0x0000000000093b23                zps_eZdpNodeDescResponse
-                0x0000000000093bcb                zps_eZdpSimpleDescResponse
-                0x0000000000093cd8                zps_eZdpSystemServerDiscoveryResponse
-                0x0000000000093d47                zps_eAplZdpMgmtLqiResponse
-                0x0000000000093e57                zps_eZdpNwkAddrResponse
-                0x0000000000093f3f                zps_eZdpIeeeAddrResponse
-                0x0000000000094027                zps_eZdpPowerDescResponse
-                0x00000000000940c4                zps_eZdpActiveEpResponse
-                0x000000000009415a                zps_eZdpMatchDescResponse
-                0x00000000000942b8                zps_bAplZdoMgmtNWKUpdateServer
-                0x00000000000947c9                ZPS_vSecondTimerCallback
- *fill*         0x000000000009492a        0x2 00
- .text          0x000000000009492c      0xc00 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans19.ltrans.o
-                0x000000000009492c                zps_vNwkHandleCmeSyncReq
-                0x0000000000094b9b                zps_eRejoinDataDcfm
-                0x0000000000094c58                eSmeAsocAssocDcfm.149832
-                0x0000000000094cdc                eSmeRjPCPollDcfm.149828
-                0x0000000000094d1d                eSceRjRsRejoinRsp.149795
-                0x0000000000094ebb                zps_eNwkHandleSceNwkStatus
-                0x000000000009504e                zps_eProcessAddrConflict
-                0x00000000000951f7                ZPS_vNwkNibCheckAndUpdateAddresses
-                0x0000000000095298                zps_bAplZdoDeviceAnnceServer
- .text          0x000000000009552c      0xcc8 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans20.ltrans.o
-                0x000000000009552c                zps_vNwkHandleCmeNwkJoinReq
-                0x0000000000095863                zps_vNwkHandleCmeNwkActvJoinReq
-                0x000000000009593d                zps_eNwkHandleSmeOrphanInd
-                0x000000000009594d                zps_vAplApsPollTimer
-                0x00000000000959af                vAplSecAuthPollTimerExpiry.20922
-                0x0000000000095ab9                vAplSecAuthTimerExpiry.20918
-                0x0000000000095b34                vPostApsdeDcfmInd.12462
-                0x0000000000095d26                zps_eNwkSendJoinResponse
-                0x0000000000095f0c                eRejoinNetwork.20993.constprop.79
-                0x0000000000095fba                eStartNetworkDiscovery.21005
-                0x0000000000096022                zps_eAplZdoStartStack
-                0x0000000000096103                eStartRouter
- .text          0x00000000000961f4      0xb4b C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans21.ltrans.o
-                0x00000000000961f4                zps_vNwkHandleCmeIdleNwkFormReq
-                0x00000000000962a7                zps_vReAttemptScanTimerHandleExpiry
-                0x0000000000096305                zps_vNwkHandleCmeNwkDiscReq
-                0x00000000000963e7                zps_vNwkHandleCmeActvStartRouterReq
-                0x000000000009647e                zps_eNwkHandleSmeBeaconNotifyInd
-                0x000000000009650c                zps_eNwkHandleSceNwkReport
-                0x0000000000096592                zps_sNwkStart
-                0x0000000000096634                ZPS_pvNwkCtor.constprop.85
-                0x00000000000969c9                eSmeAcScScanDcfm.146429
- *fill*         0x0000000000096d3f        0x1 00
- .text          0x0000000000096d40      0xd2c C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans22.ltrans.o
-                0x0000000000096fc4                vSendMlmeCommStatusFromTxFrame
-                0x000000000009701a                zps_vSocMacHandleMlmeVsReqRsp.constprop.95
-                0x000000000009754e                zps_sNwkLibSubmitScan
-                0x0000000000097587                zps_vNwkDiscUpdateNT
-                0x000000000009762b                eSmeEdScScanDcfm.146422
-                0x00000000000976db                zps_vNwkHandleCmeEdScanReq
-                0x0000000000097728                vScanBeaconReceived
-                0x0000000000097768                vRunningRxCallback
- .text          0x0000000000097a6c      0xa48 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans23.ltrans.o
-                0x0000000000097b33                vPostNlmeDcfmInd.12448
-                0x00000000000982bd                zps_bAplZdoMgmtLeaveServer
- .text          0x00000000000984b4      0xc51 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans24.ltrans.o
-                0x00000000000984b4                zps_eNwkHandleSceNwkEdTimeoutReq
-                0x00000000000985af                vSendNetworkReport.134767
-                0x000000000009868d                zps_psNwkInitiateRouteDiscovery
-                0x000000000009887d                psNwkSendRouteRecordCmd.141019
-                0x00000000000989c5                zps_psNwkSendLeaveCmd
-                0x0000000000098a2d                zps_vNwkSecondTickHandleExpiry
-                0x0000000000098c41                zps_vNwkHandleCmeLeaveReq
-                0x0000000000098d5f                zps_eNwkHandleSceLeave
-                0x0000000000098efb                zps_psSendNetworkStatusCmd
-                0x0000000000098f68                zps_eDefaultDataDcfm
-                0x000000000009905a                zps_vProcessLocalAddrConflict
- .text          0x0000000000099105      0x9dd C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans25.ltrans.o
-                0x00000000000992ea                vHandleEdTimeoutReqExpiry.134775
-                0x0000000000099393                vHandleNwkLocalUpdateAfterBcast.134788
-                0x00000000000993e7                vHandleNwkRemoteUpdateAfterBcast.134779
-                0x000000000009943a                ZPS_vNwkHandleNlmeReqRsp
-                0x00000000000994b7                zps_vAplAfPostEvent
-                0x0000000000099676                vPostToEndpoint.part.1.12163
-                0x00000000000997e2                zps_vHandleApsdeDataFragIndNotSupported
-                0x0000000000099860                zps_eAplZdoPermitJoining.constprop.82
-                0x0000000000099880                zps_bAplZdoPermitJoiningServer
-                0x000000000009994a                vStartScanTimerExpiry.52068
-                0x0000000000099986                vChangeChannelTimerExpiry.52072
-                0x00000000000999fd                eLeaveReset.131965
-                0x0000000000099a68                eLeaveDataDcfmLocalLeave.131970
- .text          0x0000000000099ae2      0xd95 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans26.ltrans.o
-                0x0000000000099ae2                psGetNlmeBuf.12445
-                0x0000000000099aeb                psGetNldeBuf.12466
-                0x0000000000099af4                psGetApsmeBuf.12452
-                0x0000000000099afa                psGetApsdeBuf.12459
-                0x0000000000099c13                APP_bMultimaskJoinCallBack
-                0x0000000000099c1f                vMacMcpsCallBackHandler.5375
-                0x0000000000099c30                zps_vGetZpsMutex
-                0x0000000000099c39                vLoopbackTimerCallback
-                0x0000000000099c68                psApsmeRequestKeyGetHandle
-                0x0000000000099cc3                zps_vAplApsInitFragTransmitPool
-                0x0000000000099ce4                zps_vAplApsFillAndPostApsAck
-                0x0000000000099d4e                zps_u8AplApsFreeMsgHandle
-                0x0000000000099db8                zps_vAplApsInitSyncMsgPool
-                0x0000000000099df0                zps_vAplApsInitFragReceivePool
-                0x0000000000099e13                vFillDataIndStruct.12123
-                0x0000000000099e71                vFillApduErrorEvent.12116
-                0x0000000000099eb4                bCheckProfile.12111
-                0x0000000000099ef2                ZPS_bIsGroupPresent
-                0x0000000000099f2a                pdum_u16ReadNBO
-                0x000000000009a08b                PDUM_u16SizeNBO
-                0x000000000009a0e9                PDUM_u16APduInstanceWriteStrNBO
-                0x000000000009a268                PDUM_u16APduInstanceReadNBO
-                0x000000000009a2b3                PDUM_u16APduInstanceWriteNBO
-                0x000000000009a31d                PDUM_eAPduFreeAPduInstance
-                0x000000000009a383                PDUM_eAPduInstanceSetPayloadSize
-                0x000000000009a3ab                PDUM_eNPduWriteDataFromBuffer
-                0x000000000009a405                PDUM_eNPduWriteDataToBuffer
-                0x000000000009a463                PDUM_eNPduWriteFromBuffer
-                0x000000000009a48c                PDUM_eNPduDescend
-                0x000000000009a4b2                PDUM_eNPduAscend
-                0x000000000009a4d8                PDUM_eNPduClaimData
-                0x000000000009a545                PDUM_eNPduAppendDataNBO
-                0x000000000009a5a2                PDUM_eNPduClaimHeader
-                0x000000000009a5c5                PDUM_eNPduReadHeaderNBO
-                0x000000000009a618                PDUM_eNPduPrependHeaderNBO
-                0x000000000009a673                PDUM_eNPduFree
-                0x000000000009a6d1                PDUM_eNPduInitDescending
-                0x000000000009a6ec                zps_vInitAPSMECmdHdr
-                0x000000000009a723                ZPS_u8MacGetChannelOffsetFromMask
-                0x000000000009a732                ZPS_eMacValidateChannelMask
-                0x000000000009a761                ZQ_bQueueReceive
-                0x000000000009a7d2                ZQ_bQueueSend
-                0x000000000009a848                APP_vGenCallback
-                0x000000000009a85b                ZPS_psMacIFTGetInterface
- .text          0x000000000009a877      0x8b1 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans27.ltrans.o
-                0x000000000009a97c                vZdoEndDeviceBindStateWaitSendWithAck
-                0x000000000009abb7                zps_bAplZdoDefaultServer
-                0x000000000009af18                zps_bAplZdoZdoClient
-                0x000000000009b0c5                zps_eZdpEndDeviceBindResponse
-                0x000000000009b0e6                zps_eZdpMgmtLeaveResponse
-                0x000000000009b107                zps_eZdpMgmtPermitJoiningResponse
- .text          0x000000000009b128      0x64c C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans28.ltrans.o
-                0x000000000009b128                zps_vAplTrustCenterRequestKey
-                0x000000000009b2c9                vPostApsmeDcfmInd.12455
- .text          0x000000000009b774      0x407 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans29.ltrans.o
-                0x000000000009b774                zps_eAplApsmeUpdateDeviceReqRsp.part.4.16759
-                0x000000000009b8c2                vHandleRemoveDeviceIndication
-                0x000000000009b9ee                zps_vAplTrustCenterUpdateDevice
- .text          0x000000000009bb7b       0xb6 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans30.ltrans.o
-                0x000000000009bb7b                ISR_vTickTimer
-                0x000000000009bbb3                vUnclaimedInterrupt
-                0x000000000009bbc8                vBusErrorHandler
-                0x000000000009bbd7                vAlignmentErrorHandler
-                0x000000000009bbe6                vIllegalInstructionHandler
-                0x000000000009bbf5                vTrapHandler
-                0x000000000009bc04                vGenericHandler
-                0x000000000009bc13                vUnclaimedException
-                0x000000000009bc22                vStackOverflowHandler
- .text          0x000000000009bc31       0x3d C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans31.ltrans.o
-                0x000000000009bc31                zps_isrMAC
-                0x000000000009bc54                AppWarmStart
- .text          0x000000000009bc6e       0x25 c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/../../../../ba-elf/lib/mcpu_jn51xx_sizeopt\libc.a(lib_a-memcmp.o)
-                0x000000000009bc6e                memcmp
- .text          0x000000000009bc93       0x19 c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/../../../../ba-elf/lib/mcpu_jn51xx_sizeopt\libc.a(lib_a-memcpy.o)
- .text          0x000000000009bcac       0x12 c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/../../../../ba-elf/lib/mcpu_jn51xx_sizeopt\libc.a(lib_a-memset.o)
-                0x000000000009bcac                memset
- .text          0x000000000009bcbe       0x25 c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/../../../../ba-elf/lib/mcpu_jn51xx_sizeopt\libc.a(lib_a-strcmp.o)
-                0x000000000009bcbe                strcmp
- *fill*         0x000000000009bce3        0x1 00
- .text          0x000000000009bce4      0x204 c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/mcpu_jn51xx_sizeopt\libgcc.a(__udivsi3.o)
-                0x000000000009bce4                __udivsi3
- .text          0x000000000009bee8      0x1b0 c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/mcpu_jn51xx_sizeopt\libgcc.a(__umodsi3.o)
-                0x000000000009bee8                __umodsi3
- .text          0x000000000009c098       0x24 c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/mcpu_jn51xx_sizeopt\libgcc.a(__modsi3.o)
-                0x000000000009c098                __modsi3
- .text          0x000000000009c0bc      0x350 c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/mcpu_jn51xx_sizeopt\libgcc.a(_udivdi3.o)
-                0x000000000009c0bc                __udivdi3
- *fill*         0x000000000009c40c        0x0 00
- .text          0x000000000009c40c       0x48 ../../../../sdk/JN-SW-4170/Components/Library\libPWRM_JN516x.a(pwrm_setjmp_JN516x.o)
-                0x000000000009c40c                setjmp
-                0x000000000009c430                PWRM_longjmp
- .text          0x000000000009c454       0x27 ../../../../sdk/JN-SW-4170/Components/Library\libHardwareApi_JN5169.a(AHI_Interrupt.o)
-                0x000000000009c454                vAHI_InterruptSetPriority
-                0x000000000009c472                vAHI_InterruptSetActivePriorityLevel
- .text          0x000000000009c47b        0x0 ../../../../sdk/JN-SW-4170/Components/Library\libZPSAPL_JN516x.a(zps_apl_version_lc.o)
-                0x000000000009c47b                ZPS_APL_Version_3v0
- .text          0x000000000009c47b        0x0 ../../../../sdk/JN-SW-4170/Components/Library\libZPSNWK_JN516x.a(zps_nwk_version_lc.o)
-                0x000000000009c47b                ZPS_NWK_Version_3v0
-                0x000000000009c47b                _flash_end = ABSOLUTE (.)
+                0x000000000008779f       0xc8 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans4.ltrans.o
+                0x00000000000877b4                vAHI_MemoryHold.156833
+ .text          0x0000000000087867      0xee2 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans5.ltrans.o
+                0x0000000000087867                zps_bAplZdoNodeDescServer
+                0x0000000000087a7c                boIdValueSearchMatch.129697
+                0x0000000000087ad6                vPostVsMcpsDcfmInd.30072
+                0x0000000000087b29                zps_vNwkHandleCmeGetInterface
+                0x0000000000087c75                zps_bAplZdoSimpleDescServer
+                0x0000000000087ec3                u8ZdoEndDeviceBindServerUnpackApdu
+                0x0000000000087f53                vZdoEndDeviceBindStateWaitSecondRequest
+                0x000000000008817f                PWRM_vWakeInterruptCallback
+                0x0000000000088206                iPDM_ReadSegmentHeaderDataFromEEPROMsegment
+                0x000000000008825f                iPDM_ReadUserDataFromEEPROMsegment
+                0x00000000000882d9                iPDM_ReCalculateWearCountAndChecksumAndWriteFileSystemHeader
+                0x0000000000088323                vPDM_SetEEPROMandFileSystemValidState
+                0x000000000008834a                iPDM_ReadUserDataFromFileSystemRecord
+                0x000000000008836a                iPDM_CompareDataInFileRecords.129957
+                0x00000000000883a5                vPDM_WriteFileSystemRecordAndSegmentDataIntoEEPROMsegment
+                0x00000000000883e0                psGetAndBuildCoordRealignment
+                0x0000000000088438                ZPS_u16NwkNibFindNwkAddr
+                0x00000000000884d9                ZPS_vNwkNibClearTables
+                0x0000000000088600                u8PDM_CalculateLargestDataRecordStored
+                0x0000000000088631                iPDM_FilterDuplicateAppendedSegmentsOnList.130763
+                0x0000000000088678                ZPS_bIsMacAddressUsedInApsTable
+ .text          0x0000000000088749     0x14f9 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans6.ltrans.o
+                0x0000000000088749                vNwkMcpsTimerCallback
+                0x0000000000088763                zps_eSceGenlIllegal
+                0x000000000008876a                zps_eSmeGenlIllegal
+                0x0000000000088771                DBG_vUartFailedAssert
+                0x0000000000088775                vZdoEndDeviceBindTimeoutSecondMessage
+                0x0000000000088789                vPostMcpsDcfmInd.30065
+                0x000000000008878c                psGetVsMcpsBuf.30069
+                0x0000000000088795                psGetMlmeBuf.30055
+                0x000000000008879e                psGetMcpsBuf.30062
+                0x00000000000887a7                zps_vExpireRequestKeyReq.20916
+                0x0000000000088821                zps_bAplZdoEndDeviceBindServer
+                0x00000000000888d9                zps_eNwkRctMatchNwkAddr
+                0x0000000000088943                ZPS_u8NwkCalcNldeReqOverhead
+                0x000000000008897e                zps_vRemoveNextHop
+                0x0000000000088a33                zps_vRemoveRoute
+                0x0000000000088aca                zps_psNwkRtMatchNwkAddr
+                0x0000000000088b40                zps_vNwkFreeMcpsHandle
+                0x0000000000088b6a                zps_u8NwkAllocateMcpsHandle
+                0x0000000000088bbb                zps_psNwkMcpsMgrFindPendingByNwkDstAddr
+                0x0000000000088bd1                ZPS_u64NwkNibGetMappedIeeeAddr
+                0x0000000000088c01                ZPS_bNwkNibNtActvMatch
+                0x0000000000088cb3                bCheckNwkAddr
+                0x0000000000088cfc                zps_eAplTrustCenterFindDevice
+                0x0000000000088d40                ZPS_vSetExtendedStatus
+                0x0000000000088d52                zps_eNwkRtMatch
+                0x0000000000088e5f                eAllocateNPDU.7604
+                0x0000000000088ec2                PDUM_eNPduClone
+                0x0000000000088f0e                PDUM_hAPduAllocateAPduInstance
+                0x0000000000088f68                zps_eAplZdoSendZdpResponse
+                0x0000000000088fb1                zps_bAplZdoMgmtLqiServer
+                0x00000000000891e6                zps_bAplZdoMgmtRtgServer
+                0x0000000000089326                bSendResponse.50807
+                0x0000000000089369                zps_psApsApsAllocateDcfmRecord
+                0x00000000000893d7                zps_u8CalcLinkCost
+                0x0000000000089413                ZPS_u8NwkNibNtDiscMatch
+                0x00000000000894f7                zps_u8NwkLibChannelLow
+                0x0000000000089506                zps_u64NwkLibFromPayload
+                0x0000000000089545                zps_vNwkLibU64ToPayload
+                0x0000000000089572                zps_eNwkDcfmIndPost
+                0x0000000000089594                zps_psNwkDcfmIndGetBuf
+                0x00000000000895b6                eRouteRequestDataDcfm.140736
+                0x000000000008960a                eNldeDataDcfm.138454
+                0x000000000008963a                zps_vSendNwkStatusInd
+                0x000000000008966a                eLeaveDataDcfmRemoteLeave.131962
+                0x00000000000896c5                psSLISTsearch
+                0x0000000000089705                psSLISTremove
+                0x0000000000089783                psSLISTgetNext
+                0x00000000000897a7                iSLISTnumberOfNodes
+                0x00000000000897be                u8PDM_CalculateFileSystemCapacity
+                0x00000000000897d3                u8PDM_ReadSequenceNumber
+                0x00000000000897f6                boSegmentNumberDeleteSearchMatch.130144
+                0x0000000000089811                u8PDM_ReadSegmentDataSize
+                0x0000000000089825                u32PDM_ReadFileSystemHeaderWearCount
+                0x000000000008983b                boSearchForWearCountSubstitute.130464
+                0x0000000000089861                boSearchForWearCountInsertPoint.129693
+                0x000000000008987f                vPDM_WriteFileSystemHeaderWearCount
+                0x0000000000089891                vPDM_ReadBitmapHeader.128604
+                0x00000000000898b0                RND_u32GetRand256
+                0x00000000000898cd                RND_u32GetRand
+                0x00000000000898f4                u16CalculateFailedTxCount
+                0x0000000000089924                vZdoIeeeAddrServerSendExtendResponse.part.0.35515
+                0x0000000000089988                vZdoNwkAddrServerSendExtendResponse.part.0.34249
+                0x00000000000899ec                vReset_StateMachine.32941
+                0x0000000000089a30                bFindMatch.32898
+                0x0000000000089a8e                zps_bPerformLeaveActionDecider
+                0x0000000000089a93                vHandleUpdateDeviceIndication.20948
+                0x0000000000089abd                zps_vByteCopy.part.2.18336
+                0x0000000000089ad9                bDuplicateCheck.18144
+                0x0000000000089be6                zps_vAplApsInitDuplicateTable
+                0x0000000000089c09                zps_vInitAPSMECmdHdr
+ .text          0x0000000000089c42      0xfbb C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans7.ltrans.o
+                0x0000000000089c78                vMiniMac_NextTransaction
+                0x0000000000089ce2                dbg_vPrintfImplNoneVerbose
+                0x000000000008a169                vReadCommand.part.1.5199
+                0x000000000008a1ee                vMiniMac_Init
+                0x000000000008a5af                eTransmit
+                0x000000000008a67d                vRetryCcaFailure
+                0x000000000008a6c9                zps_vSocMacHandleMcpsVsReqRsp.constprop.129
+                0x000000000008a858                eBuildAndSend.154859
+                0x000000000008a8cd                vMiniMac_TxComplete
+                0x000000000008a9bf                zps_vDefaultNwkLayer
+                0x000000000008abf4                ZPS_vMacPibSetRxOnWhenIdle
+ .text          0x000000000008abfd      0xe35 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans8.ltrans.o
+                0x000000000008abfd                eSmeASFlBeaconInd.145688
+                0x000000000008ac1f                DBG_vUartFlush
+                0x000000000008ac4c                DBG_vUartPutch
+                0x000000000008ac92                vPermitJoinHandleExpiry.139514
+                0x000000000008ac9b                DBG_vUartInitHardware
+                0x000000000008ad30                eSmeAcScBeaconInd.145696
+                0x000000000008ae40                zps_vNwkHandleCmePermitJoinReq
+                0x000000000008aea8                zps_bAplZdoPowerDescServer
+                0x000000000008afcc                zps_bAplZdoActiveEpServer
+                0x000000000008b0b5                zps_bAplZdoSystemServerDiscoveryServer
+                0x000000000008b141                vZdoEndDeviceBindStateIdle
+                0x000000000008b240                zps_psAllocateAndFormatMacHdr
+                0x000000000008b5a3                iPDM_SearchForBufferIdInList
+                0x000000000008b5d8                iPDM_ReadUserDataFromSegmentOnListWithId
+                0x000000000008b616                iPDM_SearchForBufferIdInFileSystem
+                0x000000000008b629                iPDM_ReadUserDataFromSegmentWithId
+                0x000000000008b65e                PDM_eReadDataFromRecord.part.0.128954
+                0x000000000008b6e5                vLoadAplRecord.20977
+                0x000000000008b719                iPDM_SearchForSpecificSegmentInList
+                0x000000000008b74b                bPDM_FindLastMarkerSegment.129986
+                0x000000000008b798                vMiniMac_ReturnRxBufferCallback
+                0x000000000008b7c4                vMMAC_RadioToOffAndWait
+                0x000000000008b7e1                vStartReceive
+                0x000000000008b7fd                vSetChannelAndPower
+                0x000000000008b986                vMiniMac_PLME_SetReq_Power
+                0x000000000008b99a                vMiniMac_PLME_SetReq_Channel
+                0x000000000008b9a2                ZPS_vMacPibSetBeaconPayload.constprop.87
+                0x000000000008b9d7                zps_vInitBeaconPayload
+ .text          0x000000000008ba32      0xbdf C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans9.ltrans.o
+                0x000000000008baf7                eBeaconReqSent.154853
+                0x000000000008bb1e                vPDM_AddFileSystemElementToListInAscendingWearCountOrder
+                0x000000000008bc46                vPDM_MoveAllDataFromListToList
+                0x000000000008bc84                vPDM_MoveAllDataToDeAllocList.constprop.120
+                0x000000000008bcaf                vPDM_MoveAllDataWithBufferIdAndStateFromListToList
+                0x000000000008bd3a                vPDM_MoveAllDataWithBufferIdFromListToList
+                0x000000000008bdbf                vPDM_DeleteAllSegmentsWithIdFromFileSystemList.129041.constprop.16
+                0x000000000008be01                vPDM_MoveFileRecordFromListToList
+                0x000000000008be24                iPDM_SelectValidFileRecordInstance.129541
+                0x000000000008bf10                vPDM_MoveRecordToDeAllocList
+                0x000000000008c003                iPDM_CreateCandidateBufferList
+                0x000000000008c107                iPDM_WriteSegmentHeaderAndData
+                0x000000000008c255                iPDM_ReconstructAtRunTimeReplacedDataTable
+                0x000000000008c395                iPDM_ReconstructReplacedDataTable
+                0x000000000008c48c                PWRM_vManagePower
+                0x000000000008c5d6                u8PostUnicastMsgToNHLE.15079
+ .text          0x000000000008c611      0xe5f C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans10.ltrans.o
+                0x000000000008c611                zps_eDefaultDataDcfm
+                0x000000000008c703                zps_psNwkInitiateRouteDiscovery
+                0x000000000008ca3b                zps_psSendFrm
+                0x000000000008cd99                zps_eNwkHandleSceRouteRecord
+                0x000000000008ce90                zps_psNwkSendLeaveCmd
+                0x000000000008cef8                zps_vNwkSecondTickHandleExpiry
+                0x000000000008d10b                zps_vNwkHandleCmeLeaveReq
+                0x000000000008d229                zps_eNwkHandleSceLeave
+                0x000000000008d3c5                zps_vProcessLocalAddrConflict
+ .text          0x000000000008d470      0xefa C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans11.ltrans.o
+                0x000000000008d470                zps_vAplTrustCenterInit
+                0x000000000008d505                zps_eNwkHandleSceLinkStatus
+                0x000000000008d639                vIncrementFrameCounterInPdm.isra.0.137406
+                0x000000000008d818                zps_eNwkSecEncryptPacket
+                0x000000000008d92e                vProcessListsForSubmission.136074
+                0x000000000008db78                vInitUnknownNeighbor.135985.constprop.68
+                0x000000000008dbd1                zps_eAplZdoAddReplaceLinkKey_W
+                0x000000000008dc95                ZPS_bNwkNibAddrMapAddEntry
+                0x000000000008de4a                zps_vAgeRouter
+                0x000000000008de83                zps_eNwkHandleSdeActvDcfmData
+                0x000000000008e008                zps_sNwkNibNtCheckJoin.part.8.137700
+                0x000000000008e2c1                zps_vNwkHandleCmeDirectJoinReq
+ .text          0x000000000008e36a      0xaaa C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans12.ltrans.o
+                0x000000000008e36a                vPDM_DeleteAppendedSequence
+                0x000000000008e40c                iPDM_ReplaceChangedSegmentInSequence
+                0x000000000008e50f                PDM_eSaveRecordData
+                0x000000000008e8ab                ZPS_vNwkSaveRecord
+                0x000000000008e8d7                ZPS_vNwkNibSetUpdateId
+                0x000000000008e901                vSendNetworkUpdate.134773
+                0x000000000008ea36                ZPS_vNwkNibSetPanId
+                0x000000000008ea53                ZPS_vNwkNibSetCapabilityInfo
+                0x000000000008ea7f                ZPS_vNwkNibSetChannel
+                0x000000000008ea9d                ZPS_vNwkNibSetAuxChannel
+                0x000000000008eab6                zps_vNwkHandleCmeSetInterface
+                0x000000000008ec6e                ZPS_vNwkSaveNt
+                0x000000000008ecaa                zps_eNwkHandleSmeCommStatusInd
+                0x000000000008ed64                ZPS_vNwkSaveSecMat
+                0x000000000008ed78                iPDM_VerifyDataSequenceWithBufferId
+ .text          0x000000000008ee14      0xdb7 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans13.ltrans.o
+                0x000000000008ef26                zps_vAplSaveRecord
+                0x000000000008f0a1                zps_bNwkFindAddIeeeAddr
+                0x000000000008f229                eCheckAddrConflict.isra.7.135040
+                0x000000000008f2c4                vAplSecRemoveLinkKey.21033
+                0x000000000008f394                ZPS_vRemoveEntryFromAddressMap
+                0x000000000008f3dd                ZPS_vNtSetUsedStatus
+                0x000000000008f4ab                zps_vJoinInitNtParent
+                0x000000000008f68f                zps_vBuildSortedActvNTList
+                0x000000000008f75b                zps_vCheckActvNtForDuplicate
+                0x000000000008f7fa                zps_vCleanUnAuthenHandleExpiry
+                0x000000000008f927                eUnsolicitedRejoinRspDataDcfm.134785
+                0x000000000008f952                eRejoinRspDataDcfm.148378
+                0x000000000008f9fe                ZPS_vNwkNibSetNwkAddr
+                0x000000000008fa28                zps_eNwkHandleSceRejnResponse
+                0x000000000008fa85                ZPS_vNwkNibSetExtPanId
+                0x000000000008fab5                vFinish.149666
+                0x000000000008fb0a                eSmeOrphScanDcfm.149679
+                0x000000000008fb82                ZPS_vNwkNibSetKeySeqNum
+                0x000000000008fb96                ZPS_vNwkNibSetDepth
+ *fill*         0x000000000008fbcb        0x1 00
+ .text          0x000000000008fbcc      0xfcc C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans14.ltrans.o
+                0x000000000008fbcc                vMcpsMgrExpiry.135901
+                0x000000000008fc2b                ZPS_vNwkMacDataPollRequest
+                0x000000000008fdc2                zps_vNwkHandleCmeRouteDiscoveryReq
+                0x000000000008fe48                vMiniMac_MlmeCallback
+                0x00000000000900c0                ePollReqSent.154406
+                0x0000000000090248                vScanBeaconReceived
+                0x0000000000090287                vRunningRxCallback
+                0x0000000000090587                vPostDcfm.154870
+                0x00000000000905f6                vScanNextChannel.154857
+                0x00000000000907a6                ZPS_vNwkSaveAllRecords
+                0x00000000000907d0                zps_vSaveAllZpsRecords
+                0x00000000000907ef                ZPS_vSetDevicePreviousData.constprop.17
+                0x000000000009096d                ZPS_vNMPurgeEntry
+                0x0000000000090b2d                zps_psSendBroadcastFrm.part.0.147109
+ .text          0x0000000000090b98      0xb84 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans15.ltrans.o
+                0x0000000000090d4d                vSendMlmeCommStatusFromTxFrame
+                0x0000000000090da3                zps_vSocMacHandleMlmeVsReqRsp.constprop.95
+                0x00000000000912d6                zps_sNwkStart
+                0x0000000000091378                ZPS_pvNwkCtor.constprop.85
+ .text          0x000000000009171c      0xb98 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans16.ltrans.o
+                0x000000000009171c                zps_eAplApsmeUpdateDeviceReqRsp.part.4.16761
+                0x000000000009186a                vPostNlmeDcfmInd.12450
+                0x00000000000920bc                zps_bAplZdoMgmtLeaveServer
+ .text          0x00000000000922b4      0xd24 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans17.ltrans.o
+                0x00000000000922b4                DBG_iUartGetChar
+                0x0000000000092635                zps_bAplZdoMatchDescServer
+                0x0000000000092649                eOrphanNotificationSent.154849
+                0x0000000000092692                vMiniMac_ReturnTxBufferCallback
+                0x00000000000926be                vPostTxActions.155252
+                0x00000000000926fb                vStartTransmit.155259
+                0x0000000000092854                vTimerFired
+                0x0000000000092929                vMiniMac_McpsCallback
+                0x0000000000092bdb                eMcpsTxCompleteHandler.154174
+                0x0000000000092c09                ZPS_bSecDecrypt
+                0x0000000000092d16                boPDM_IsBitmapSaturated.128639
+                0x0000000000092d5f                ZPS_u16MacIFTGetIDByChannelMask
+                0x0000000000092da4                ZPS_u8MacIFTAddUpdateChannelMask.part.3.158291
+                0x0000000000092e32                zps_psNwkInitCmdFrame
+                0x0000000000092eb1                eSendLinkStatusDataDcfm.part.1.133653
+ .text          0x0000000000092fd8      0xe1e C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans18.ltrans.o
+                0x0000000000092fd8                vMcpsMgrTimeoutExpiry
+                0x0000000000093042                zps_vNwkMcpsMgrPost
+                0x0000000000093066                zps_psSendNetworkStatusCmd
+                0x00000000000930d3                vSendNetworkReport.134769
+                0x00000000000931b1                zps_eNwkHandleSceNwkEdTimeoutReq
+                0x00000000000933be                zps_eNwkHandleSceRouteRequest
+                0x0000000000093892                zps_eNwkHandleSceRouteReply
+                0x0000000000093b65                zps_psSendNetworkLinkPowerDelta.142144
+                0x0000000000093bf7                zps_eNwkHandleSceNwkLinkPowerDelta
+                0x0000000000093c11                zps_psNwkSendRejoinReqCmd
+                0x0000000000093c8f                zps_u8NwkHandleRejoinReq
+                0x0000000000093d4f                vContinueRejoin.148374
+ .text          0x0000000000093df6      0xcc5 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans19.ltrans.o
+                0x0000000000093fec                zps_eRejoinDataDcfm
+                0x00000000000940a8                eSmeAsocAssocDcfm.149834
+                0x000000000009412c                eSmeRjPCPollDcfm.149830
+                0x000000000009416d                eSceRjRsRejoinRsp.149797
+                0x0000000000094245                zps_sNwkLibSubmitScan
+                0x000000000009427e                zps_vNwkDiscUpdateNT
+                0x0000000000094322                eSmeEdScScanDcfm.146424
+                0x00000000000943d2                eSmeAcScScanDcfm.146431
+                0x0000000000094748                zps_vNwkHandleCmeEdScanReq
+                0x0000000000094787                ZPS_vNwkNibCheckAndUpdateAddresses
+                0x0000000000094828                zps_bAplZdoDeviceAnnceServer
+ .text          0x0000000000094abb      0xc57 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans20.ltrans.o
+                0x0000000000094e88                ZPS_vAplHandleApsdeReqRsp
+                0x00000000000952a1                zps_eAplZdpApsdeReqInternal
+                0x0000000000095310                zps_eAplZdpGenStatusOnlyResponse
+                0x000000000009536b                zps_eAplSendApsmeCmdFrame
+                0x00000000000954df                zps_eAplApsmeTransportKeyReqRsp.constprop.18
+                0x000000000009567a                vApsmeResendTimeOutHandler
+                0x00000000000956a9                zps_eAplApsmeRemoveDeviceReqRsp
+ *fill*         0x0000000000095712        0x2 00
+ .text          0x0000000000095714      0xa70 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans21.ltrans.o
+                0x0000000000095714                vBbcIntHandler.153745
+                0x0000000000095a0b                eAssocRespSent.154062
+                0x0000000000095a92                zps_vNwkHandleCmeActvStartRouterReq
+                0x0000000000095b29                zps_vNwkHandleCmeSyncReq
+                0x0000000000095ba2                zps_vNwkHandleCmeIdleNwkFormReq
+                0x0000000000095c55                zps_vReAttemptScanTimerHandleExpiry
+                0x0000000000095cb3                zps_vNwkHandleCmeNwkDiscReq
+                0x0000000000095d2d                zps_eNwkHandleSmeBeaconNotifyInd
+                0x0000000000095dbb                zps_eNwkHandleSceNwkReport
+                0x0000000000095e41                zps_vNwkHandleCmeNwkJoinReq
+                0x0000000000096177                zps_vNwkHandleCmeNwkActvJoinReq
+ .text          0x0000000000096184      0xd6d C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans22.ltrans.o
+                0x0000000000096184                zps_eZdpNodeDescResponse
+                0x000000000009622c                zps_eZdpSimpleDescResponse
+                0x0000000000096339                zps_eAplZdpMgmtRtgResponse
+                0x0000000000096400                zps_bAplZdoMgmtNWKUpdateServer
+                0x0000000000096911                zps_eZdpNwkAddrResponse
+                0x00000000000969f9                zps_eZdpIeeeAddrResponse
+                0x0000000000096ae1                zps_eZdpPowerDescResponse
+                0x0000000000096b7e                zps_eZdpActiveEpResponse
+                0x0000000000096c14                zps_eZdpMatchDescResponse
+                0x0000000000096caa                zps_eZdpSystemServerDiscoveryResponse
+                0x0000000000096d19                zps_eAplZdpMgmtLqiResponse
+ *fill*         0x0000000000096ef1        0x3 00
+ .text          0x0000000000096ef4      0xd8c C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans23.ltrans.o
+                0x0000000000096fc2                zps_eNwkHandleSmeOrphanInd
+                0x0000000000096fd2                zps_vAplApsPollTimer
+                0x0000000000097034                vAplSecAuthPollTimerExpiry.20924
+                0x000000000009713e                vAplSecAuthTimerExpiry.20920
+                0x00000000000971b9                vPostApsdeDcfmInd.12464
+                0x00000000000973ab                zps_eNwkSendJoinResponse
+                0x0000000000097657                zps_eProcessAddrConflict
+                0x0000000000097800                zps_eNwkHandleSceNwkStatus
+                0x0000000000097996                eRejoinNetwork.20995.constprop.79
+                0x0000000000097a44                eStartNetworkDiscovery.21007
+                0x0000000000097aac                zps_eAplZdoStartStack
+                0x0000000000097b8d                eStartRouter
+ .text          0x0000000000097c80      0x9dd C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans24.ltrans.o
+                0x0000000000097e65                vHandleEdTimeoutReqExpiry.134777
+                0x0000000000097f0e                vHandleNwkLocalUpdateAfterBcast.134790
+                0x0000000000097f62                vHandleNwkRemoteUpdateAfterBcast.134781
+                0x0000000000097fb5                ZPS_vNwkHandleNlmeReqRsp
+                0x0000000000098032                zps_vAplAfPostEvent
+                0x00000000000981f1                vPostToEndpoint.part.1.12165
+                0x000000000009835d                zps_vHandleApsdeDataFragIndNotSupported
+                0x00000000000983db                zps_eAplZdoPermitJoining.constprop.82
+                0x00000000000983fb                zps_bAplZdoPermitJoiningServer
+                0x00000000000984c5                vStartScanTimerExpiry.52070
+                0x0000000000098501                vChangeChannelTimerExpiry.52074
+                0x0000000000098578                eLeaveReset.131967
+                0x00000000000985e3                eLeaveDataDcfmLocalLeave.131972
+ *fill*         0x000000000009865d        0x3 00
+ .text          0x0000000000098660      0xb6c C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans25.ltrans.o
+                0x0000000000098660                eSmeAcScBeaconInd.145874
+                0x0000000000098703                zps_bAplZdoNwkAddrServer
+                0x0000000000098896                zps_bAplZdoIeeeAddrServer
+                0x00000000000989f2                vfExtendedStatusCallBack.3094
+                0x00000000000989fe                vPdmEventHandlerCallback
+                0x0000000000098aab                vReadCharInterrupt
+                0x0000000000098b28                zps_u8AplApsConstructAndPostLoopBackDataInd.15071
+                0x0000000000098c61                vFreePendingReqDescr
+                0x0000000000098ccc                vHandleRouteDiscoveryExpiry.140275
+                0x0000000000098d2a                zps_vSendJoinDcfm
+                0x0000000000098d71                vGiveUp.149208
+                0x0000000000098da9                ZPS_bSecEncrypt
+                0x0000000000098f64                zps_vNwkMcpsMgrTidyBtrReqDescr
+                0x0000000000098fa9                vNwkBttTimerExpiry.143829
+                0x00000000000990cb                vLoadNwkRecord.136954
+                0x0000000000099109                vShowException
+ .text          0x00000000000991cc      0x9a7 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans26.ltrans.o
+                0x0000000000099504                zps_eNwkHandleSmeAssocInd
+                0x0000000000099532                zps_eNwkHandleSceRejnRequest
+                0x00000000000995bf                zps_bGetFlashCredential
+                0x00000000000995c4                zps_psFindKeyDescr
+                0x00000000000996e5                vTransformKey.isra.0.18331
+                0x0000000000099746                zps_eAplSecEncryptPacket
+                0x000000000009983b                ZPS_vNwkHandleNldeReqRsp
+                0x0000000000099a6a                zps_eAplApsmeCmdMgrSendCommand
+                0x0000000000099b47                zps_vAplApsmeCmdMgrRetryTimeout.16588
+ .text          0x0000000000099b73      0xd5e C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans27.ltrans.o
+                0x0000000000099b73                psGetNlmeBuf.12447
+                0x0000000000099b7c                psGetNldeBuf.12468
+                0x0000000000099b85                psGetApsmeBuf.12454
+                0x0000000000099b8b                psGetApsdeBuf.12461
+                0x0000000000099ca4                APP_bMultimaskJoinCallBack
+                0x0000000000099cb0                vMacMcpsCallBackHandler.5377
+                0x0000000000099cc1                zps_vGetZpsMutex
+                0x0000000000099cca                vLoopbackTimerCallback
+                0x0000000000099cf9                psApsmeRequestKeyGetHandle
+                0x0000000000099d54                zps_vAplApsInitFragTransmitPool
+                0x0000000000099d75                zps_vAplApsFillAndPostApsAck
+                0x0000000000099ddf                zps_u8AplApsFreeMsgHandle
+                0x0000000000099e49                zps_vAplApsInitSyncMsgPool
+                0x0000000000099e81                zps_vAplApsInitFragReceivePool
+                0x0000000000099ea4                vFillDataIndStruct.12125
+                0x0000000000099f02                vFillApduErrorEvent.12118
+                0x0000000000099f45                bCheckProfile.12113
+                0x0000000000099f83                ZPS_bIsGroupPresent
+                0x0000000000099fbb                pdum_u16ReadNBO
+                0x000000000009a11c                PDUM_u16SizeNBO
+                0x000000000009a17a                PDUM_u16APduInstanceWriteStrNBO
+                0x000000000009a2f9                PDUM_u16APduInstanceReadNBO
+                0x000000000009a344                PDUM_u16APduInstanceWriteNBO
+                0x000000000009a3ae                PDUM_eAPduFreeAPduInstance
+                0x000000000009a414                PDUM_eAPduInstanceSetPayloadSize
+                0x000000000009a43c                PDUM_eNPduWriteDataFromBuffer
+                0x000000000009a496                PDUM_eNPduWriteDataToBuffer
+                0x000000000009a4f4                PDUM_eNPduWriteFromBuffer
+                0x000000000009a51d                PDUM_eNPduDescend
+                0x000000000009a543                PDUM_eNPduAscend
+                0x000000000009a569                PDUM_eNPduClaimData
+                0x000000000009a5d6                PDUM_eNPduAppendDataNBO
+                0x000000000009a633                PDUM_eNPduClaimHeader
+                0x000000000009a656                PDUM_eNPduReadHeaderNBO
+                0x000000000009a6a9                PDUM_eNPduPrependHeaderNBO
+                0x000000000009a704                PDUM_eNPduFree
+                0x000000000009a762                PDUM_eNPduInitDescending
+                0x000000000009a77d                ZPS_u8MacGetChannelOffsetFromMask
+                0x000000000009a78c                ZPS_eMacValidateChannelMask
+                0x000000000009a7bb                ZQ_bQueueReceive
+                0x000000000009a82c                ZQ_bQueueSend
+                0x000000000009a8a2                APP_vGenCallback
+                0x000000000009a8b5                ZPS_psMacIFTGetInterface
+ .text          0x000000000009a8d1      0xa12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans28.ltrans.o
+                0x000000000009a8d1                ZPS_vSecondTimerCallback
+                0x000000000009ab37                vZdoEndDeviceBindStateWaitSendWithAck
+                0x000000000009ad72                zps_bAplZdoDefaultServer
+                0x000000000009b0d3                zps_bAplZdoZdoClient
+                0x000000000009b280                zps_eZdpEndDeviceBindResponse
+                0x000000000009b2a1                zps_eZdpMgmtLeaveResponse
+                0x000000000009b2c2                zps_eZdpMgmtPermitJoiningResponse
+ *fill*         0x000000000009b2e3        0x1 00
+ .text          0x000000000009b2e4      0x904 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans29.ltrans.o
+                0x000000000009b2e4                zps_vAplTrustCenterRequestKey
+                0x000000000009b5b1                vPostApsmeDcfmInd.12457
+                0x000000000009ba59                zps_vAplTrustCenterUpdateDevice
+ .text          0x000000000009bbe8       0xb6 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans30.ltrans.o
+                0x000000000009bbe8                ISR_vTickTimer
+                0x000000000009bc20                vUnclaimedInterrupt
+                0x000000000009bc35                vBusErrorHandler
+                0x000000000009bc44                vAlignmentErrorHandler
+                0x000000000009bc53                vIllegalInstructionHandler
+                0x000000000009bc62                vTrapHandler
+                0x000000000009bc71                vGenericHandler
+                0x000000000009bc80                vUnclaimedException
+                0x000000000009bc8f                vStackOverflowHandler
+ .text          0x000000000009bc9e       0x3d C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans31.ltrans.o
+                0x000000000009bc9e                zps_isrMAC
+                0x000000000009bcc1                AppWarmStart
+ .text          0x000000000009bcdb       0x25 c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/../../../../ba-elf/lib/mcpu_jn51xx_sizeopt\libc.a(lib_a-memcmp.o)
+                0x000000000009bcdb                memcmp
+ .text          0x000000000009bd00       0x19 c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/../../../../ba-elf/lib/mcpu_jn51xx_sizeopt\libc.a(lib_a-memcpy.o)
+ .text          0x000000000009bd19       0x12 c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/../../../../ba-elf/lib/mcpu_jn51xx_sizeopt\libc.a(lib_a-memset.o)
+                0x000000000009bd19                memset
+ .text          0x000000000009bd2b       0x25 c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/../../../../ba-elf/lib/mcpu_jn51xx_sizeopt\libc.a(lib_a-strcmp.o)
+                0x000000000009bd2b                strcmp
+ .text          0x000000000009bd50      0x204 c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/mcpu_jn51xx_sizeopt\libgcc.a(__udivsi3.o)
+                0x000000000009bd50                __udivsi3
+ .text          0x000000000009bf54      0x1b0 c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/mcpu_jn51xx_sizeopt\libgcc.a(__umodsi3.o)
+                0x000000000009bf54                __umodsi3
+ .text          0x000000000009c104       0x24 c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/mcpu_jn51xx_sizeopt\libgcc.a(__modsi3.o)
+                0x000000000009c104                __modsi3
+ .text          0x000000000009c128      0x350 c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/mcpu_jn51xx_sizeopt\libgcc.a(_udivdi3.o)
+                0x000000000009c128                __udivdi3
+ *fill*         0x000000000009c478        0x0 00
+ .text          0x000000000009c478       0x48 ../../../../sdk/JN-SW-4170/Components/Library\libPWRM_JN516x.a(pwrm_setjmp_JN516x.o)
+                0x000000000009c478                setjmp
+                0x000000000009c49c                PWRM_longjmp
+ .text          0x000000000009c4c0       0x27 ../../../../sdk/JN-SW-4170/Components/Library\libHardwareApi_JN5169.a(AHI_Interrupt.o)
+                0x000000000009c4c0                vAHI_InterruptSetPriority
+                0x000000000009c4de                vAHI_InterruptSetActivePriorityLevel
+ .text          0x000000000009c4e7        0x0 ../../../../sdk/JN-SW-4170/Components/Library\libZPSAPL_JN516x.a(zps_apl_version_lc.o)
+                0x000000000009c4e7                ZPS_APL_Version_3v0
+ .text          0x000000000009c4e7        0x0 ../../../../sdk/JN-SW-4170/Components/Library\libZPSNWK_JN516x.a(zps_nwk_version_lc.o)
+                0x000000000009c4e7                ZPS_NWK_Version_3v0
+                0x000000000009c4e7                _flash_end = ABSOLUTE (.)
 
-.rela.dyn       0x000000000009c47c        0x0
+.rela.dyn       0x000000000009c4e8        0x0
  .rela.text     0x0000000000000000        0x0 irq_JN516x.o
  .rela.data     0x0000000000000000        0x0 irq_JN516x.o
  .rela.rodata   0x0000000000000000        0x0 irq_JN516x.o
                 0x000000000400004c                . = ORIGIN (ram)
 
-.data           0x000000000400004c      0x514 load address 0x000000000009c47c
+.data           0x000000000400004c      0x518 load address 0x000000000009c4e8
                 0x000000000400004c                _ram_data_start = ABSOLUTE (.)
  *(.data*)
  *fill*         0x000000000400004c        0x4 00
- .data          0x0000000004000050      0x4b0 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans0.ltrans.o
+ .data          0x0000000004000050      0x4b0 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans0.ltrans.o
                 0x0000000004000050                g_asMacInterfaceTable.2551
                 0x000000000400007c                psAplDefaultGlobalAPSLinkKey
                 0x0000000004000080                s_sApl.2446
-                0x00000000040001e0                u8AhiBaudRate.130946
+                0x00000000040001e0                u8AhiBaudRate.130948
                 0x00000000040001e1                u8MiniMacConfig_MaxConcurrentAssocResponses
                 0x00000000040001e4                psShadowRxBuffer
                 0x00000000040001e8                gMAC_u8MaxBuffers
                 0x0000000004000224                s_keyPairTableStorage.2494
- .data          0x0000000004000500        0x4 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans1.ltrans.o
+ .data          0x0000000004000500        0x6 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans1.ltrans.o
                 0x0000000004000500                g_u16zpsCurrentAddress
- .data          0x0000000004000504        0x4 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans3.ltrans.o
-                0x0000000004000504                u32HeapStart
- .data          0x0000000004000508        0x4 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans8.ltrans.o
-                0x0000000004000508                bCanLoopback.15352
- .data          0x000000000400050c        0x2 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans9.ltrans.o
- .data          0x000000000400050e        0x4 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans10.ltrans.o
- .data          0x0000000004000512        0x4 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans24.ltrans.o
+ *fill*         0x0000000004000506        0x2 00
+ .data          0x0000000004000508        0x4 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans3.ltrans.o
+                0x0000000004000508                u32HeapStart
+ .data          0x000000000400050c        0x2 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans7.ltrans.o
+ .data          0x000000000400050e        0x4 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans10.ltrans.o
+ .data          0x0000000004000512        0x4 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans17.ltrans.o
  *fill*         0x0000000004000516        0x2 00
- .data          0x0000000004000518       0x30 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans26.ltrans.o
-                0x0000000004000518                s_asapduMyDataInstances
-                0x0000000004000524                s_asapduZDPInstances
+ .data          0x0000000004000518        0x4 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans25.ltrans.o
+                0x0000000004000518                bCanLoopback.15354
+ .data          0x000000000400051c       0x30 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans27.ltrans.o
+                0x000000000400051c                s_asapduMyDataInstances
+                0x0000000004000528                s_asapduZDPInstances
  .data.s_asAPduPool
-                0x0000000004000548       0x18 pdum_apdu.o
-                0x0000000004000548                pdum_apduZDP
-                0x0000000004000548                s_asAPduPool
-                0x0000000004000554                pdum_apduMyData
+                0x000000000400054c       0x18 pdum_apdu.o
+                0x000000000400054c                pdum_apduZDP
+                0x000000000400054c                s_asAPduPool
+                0x0000000004000558                pdum_apduMyData
  *(.data.*)
-                0x0000000004000560                . = ALIGN (0x4)
-                0x0000000004000560                _ram_data_end = ABSOLUTE (.)
+                0x0000000004000564                . = ALIGN (0x4)
+                0x0000000004000564                _ram_data_end = ABSOLUTE (.)
 
-.bss            0x0000000004000560     0x2fb4 load address 0x000000000009c990
-                0x0000000004000560                _bss_start = ABSOLUTE (.)
+.bss            0x0000000004000564     0x2fc0 load address 0x000000000009ca00
+                0x0000000004000564                _bss_start = ABSOLUTE (.)
  *(.bss*)
- .bss           0x0000000004000560     0x1eb0 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans0.ltrans.o
-                0x0000000004000560                s_sDefaultServerContext.2522
-                0x0000000004000564                s_sEndDeviceBindServerContext.2442
-                0x00000000040005a4                s_sMgmtRtgServerContext.2443
-                0x00000000040005a8                s_sPermitJoiningServerContext.2444
-                0x00000000040005ac                s_sMgmtNWKUpdateServerContext.2445
-                0x0000000004000604                s_sMgmtLeaveServerContext.2521
-                0x000000000400062c                s_sMgmtLqiServerContext.2520
-                0x0000000004000630                s_sSimpleDescServerContext.2519
-                0x0000000004000634                s_sMatchDescServerContext.2518
-                0x0000000004000638                s_sPowerDescServerContext.2517
-                0x000000000400063c                s_sNodeDescServerContext.2516
-                0x0000000004000640                s_sSystemServerDiscoveryServerContext.2515
-                0x0000000004000644                s_sIeeeAddrServerContext.2514
-                0x0000000004000648                s_sNwkAddrServerContext.2513
-                0x000000000400064c                s_sActiveEpServerContext.2512
-                0x0000000004000650                s_sDeviceAnnceServerContext.2511
-                0x0000000004000650                s_sZdoClientContext.2510
-                0x0000000004000658                vFlushFn.130890
-                0x000000000400065c                vPutchFn.130885
-                0x0000000004000660                u8AhiUart.130945
-                0x0000000004000664                psNextWake.7529
-                0x0000000004000668                s_bWakeTimerActive.7530
-                0x0000000004000669                s_ePowerMode.7531
-                0x000000000400066a                gu16NumberOfSegments.157978
-                0x000000000400066c                pfExtendedStatusCallBack.134255
-                0x0000000004000670                ZTIMER_sCommon.5333
-                0x0000000004000678                APP_msgMyEndPointEvents
-                0x0000000004000690                APP_msgZpsEvents
-                0x00000000040006a8                u8App_tmr1sec
-                0x00000000040006ac                psPDM_Common
-                0x00000000040006b0                s_u32x.128573
-                0x00000000040006b4                s_prExpireFn.158408
-                0x00000000040006b8                pvRxStore
-                0x00000000040006bc                pvTxStore
-                0x00000000040006c0                g_pvAplHandle
-                0x00000000040006c4                s_sDcfmIndMgr.6839
-                0x00000000040006cc                prAppMlmeGetBuffer
-                0x00000000040006d0                prAppMlmeCallback
-                0x00000000040006d4                s_pvAplHandle.6091
-                0x00000000040006d8                s_prMcpsCallBack.6089
-                0x00000000040006dc                s_prMlmeCallBack.6090
-                0x00000000040006e0                sMiniMacPib
-                0x000000000400077c                u8MiniMac_RunTimeOptions
-                0x0000000004000780                sZpsIntStore
-                0x0000000004000784                s_eDeviceState.3739
- .bss           0x0000000004002410       0x94 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans1.ltrans.o
-                0x0000000004002410                bCheckChild
-                0x0000000004002414                uMacDcfmInd
-                0x0000000004002440                command.5212
- .bss           0x00000000040024a4        0x8 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans2.ltrans.o
-                0x00000000040024a4                psActiveMsgListHead
-                0x00000000040024a8                s_u16ActivityCounter
- .bss           0x00000000040024ac       0x18 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans3.ltrans.o
- .bss           0x00000000040024c4      0xc20 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans4.ltrans.o
-                0x00000000040024c4                sIntStorage.130563
-                0x00000000040024c8                u8MaxNpdu.7745
-                0x00000000040024c9                u8Count.7744
-                0x00000000040024cc                s_psNPduPoolEnd.7742
-                0x00000000040024d0                s_psNPduPoolStart.7741
-                0x00000000040024d4                s_psFreeListHead.7743
-                0x00000000040024d8                s_asAPduPool.7841
+ *fill*         0x0000000004000564        0xc 00
+ .bss           0x0000000004000570     0x1eb0 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans0.ltrans.o
+                0x0000000004000570                s_sDefaultServerContext.2522
+                0x0000000004000574                s_sEndDeviceBindServerContext.2442
+                0x00000000040005b4                s_sMgmtRtgServerContext.2443
+                0x00000000040005b8                s_sPermitJoiningServerContext.2444
+                0x00000000040005bc                s_sMgmtNWKUpdateServerContext.2445
+                0x0000000004000614                s_sMgmtLeaveServerContext.2521
+                0x000000000400063c                s_sMgmtLqiServerContext.2520
+                0x0000000004000640                s_sSimpleDescServerContext.2519
+                0x0000000004000644                s_sMatchDescServerContext.2518
+                0x0000000004000648                s_sPowerDescServerContext.2517
+                0x000000000400064c                s_sNodeDescServerContext.2516
+                0x0000000004000650                s_sSystemServerDiscoveryServerContext.2515
+                0x0000000004000654                s_sIeeeAddrServerContext.2514
+                0x0000000004000658                s_sNwkAddrServerContext.2513
+                0x000000000400065c                s_sActiveEpServerContext.2512
+                0x0000000004000660                s_sDeviceAnnceServerContext.2511
+                0x0000000004000660                s_sZdoClientContext.2510
+                0x0000000004000668                vFlushFn.130892
+                0x000000000400066c                vPutchFn.130887
+                0x0000000004000670                u8AhiUart.130947
+                0x0000000004000674                psNextWake.7531
+                0x0000000004000678                s_bWakeTimerActive.7532
+                0x0000000004000679                s_ePowerMode.7533
+                0x000000000400067a                gu16NumberOfSegments.157980
+                0x000000000400067c                pfExtendedStatusCallBack.134257
+                0x0000000004000680                ZTIMER_sCommon.5335
+                0x0000000004000688                APP_msgMyEndPointEvents
+                0x00000000040006a0                APP_msgZpsEvents
+                0x00000000040006b8                u8App_tmr1sec
+                0x00000000040006bc                psPDM_Common
+                0x00000000040006c0                s_u32x.128575
+                0x00000000040006c4                s_prExpireFn.158410
+                0x00000000040006c8                pvRxStore
+                0x00000000040006cc                pvTxStore
+                0x00000000040006d0                g_pvAplHandle
+                0x00000000040006d4                s_sDcfmIndMgr.6841
+                0x00000000040006dc                prAppMlmeGetBuffer
+                0x00000000040006e0                prAppMlmeCallback
+                0x00000000040006e4                s_pvAplHandle.6093
+                0x00000000040006e8                s_prMcpsCallBack.6091
+                0x00000000040006ec                s_prMlmeCallBack.6092
+                0x00000000040006f0                sMiniMacPib
+                0x000000000400078c                u8MiniMac_RunTimeOptions
+                0x0000000004000790                sZpsIntStore
+                0x0000000004000794                s_eDeviceState.3739
+ .bss           0x0000000004002420       0x94 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans1.ltrans.o
+                0x0000000004002420                bCheckChild
+                0x0000000004002424                uMacDcfmInd
+                0x0000000004002450                command.5214
+ .bss           0x00000000040024b4        0x8 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans2.ltrans.o
+                0x00000000040024b4                psActiveMsgListHead
+                0x00000000040024b8                s_u16ActivityCounter
+ .bss           0x00000000040024bc       0x18 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans3.ltrans.o
+ .bss           0x00000000040024d4      0xc20 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans4.ltrans.o
+                0x00000000040024d4                sIntStorage.130565
+                0x00000000040024d8                u8MaxNpdu.7747
+                0x00000000040024d9                u8Count.7746
+                0x00000000040024dc                s_psNPduPoolEnd.7744
+                0x00000000040024e0                s_psNPduPoolStart.7743
+                0x00000000040024e4                s_psFreeListHead.7745
+                0x00000000040024e8                s_asAPduPool.7843
  .bss.initinboot
-                0x00000000040030e4        0x1 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans4.ltrans.o
-                0x00000000040030e4                bMutexTaken.157686
- .bss           0x00000000040030e5        0xf C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans5.ltrans.o
-                0x00000000040030e5                g_au8LegacyBeaconPayload
- .bss           0x00000000040030f4       0x14 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans6.ltrans.o
- .bss           0x0000000004003108        0x3 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans7.ltrans.o
-                0x0000000004003108                u8ApduCount.7842
- *fill*         0x000000000400310b        0x1 00
- .bss           0x000000000400310c       0x38 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans8.ltrans.o
- .bss           0x0000000004003144       0x10 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans9.ltrans.o
-                0x0000000004003144                prIntHandler.156362
-                0x0000000004003148                psTimerServerList
- .bss           0x0000000004003154        0x8 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans10.ltrans.o
-                0x0000000004003154                sMiniMacIntStore.6820
- .bss           0x000000000400315c       0x30 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans11.ltrans.o
-                0x000000000400315c                g_u8LegacyBeaconPayloadLen
-                0x000000000400315d                au8BeaconPayload.137834
-                0x000000000400316c                apvAplPdmRecordsAddress
-                0x0000000004003180                au16AplPdmRecordsSize
- .bss           0x000000000400318c        0x1 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans12.ltrans.o
- .bss           0x000000000400318d        0x1 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans13.ltrans.o
- .bss           0x000000000400318e        0xc C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans14.ltrans.o
-                0x000000000400318e                a16NwkPdmRecordSizes
- *fill*         0x000000000400319a        0x2 00
- .bss           0x000000000400319c       0x84 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans15.ltrans.o
-                0x000000000400319c                pfnDataReqCallback
-                0x00000000040031a0                aprTimerCallback
-                0x00000000040031c0                au32TimerCounter
-                0x00000000040031e0                sMiniMacInternal
-                0x0000000004003218                sAfFlashInfoSetLocal
- .bss           0x0000000004003220        0x1 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans16.ltrans.o
-                0x0000000004003220                bResetScanTimer.155104
- *fill*         0x0000000004003221        0x3 00
- .bss           0x0000000004003224       0x14 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans17.ltrans.o
-                0x0000000004003224                psFreeMsgListHead
-                0x0000000004003228                pu8ApsSeq
- .bss           0x0000000004003238        0x1 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans18.ltrans.o
-                0x0000000004003238                bDefaultServerIgnoreHandleMgmtUpdate
- *fill*         0x0000000004003239        0x3 00
- .bss           0x000000000400323c        0x4 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans20.ltrans.o
-                0x000000000400323c                sMiniMacPhyPib
- .bss           0x0000000004003240       0x40 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans21.ltrans.o
-                0x0000000004003240                sScanAttemptTimer
-                0x000000000400325c                bSecondScan.146459
-                0x000000000400325d                au8ChanCnt
-                0x0000000004003278                g_bMacEnhancedMode
-                0x000000000400327c                zps_psNwk
- .bss           0x0000000004003280        0xc C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans22.ltrans.o
-                0x0000000004003280                u8ScanBeaconsSeen.6877
- .bss           0x000000000400328c        0xc C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans23.ltrans.o
-                0x000000000400328c                g_bLastRejoinWasSecure
- .bss           0x0000000004003298       0x18 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans24.ltrans.o
-                0x0000000004003298                g_pfTimerExpiryCallback.133738
- .bss           0x00000000040032b0        0x8 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans25.ltrans.o
-                0x00000000040032b0                sThisDeviceMacAddr
- .bss           0x00000000040032b8      0x174 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans26.ltrans.o
- *fill*         0x000000000400342c        0x4 00
- .bss           0x0000000004003430       0x38 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans28.ltrans.o
-                0x0000000004003430                sRecoverDevice
-                0x0000000004003460                bZpsMyLastJoinWasRejoin.21963
- .bss           0x0000000004003468       0x40 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans29.ltrans.o
- .bss           0x00000000040034a8       0x2c C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans31.ltrans.o
-                0x00000000040034a8                pwrm_CPUContext
-                0x00000000040034cc                s_psVsMcpsDcfmInd.31450
-                0x00000000040034d0                s_psMacDcfmInd.31449
+                0x00000000040030f4        0x1 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans4.ltrans.o
+                0x00000000040030f4                bMutexTaken.157688
+ .bss           0x00000000040030f5        0x3 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans6.ltrans.o
+                0x00000000040030f5                u8ApduCount.7844
+ .bss           0x00000000040030f8        0xc C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans7.ltrans.o
+                0x00000000040030f8                prIntHandler.156364
+                0x00000000040030fc                psTimerServerList
+ .bss           0x0000000004003104       0x24 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans8.ltrans.o
+                0x0000000004003104                g_au8LegacyBeaconPayload
+ .bss           0x0000000004003128        0x8 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans9.ltrans.o
+ .bss           0x0000000004003130       0x18 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans10.ltrans.o
+                0x0000000004003130                g_pfTimerExpiryCallback.133740
+ .bss           0x0000000004003148        0x1 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans11.ltrans.o
+ *fill*         0x0000000004003149        0x1 00
+ .bss           0x000000000400314a        0xc C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans12.ltrans.o
+                0x000000000400314a                a16NwkPdmRecordSizes
+ *fill*         0x0000000004003156        0x2 00
+ .bss           0x0000000004003158       0x30 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans13.ltrans.o
+                0x0000000004003158                g_u8LegacyBeaconPayloadLen
+                0x0000000004003159                au8BeaconPayload.137836
+                0x0000000004003168                apvAplPdmRecordsAddress
+                0x000000000400317c                au16AplPdmRecordsSize
+ .bss           0x0000000004003188        0x1 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans14.ltrans.o
+                0x0000000004003188                bResetScanTimer.155106
+ *fill*         0x0000000004003189        0x3 00
+ .bss           0x000000000400318c        0x8 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans15.ltrans.o
+                0x000000000400318c                u8ScanBeaconsSeen.6879
+                0x000000000400318d                g_bMacEnhancedMode
+                0x0000000004003190                zps_psNwk
+ *fill*         0x0000000004003194        0x4 00
+ .bss           0x0000000004003198       0x50 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans16.ltrans.o
+                0x0000000004003198                g_bLastRejoinWasSecure
+ .bss           0x00000000040031e8        0x8 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans17.ltrans.o
+                0x00000000040031e8                sMiniMacIntStore.6822
+ .bss           0x00000000040031f0        0x1 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans18.ltrans.o
+ *fill*         0x00000000040031f1        0x3 00
+ .bss           0x00000000040031f4       0x24 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans19.ltrans.o
+                0x00000000040031f4                bSecondScan.146461
+                0x00000000040031f5                au8ChanCnt
+ .bss           0x0000000004003218       0x14 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans20.ltrans.o
+                0x0000000004003218                psFreeMsgListHead
+                0x000000000400321c                pu8ApsSeq
+ .bss           0x000000000400322c       0x9c C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans21.ltrans.o
+                0x000000000400322c                sScanAttemptTimer
+                0x0000000004003248                sMiniMacPhyPib
+                0x000000000400324c                pfnDataReqCallback
+                0x0000000004003250                aprTimerCallback
+                0x0000000004003270                au32TimerCounter
+                0x0000000004003290                sMiniMacInternal
+ .bss           0x00000000040032c8        0x1 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans22.ltrans.o
+                0x00000000040032c8                bDefaultServerIgnoreHandleMgmtUpdate
+ *fill*         0x00000000040032c9        0x3 00
+ .bss           0x00000000040032cc        0x8 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans24.ltrans.o
+                0x00000000040032cc                sThisDeviceMacAddr
+ .bss           0x00000000040032d4       0x34 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans25.ltrans.o
+                0x00000000040032d4                cmd_index.5215
+ .bss           0x0000000004003308      0x174 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans27.ltrans.o
+ *fill*         0x000000000400347c        0x4 00
+ .bss           0x0000000004003480       0x38 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans29.ltrans.o
+                0x0000000004003480                sRecoverDevice
+                0x00000000040034b0                bZpsMyLastJoinWasRejoin.21965
+ .bss           0x00000000040034b8       0x2c C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans31.ltrans.o
+                0x00000000040034b8                pwrm_CPUContext
+                0x00000000040034dc                s_psVsMcpsDcfmInd.31452
+                0x00000000040034e0                s_psMacDcfmInd.31451
  .bss.dontinitinboot
-                0x00000000040034d4       0x40 ../../../../sdk/JN-SW-4170/Components/Library\libBoot_JN516x.a(ExceptionHandler.o)
-                0x00000000040034d4                isr_handlers
+                0x00000000040034e4       0x40 ../../../../sdk/JN-SW-4170/Components/Library\libBoot_JN516x.a(ExceptionHandler.o)
+                0x00000000040034e4                isr_handlers
  *(.bss.*)
  *(.scommon*)
  *(.scommon.*)
  *(COMMON)
-                0x0000000004003514                . = ALIGN (0x4)
-                0x0000000004003514                _bss_end = ABSOLUTE (.)
+                0x0000000004003524                . = ALIGN (0x4)
+                0x0000000004003524                _bss_end = ABSOLUTE (.)
 
-.heap           0x0000000004003514      0x7d0 load address 0x000000000009f944
-                0x0000000004003514                _heap_start = ABSOLUTE (.)
-                0x0000000004003ce4                . = (. + __minimum_heap_size)
- *fill*         0x0000000004003514      0x7d0 00
+.heap           0x0000000004003524      0x7d0 load address 0x000000000009f9c0
+                0x0000000004003524                _heap_start = ABSOLUTE (.)
+                0x0000000004003cf4                . = (. + __minimum_heap_size)
+ *fill*         0x0000000004003524      0x7d0 00
 
-.stack          0x0000000004006c78     0x1388 load address 0x00000000000a30a8
+.stack          0x0000000004006c78     0x1388 load address 0x00000000000a3114
                 0x0000000004006c78                _heap_end = ABSOLUTE (.)
                 0x0000000004006c78                _stack_low_water_mark = ABSOLUTE (.)
                 0x0000000004008000                . = (. + __stack_size)
  *fill*         0x0000000004006c78     0x1388 00
 
-.test           0x000000000009c990        0x1
-                0x000000000009c990        0x1 BYTE 0xff
-                0x000000000009c47c                _flash_data_start = LOADADDR (.data)
-                0x0000000000000514                _ram_data_len = (((_ram_data_end - _ram_data_start) + 0x3) & 0xfffffffffffffffc)
-                0x0000000000002fb4                _bss_len = (((_bss_end - _bss_start) + 0x3) & 0xfffffffffffffffc)
-                0x000000000001c990                _image_len = ((((_flash_end - _flash_start) + _ram_data_len) + 0x3) & 0xfffffffffffffffc)
+.test           0x000000000009ca00        0x1
+                0x000000000009ca00        0x1 BYTE 0xff
+                0x000000000009c4e8                _flash_data_start = LOADADDR (.data)
+                0x0000000000000518                _ram_data_len = (((_ram_data_end - _ram_data_start) + 0x3) & 0xfffffffffffffffc)
+                0x0000000000002fc0                _bss_len = (((_bss_end - _bss_start) + 0x3) & 0xfffffffffffffffc)
+                0x000000000001ca00                _image_len = ((((_flash_end - _flash_start) + _ram_data_len) + 0x3) & 0xfffffffffffffffc)
                 0x0000000004008000                _ram_top = (ABSOLUTE (ORIGIN (ram)) + 0x7fb4)
                 0x0000000004008000                ram_top = (ABSOLUTE (ORIGIN (ram)) + 0x7fb4)
                 0x0000000001001580                _app_ram_start = 0x1001580
-                0x0000000004000504                PROVIDE (_heap_location, u32HeapStart)
-                0x0000000004000504                PROVIDE (heap_location, u32HeapStart)
+                0x0000000004000508                PROVIDE (_heap_location, u32HeapStart)
+                0x0000000004000508                PROVIDE (heap_location, u32HeapStart)
 OUTPUT(AN1229_ZBP_Coordinator_JN5169.elf elf32-ba)
 
 .comment        0x0000000000000000       0x11
- .comment       0x0000000000000000       0x11 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans0.ltrans.o
+ .comment       0x0000000000000000       0x11 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans0.ltrans.o
                                          0x12 (size before relaxing)
- .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans1.ltrans.o
- .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans2.ltrans.o
- .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans3.ltrans.o
- .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans4.ltrans.o
- .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans5.ltrans.o
- .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans6.ltrans.o
- .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans7.ltrans.o
- .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans8.ltrans.o
- .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans9.ltrans.o
- .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans10.ltrans.o
- .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans11.ltrans.o
- .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans12.ltrans.o
- .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans13.ltrans.o
- .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans14.ltrans.o
- .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans15.ltrans.o
- .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans16.ltrans.o
- .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans17.ltrans.o
- .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans18.ltrans.o
- .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans19.ltrans.o
- .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans20.ltrans.o
- .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans21.ltrans.o
- .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans22.ltrans.o
- .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans23.ltrans.o
- .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans24.ltrans.o
- .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans25.ltrans.o
- .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans26.ltrans.o
- .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans27.ltrans.o
- .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans28.ltrans.o
- .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans29.ltrans.o
- .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans30.ltrans.o
- .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\cczUeAQy.ltrans31.ltrans.o
+ .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans1.ltrans.o
+ .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans2.ltrans.o
+ .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans3.ltrans.o
+ .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans4.ltrans.o
+ .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans5.ltrans.o
+ .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans6.ltrans.o
+ .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans7.ltrans.o
+ .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans8.ltrans.o
+ .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans9.ltrans.o
+ .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans10.ltrans.o
+ .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans11.ltrans.o
+ .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans12.ltrans.o
+ .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans13.ltrans.o
+ .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans14.ltrans.o
+ .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans15.ltrans.o
+ .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans16.ltrans.o
+ .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans17.ltrans.o
+ .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans18.ltrans.o
+ .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans19.ltrans.o
+ .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans20.ltrans.o
+ .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans21.ltrans.o
+ .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans22.ltrans.o
+ .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans23.ltrans.o
+ .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans24.ltrans.o
+ .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans25.ltrans.o
+ .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans26.ltrans.o
+ .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans27.ltrans.o
+ .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans28.ltrans.o
+ .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans29.ltrans.o
+ .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans30.ltrans.o
+ .comment       0x0000000000000000       0x12 C:\Users\okaya\AppData\Local\Temp\ccoXvinH.ltrans31.ltrans.o
  .comment       0x0000000000000000       0x12 c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/../../../../ba-elf/lib/mcpu_jn51xx_sizeopt\libc.a(lib_a-memcmp.o)
  .comment       0x0000000000000000       0x12 c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/../../../../ba-elf/lib/mcpu_jn51xx_sizeopt\libc.a(lib_a-memcpy.o)
  .comment       0x0000000000000000       0x12 c:/nxp/bstudio_nxp/sdk/tools/ba-elf-ba2-r36379/bin/../lib/gcc/ba-elf/4.7.4/../../../../ba-elf/lib/mcpu_jn51xx_sizeopt\libc.a(lib_a-memset.o)

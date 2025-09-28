@@ -50,7 +50,7 @@ PUBLIC void APP_vInitialiseCoordinator(void);
 PUBLIC void APP_vtaskCoordinator (void);
 PUBLIC void APP_vSetCommand(uint8 command);
 PUBLIC void SendData();
-PRIVATE int hexToDecimal();
+//PRIVATE int hexToDecimal();//(égÇ¡ÇƒÇ»Ç¢ÅH)
 /****************************************************************************/
 /***        External Variables                                            ***/
 /****************************************************************************/

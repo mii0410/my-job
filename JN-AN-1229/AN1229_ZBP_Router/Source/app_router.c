@@ -43,6 +43,10 @@
 	#define TRACE_APP 	TRUE
 #endif
 
+#ifndef PDM_E_STATUS_OK_RESTORED
+#define PDM_E_STATUS_OK_RESTORED PDM_E_STATUS_OK
+#endif
+
 // 追加
 #define ROUTE_MONITOR_INVALID_ADDRESS     0xFFFF
 #define ROUTE_MONITOR_RECOVERY_INTERVAL   ZTIMER_TIME_SEC(5)
@@ -78,6 +82,7 @@ PRIVATE void vWaitForNetworkDiscovery(ZPS_tsAfEvent sStackEvent);
 PRIVATE void vWaitForNetworkJoin(ZPS_tsAfEvent sStackEvent);
 PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent);
 PRIVATE void vClearDiscNT(void);
+PRIVATE bool_t bLoadDeviceState(void);
 
 // 追加
 #ifndef ZPS_APL_AF_ACK_REQ
@@ -165,16 +170,33 @@ PUBLIC void SendData(void)
 
     if (hAPduInst == PDUM_INVALID_HANDLE)
     {
-        DBG_vPrintf(TRUE, "APP: APDUインスタンスの確保に失敗しました\n");
+        DBG_vPrintf(TRUE, "APP: APDU allocation failed\n");
         return;
     }
 
-    u16Offset += PDUM_u16APduInstanceWriteNBO(hAPduInst, u16Offset, "a", au8Payload);///////////mojibake
+    u16Offset += PDUM_u16APduInstanceWriteNBO(hAPduInst, u16Offset, "a", au8Payload);
     PDUM_eAPduInstanceSetPayloadSize(hAPduInst, u16Offset);
 
     /* 以下は送信要求のサンプルコード。実際に使用する際は必要な処理を追加する。 */
     ZPS_teStatus eStatus;
     ZPS_teAplAfSecurityMode eSecurityMode = ZPS_E_APL_AF_UNSECURE;
+
+    eStatus = ZPS_eAplAfUnicastDataReq(hAPduInst,
+                                       0x1337,
+                                       0x1234,
+                                       0x01,
+                                       0x01,
+                                       eSecurityMode,
+                                       APP_TX_OPTION_ACK_REQUIRED,
+                                       &u8TransactionSequenceNumber);
+
+    if (ZPS_E_SUCCESS != eStatus)
+    {
+        DBG_vPrintf(TRUE,
+                    "APP: SendData unicast failed status=%d\n",
+                    eStatus);
+        PDUM_eAPduFreeAPduInstance(hAPduInst);
+    }
 
     /* 一例として IEEE アドレス指定で送信する場合の参考コード */
     /*
@@ -203,6 +225,35 @@ PUBLIC void SendData(void)
                     &u8TransactionSequenceNumber);
     */
 }
+PRIVATE bool_t bLoadDeviceState(void)
+{
+    uint16 u16DataBytesRead = 0;
+    PDM_teStatus eStatus;
+
+    memset(&s_eDeviceState, 0, sizeof(s_eDeviceState));
+    s_eDeviceState.eNodeState = E_STARTUP;
+
+    eStatus = PDM_eReadDataFromRecord(PDM_ID_APP_ROUTER,
+                                      &s_eDeviceState,
+                                      sizeof(s_eDeviceState),
+                                      &u16DataBytesRead);
+
+    if ((PDM_E_STATUS_OK == eStatus) || (PDM_E_STATUS_OK_RESTORED == eStatus))
+    {
+        DBG_vPrintf(TRACE_APP,
+                    "APP: Warm start - restored node state %d\n",
+                    s_eDeviceState.eNodeState);
+        return TRUE;
+    }
+
+    DBG_vPrintf(TRACE_APP,
+                "APP: No persisted router context (status=%d)\n",
+                eStatus);
+    memset(&s_eDeviceState, 0, sizeof(s_eDeviceState));
+    s_eDeviceState.eNodeState = E_STARTUP;
+    return FALSE;
+}
+
 
 /* Route probe helper */
 PRIVATE bool_t bTriggerRouteProbe(uint16 u16ShortAddr)
@@ -364,29 +415,31 @@ PUBLIC void APP_vInitialiseRouter(void)
     vResetRouteMonitor();
     u32SystemTimeSeconds = 0;
 
+    (void)bLoadDeviceState();
 
-	bool_t bDeleteRecords = TRUE /*FALSE*/;
-    uint16 u16DataBytesRead;
-
-    /* 必要に応じてネットワークコンテキストをフラッシュから削除する。
-     * たとえばリセット時にボタンが押されているかを判定し、押下時のみ
-     * PDM に全レコード削除を要求するような利用が想定される。
-     * 永続化が不要な場合は常に PDM_vDeleteAllDataRecords() を呼び出してもよい。
-     */
-    if (bDeleteRecords)
-    {
-        DBG_vPrintf(TRACE_APP, "APP: フラッシュからすべてのレコードを削除します\n");
-        PDM_vDeleteAllDataRecords();
-    }
-
-    /* 過去にフラッシュへ保存したアプリケーションデータを復元する。
-     * ZPS_eAplAfInit を呼び出す前に必要なレコードをすべて読み込んでおく。
-     */
-    s_eDeviceState.eNodeState = E_STARTUP;
-    PDM_eReadDataFromRecord(PDM_ID_APP_ROUTER,
-                    		&s_eDeviceState,
-                    		sizeof(s_eDeviceState),
-                    		&u16DataBytesRead);
+    //以下の機能はbLoadDeviceStateに収納した
+//    bool_t bDeleteRecords = TRUE /*FALSE*/;
+//    uint16 u16DataBytesRead;
+//
+//    /* 必要に応じてネットワークコンテキストをフラッシュから削除する。
+//     * たとえばリセット時にボタンが押されているかを判定し、押下時のみ
+//     * PDM に全レコード削除を要求するような利用が想定される。
+//     * 永続化が不要な場合は常に PDM_vDeleteAllDataRecords() を呼び出してもよい。
+//     */
+//    if (bDeleteRecords)
+//    {
+//        DBG_vPrintf(TRACE_APP, "APP: フラッシュからすべてのレコードを削除します\n");
+//        PDM_vDeleteAllDataRecords();
+//    }
+//
+//    /* 過去にフラッシュへ保存したアプリケーションデータを復元する。
+//     * ZPS_eAplAfInit を呼び出す前に必要なレコードをすべて読み込んでおく。
+//     */
+//    s_eDeviceState.eNodeState = E_STARTUP;
+//    PDM_eReadDataFromRecord(PDM_ID_APP_ROUTER,
+//                    		&s_eDeviceState,
+//                    		sizeof(s_eDeviceState),
+//                    		&u16DataBytesRead);
 
     /* ZBPro スタックの初期化 */
     ZPS_eAplAfInit();
@@ -630,6 +683,7 @@ PRIVATE void vWaitForNetworkDiscovery(ZPS_tsAfEvent sStackEvent)
                         sStackEvent.uEvent.sNwkJoinedEvent.u16Addr);
             s_eDeviceState.eNodeState = E_RUNNING;
 
+            ZPS_eAplZdoPermitJoining(0xff);
             vResetRouteMonitor();
             s_sRouteMonitor.bTimerArmed = FALSE;
 
@@ -672,6 +726,7 @@ PRIVATE void vWaitForNetworkJoin(ZPS_tsAfEvent sStackEvent)
             u64ExtPANID = ZPS_u64NwkNibGetEpid(ZPS_pvAplZdoGetNwkHandle());
             ZPS_eAplAibSetApsUseExtendedPanId(u64ExtPANID);
             s_eDeviceState.eNodeState = E_RUNNING;
+            ZPS_eAplZdoPermitJoining(0xff);
 
             // 追加
             vResetRouteMonitor();

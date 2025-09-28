@@ -4,7 +4,7 @@ import time
 def main():
     try:
         ser = serial.Serial(
-            port='COM5',  # デバイスポート番号（自分のポート番号に合わせる）
+            port="COM3",  # デバイスポート番号（自分のポート番号に合わせる）
             baudrate=115200,  # ボーレート
             parity=serial.PARITY_NONE,
             stopbits=serial.STOPBITS_ONE,
