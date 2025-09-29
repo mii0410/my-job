@@ -349,16 +349,55 @@ PRIVATE void vReadInputCommand()
 PRIVATE void vPrintNetworkStatus(void)
 {
     void *pvNwk = ZPS_pvAplZdoGetNwkHandle();
+    ZPS_tsAplAib *psAib = ZPS_psAplAibGetAib();
     uint64 u64ExtPanId = ZPS_u64NwkNibGetEpid(pvNwk);
     uint16 u16ShortAddr = ZPS_u16AplZdoGetNwkAddr();
     uint8 u8Channel = ZPS_u8AplZdoGetRadioChannel();
+    ZPS_tsNwkNib *psNib = ZPS_psNwkNibGetHandle(pvNwk);
     uint8 u8NeighborCount = 0;
+
+    if ((psAib != NULL) && (psAib->u16ApsShortAddress != 0xFFFF))
+    {
+        u16ShortAddr = psAib->u16ApsShortAddress;
+    }
 
     DBG_vPrintf(TRUE, "\r\n[NET] Status\r\n");
     DBG_vPrintf(TRUE, "  Channel        : %d\r\n", u8Channel);
     DBG_vPrintf(TRUE, "  Ext PAN ID     : %016llx\r\n", u64ExtPanId);
     DBG_vPrintf(TRUE, "  Short Address  : 0x%04x\r\n", u16ShortAddr);
-    DBG_vPrintf(TRUE, "  Neighbors information is not available with this SDK configuration\r\n");
+
+    if (psNib != NULL)
+    {
+        DBG_vPrintf(TRUE, "  Neighbors:\r\n");
+        uint8 u8Index;
+        for (u8Index = 0; u8Index < psNib->sTblSize.u8NtActv; u8Index++)
+        {
+            ZPS_tsNwkActvNtEntry *psEntry = &psNib->sTbl.psNtActv[u8Index];
+
+            if ((psEntry->u16NwkAddr == 0xFFFF) || (psEntry->u16NwkAddr == 0x0000 && psEntry->u8LinkQuality == 0))
+            {
+                continue;
+            }
+
+            u8NeighborCount++;
+            DBG_vPrintf(TRUE, "    %02d) 0x%04x LQI=%3u Rel=%u Parent=0x%04x Depth=%u\r\n",
+                        u8NeighborCount,
+                        psEntry->u16NwkAddr,
+                        psEntry->u8LinkQuality,
+                        psEntry->u8Relationship,
+                        psEntry->u16DeviceAddr,
+                        psEntry->u8Depth);
+        }
+
+        if (u8NeighborCount == 0)
+        {
+            DBG_vPrintf(TRUE, "    (no active neighbors)\r\n");
+        }
+    }
+    else
+    {
+        DBG_vPrintf(TRUE, "  Neighbors: (NIB unavailable)\r\n");
+    }
 
     DBG_vPrintf(TRUE, "  Active entries : %d\r\n", u8NeighborCount);
     DBG_vPrintf(TRUE, "[NET] -----------\r\n");
@@ -652,12 +691,31 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
 
             case ZPS_EVENT_NWK_NEW_NODE_HAS_JOINED:
             {
-            	 uint16 u16JoinedAddr = sStackEvent.uEvent.sNwkJoinIndicationEvent.u16NwkAddr;
+                uint16 u16JoinedAddr = sStackEvent.uEvent.sNwkJoinIndicationEvent.u16NwkAddr;
+                uint8 u8Lqi = sStackEvent.uEvent.sNwkJoinIndicationEvent.u8LinkQuality;
+                uint16 u16ParentAddr = 0xFFFF;
+                void *pvNwk = ZPS_pvAplZdoGetNwkHandle();
+                ZPS_tsNwkNib *psNib = ZPS_psNwkNibGetHandle(pvNwk);
 
-            	 DBG_vPrintf(TRACE_APP,
-            			 "APP: New node joined 0x%04x\r\n",
-            	         u16JoinedAddr);
-            	 u16LastKnownNodeAddr = u16JoinedAddr;
+                if (psNib != NULL)
+                {
+                    uint8 u8Index;
+                    for (u8Index = 0; u8Index < psNib->sTblSize.u8NtActv; u8Index++)
+                    {
+                        ZPS_tsNwkActvNtEntry *psEntry = &psNib->sTbl.psNtActv[u8Index];
+                        if (psEntry->u16NwkAddr == u16JoinedAddr)
+                        {
+                            u16ParentAddr = psEntry->u16DeviceAddr;
+                            break;
+                        }
+                    }
+                }
+
+                DBG_vPrintf(TRACE_APP, "APP: New node joined 0x%04x LQI=%u Parent=0x%04x\r\n",
+                            u16JoinedAddr,
+                            u8Lqi,
+                            u16ParentAddr);
+                u16LastKnownNodeAddr = u16JoinedAddr;
             }
             break;
 

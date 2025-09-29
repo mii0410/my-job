@@ -64,7 +64,7 @@ PUBLIC void SendData();  //追加関数
 PUBLIC void app_vMainloop(void);
 PRIVATE void vInitialiseApp(void);
 PRIVATE void vfExtendedStatusCallBack (ZPS_teExtendedStatus eExtendedStatus);
-PRIVATE void vUartCallback(uint32 u32Device, uint32 u32ItemBitmap);
+
 /****************************************************************************
  *
  * 関数名: vfExtendedStatusCallBack
@@ -85,12 +85,6 @@ PUBLIC uint8 u8RouteRecoveryTimer;
 /****************************************************************************/
 /***        ローカル変数                                                                                                                            ***/
 /****************************************************************************/
-PRIVATE void vUartCallback(uint32 u32Device, uint32 u32ItemBitmap)
-{
-    (void)u32Device;
-    (void)u32ItemBitmap;
-    vReadCharInterrupt();
-}
 /*local variables*/
 PRIVATE MAC_tsMcpsVsCfmData asMacMcpsDcfm[MCPS_DCFM_QUEUE_SIZE];
 PRIVATE zps_tsTimeEvent asTimeEvent[TIMER_QUEUE_SIZE];
@@ -134,7 +128,7 @@ PUBLIC void vAppMain(void)
     /* UART 初期化 */
        DBG_vUartInit (DBG_E_UART_0, DBG_E_UART_BAUD_RATE_115200);
 
-                     vAHI_Uart0RegisterCallback(vUartCallback); // 受信割り込みでターミナル入力を処理
+                     vAHI_Uart0RegisterCallback(&vReadCharInterrupt); // 受信割り込みでターミナル入力を処理
                      vAHI_UartSetInterrupt(DBG_E_UART_0,
                                            FALSE,
                                            FALSE,                    // 受信ラインステータス割り込み無効

@@ -90,6 +90,7 @@ PUBLIC void APP_vSetUpHardware(void);
 PUBLIC void app_vMainloop(void);
 PRIVATE void vInitialiseApp(void);
 PRIVATE void vfExtendedStatusCallBack (ZPS_teExtendedStatus eExtendedStatus);
+PRIVATE void vUartCallback(uint32 u32Device, uint32 u32ItemBitmap);
 PRIVATE PWRM_DECLARE_CALLBACK_DESCRIPTOR(Wakeup);
 PRIVATE PWRM_DECLARE_CALLBACK_DESCRIPTOR(PreSleep);
 
@@ -99,6 +100,12 @@ PUBLIC void SendData();  //í«â¡ä÷êî
 /****************************************************************************/
 /***        Local Variables                                               ***/
 /****************************************************************************/
+PRIVATE void vUartCallback(uint32 u32Device, uint32 u32ItemBitmap)
+{
+    (void)u32Device;
+    (void)u32ItemBitmap;
+    vReadCharInterrupt();
+}
 /*local variables*/
 PRIVATE MAC_tsMcpsVsCfmData asMacMcpsDcfm[MCPS_DCFM_QUEUE_SIZE];
 PRIVATE zps_tsTimeEvent asTimeEvent[TIMER_QUEUE_SIZE];
@@ -151,7 +158,7 @@ PUBLIC void vAppMain(void)
     /*í«â¡ÉRÅ[Éh*/
     DBG_vUartInit (DBG_E_UART_0, DBG_E_UART_BAUD_RATE_115200);
 
-        	     vAHI_Uart0RegisterCallback(&vReadCharInterrupt); // terminalÇ©ÇÁÇÃï∂éöì¸óÕ
+        	     vAHI_Uart0RegisterCallback(vUartCallback); // terminalÇ©ÇÁÇÃï∂éöì¸óÕ
         	     vAHI_UartSetInterrupt(DBG_E_UART_0,
         	      	    		              FALSE,
         	       	    		              FALSE,                    // Enable Rx line status

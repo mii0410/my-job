@@ -112,8 +112,7 @@ void APP_vtaskMyEndPoint (void)
 
                 u16bytesread = PDUM_u16APduInstanceReadNBO(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst,0,"a\x10",&Rxbyte);
                 addr = sStackEvent.uEvent.sApsDataIndEvent.uSrcAddress.u16Addr;
-                u8LQI = 0;
-                //u8LQI = sStackEvent.uEvent.sApsDataIndEvent.u8LinkQuality;
+                u8LQI = sStackEvent.uEvent.sApsDataIndEvent.u8LinkQuality;
                 vAHI_UartWriteData(DBG_E_UART_0, Rxbyte[0]); //受信したセンサの識別番号
                 vAHI_UartWriteData(DBG_E_UART_0, Rxbyte[1]); //受信した各センサの順番
                 vAHI_UartWriteData(DBG_E_UART_0, addr); //受信したデータの送信元のshortアドレス
