@@ -101,8 +101,6 @@ PRIVATE void vRecordRouteFailure(uint16 u16Addr, uint8 u8Status, const char *pcR
 PRIVATE void vLogRouteMonitor(const char *pcPrefix);
 PRIVATE void vHandleManualRouteRecoveryRequest(void);
 PRIVATE void vShowRouteMonitorStatus(void);
-PRIVATE void vSendDataInternal(uint16 u16RequestedDest);
-PRIVATE uint16 u16ResolveDestinationAddress(uint16 u16RequestedDest);
 
 /****************************************************************************/
 /***        ローカル変数                                                                                                                            ***/
@@ -113,7 +111,6 @@ PRIVATE tsDeviceDesc s_eDeviceState;
 PRIVATE tsRouteMonitor s_sRouteMonitor;
 PRIVATE uint32 u32SystemTimeSeconds = 0;
 PUBLIC uint8_t count1 = 1;
-PRIVATE uint16 u16LastUnicastDestination = COORDINATOR_ADR;
 
 PUBLIC uint8 au8DefaultTCLinkKey[16]    = {0x5a, 0x69, 0x67, 0x42, 0x65, 0x65, 0x41, 0x6c,
                                            0x6c, 0x69, 0x61, 0x6e, 0x63, 0x65, 0x30, 0x39};
@@ -157,40 +154,13 @@ PRIVATE void vReadInputCommand(void)
     }
 }
 
-PUBLIC void APP_vSetUnicastDestination(uint16 u16ShortAddr)
-{
-    if (ROUTE_MONITOR_INVALID_ADDRESS == u16ShortAddr)
-    {
-        u16LastUnicastDestination = COORDINATOR_ADR;
-    }
-    else
-    {
-        u16LastUnicastDestination = u16ShortAddr;
-    }
-
-    DBG_vPrintf(TRUE,
-                "APP: Updated default destination to 0x%04x\n",
-                u16LastUnicastDestination);
-}
-
 PUBLIC void SendData(void)
-{
-    vSendDataInternal(ROUTE_MONITOR_INVALID_ADDRESS);
-}
-
-PUBLIC void SendDataTo(uint16 u16ShortAddr)
-{
-    vSendDataInternal(u16ShortAddr);
-}
-
-PRIVATE void vSendDataInternal(uint16 u16RequestedDest)
 {
     /* デモ用の送信処理 */
     uint8 u8TransactionSequenceNumber = 0;
     PDUM_thAPduInstance hAPduInst = PDUM_hAPduAllocateAPduInstance(apduZDP);
     uint16 u16Offset = 0;
     uint8 au8Payload[4] = {0};
-    uint16 u16DstAddr = u16ResolveDestinationAddress(u16RequestedDest);
 
     au8Payload[0] = 6;
     au8Payload[1] = count1;
@@ -213,7 +183,7 @@ PRIVATE void vSendDataInternal(uint16 u16RequestedDest)
 
     eStatus = ZPS_eAplAfUnicastDataReq(hAPduInst,
                                        0x1337,
-                                       u16DstAddr,
+                                       0x1234,
                                        0x01,
                                        0x01,
                                        eSecurityMode,
@@ -223,17 +193,9 @@ PRIVATE void vSendDataInternal(uint16 u16RequestedDest)
     if (ZPS_E_SUCCESS != eStatus)
     {
         DBG_vPrintf(TRUE,
-        			"APP: SendData unicast failed status=%d dest=0x%04x\n",
-                    eStatus,
-                    u16DstAddr);
+                    "APP: SendData unicast failed status=%d\n",
+                    eStatus);
         PDUM_eAPduFreeAPduInstance(hAPduInst);
-    }
-    else
-    {
-        DBG_vPrintf(TRUE,
-                    "APP: SendData queued dest=0x%04x tsn=%d\n",
-                    u16DstAddr,
-                    u8TransactionSequenceNumber);
     }
 
     /* 一例として IEEE アドレス指定で送信する場合の参考コード */
@@ -263,24 +225,6 @@ PRIVATE void vSendDataInternal(uint16 u16RequestedDest)
                     &u8TransactionSequenceNumber);
     */
 }
-
-PRIVATE uint16 u16ResolveDestinationAddress(uint16 u16RequestedDest)
-{
-    if (ROUTE_MONITOR_INVALID_ADDRESS != u16RequestedDest)
-    {
-        u16LastUnicastDestination = u16RequestedDest;
-        return u16RequestedDest;
-    }
-
-    if (ROUTE_MONITOR_INVALID_ADDRESS != u16LastUnicastDestination)
-    {
-        return u16LastUnicastDestination;
-    }
-
-    u16LastUnicastDestination = COORDINATOR_ADR;
-    return COORDINATOR_ADR;
-}
-
 PRIVATE bool_t bLoadDeviceState(void)
 {
     uint16 u16DataBytesRead = 0;
@@ -740,7 +684,6 @@ PRIVATE void vWaitForNetworkDiscovery(ZPS_tsAfEvent sStackEvent)
             s_eDeviceState.eNodeState = E_RUNNING;
 
             ZPS_eAplZdoPermitJoining(0xff);
-            APP_vSetUnicastDestination(COORDINATOR_ADR);
             vResetRouteMonitor();
             s_sRouteMonitor.bTimerArmed = FALSE;
 
@@ -784,7 +727,6 @@ PRIVATE void vWaitForNetworkJoin(ZPS_tsAfEvent sStackEvent)
             ZPS_eAplAibSetApsUseExtendedPanId(u64ExtPANID);
             s_eDeviceState.eNodeState = E_RUNNING;
             ZPS_eAplZdoPermitJoining(0xff);
-            APP_vSetUnicastDestination(COORDINATOR_ADR);
 
             // 追加
             vResetRouteMonitor();

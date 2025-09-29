@@ -9,16 +9,12 @@
 #ifndef APP_ROUTER_H_
 #define APP_ROUTER_H_
 
-#include <jendefs.h>
-
 /****************************************************************************/
 /***        グローバル関数                                                                                                                         ***/
 /****************************************************************************/
 PUBLIC void APP_vInitialiseRouter(void);
 PUBLIC void APP_vtaskRouter(void);
 PUBLIC void SendData(void);
-PUBLIC void SendDataTo(uint16 u16ShortAddr);
-PUBLIC void APP_vSetUnicastDestination(uint16 u16ShortAddr);
 
 /****************************************************************************/
 /***        グローバル変数                                                                                                                         ***/
