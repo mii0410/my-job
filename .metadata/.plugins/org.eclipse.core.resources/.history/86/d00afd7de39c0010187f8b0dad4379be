@@ -190,10 +190,6 @@ PUBLIC commandType vReadCommand(void)
     	//DBG_vPrintf(TRUE,"%s Results command \n",command);
     	type = RESULTS_COMMAND;
     }
-    else if (strcmp(command, "status") == 0)
-    {
-        type = STATUS_COMMAND;
-    }
     else if (strcmp(command, "recover") == 0)
     {
     	//DBG_vPrintf(TRUE,"%s Recover command \n",command);

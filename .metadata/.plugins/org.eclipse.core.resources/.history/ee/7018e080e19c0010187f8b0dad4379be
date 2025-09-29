@@ -56,9 +56,6 @@
 #include "Time.h"
 #include "config.h"
 #include "zps_gen.h"
-#include <zps_apl_aib.h>
-#include <zps_apl_zdo.h>
-#include <zps_nwk_nib.h>
 
 /****************************************************************************/
 /***        Macro Definitions                                             ***/
@@ -91,7 +88,6 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent);
 PRIVATE void vReadInputCommand();
 PUBLIC void APP_vSetCommand(uint8 command);
 PUBLIC void SendData();
-PRIVATE void vPrintNetworkStatus(void);
 
 
 
@@ -333,74 +329,12 @@ PRIVATE void vReadInputCommand()
 	   SendData();
 	   currentCommand = NO_COMMAND;
     }
-  else if (currentCommand == STATUS_COMMAND)
-    {
-	   vPrintNetworkStatus();
-	   currentCommand = NO_COMMAND;
-    }
   else if(currentCommand == RX_COMMAND){ //追加コード
 
 	  //SendData();
 	  DBG_vPrintf(TRUE, "5");
 	  currentCommand = NO_COMMAND;
   }
-}
-
-PRIVATE void vPrintNetworkStatus(void)
-{
-    void *pvNwk = ZPS_pvAplZdoGetNwkHandle();
-    ZPS_tsAplAib *psAib = ZPS_psAplAibGetAib();
-    uint64 u64ExtPanId = ZPS_u64NwkNibGetEpid(pvNwk);
-    uint16 u16ShortAddr = ZPS_u16AplZdoGetNwkAddr();
-    uint8 u8Channel = ZPS_u8AplZdoGetRadioChannel();
-    ZPS_tsNwkNib *psNib = ZPS_psNwkNibGetHandle(pvNwk);
-    uint8 u8NeighborCount = 0;
-
-    if ((psAib != NULL) && (psAib->u16ApsShortAddress != 0xFFFF))
-    {
-        u16ShortAddr = psAib->u16ApsShortAddress;
-    }
-
-    DBG_vPrintf(TRUE, "\r\n[NET] Status\r\n");
-    DBG_vPrintf(TRUE, "  Channel        : %d\r\n", u8Channel);
-    DBG_vPrintf(TRUE, "  Ext PAN ID     : %016llx\r\n", u64ExtPanId);
-    DBG_vPrintf(TRUE, "  Short Address  : 0x%04x\r\n", u16ShortAddr);
-
-    if (psNib != NULL)
-    {
-        DBG_vPrintf(TRUE, "  Neighbors:\r\n");
-        uint8 u8Index;
-        for (u8Index = 0; u8Index < psNib->sTblSize.u8NtActv; u8Index++)
-        {
-            ZPS_tsNwkActvNtEntry *psEntry = &psNib->sTbl.psNtActv[u8Index];
-
-            if ((psEntry->u16NwkAddr == 0xFFFF) || (psEntry->u16NwkAddr == 0x0000 && psEntry->u8LinkQuality == 0))
-            {
-                continue;
-            }
-
-            u8NeighborCount++;
-            DBG_vPrintf(TRUE, "    %02d) 0x%04x LQI=%3u Rel=%u Parent=0x%04x Depth=%u\r\n",
-                        u8NeighborCount,
-                        psEntry->u16NwkAddr,
-                        psEntry->u8LinkQuality,
-                        psEntry->u8Relationship,
-                        psEntry->u16DeviceAddr,
-                        psEntry->u8Depth);
-        }
-
-        if (u8NeighborCount == 0)
-        {
-            DBG_vPrintf(TRUE, "    (no active neighbors)\r\n");
-        }
-    }
-    else
-    {
-        DBG_vPrintf(TRUE, "  Neighbors: (NIB unavailable)\r\n");
-    }
-
-    DBG_vPrintf(TRUE, "  Active entries : %d\r\n", u8NeighborCount);
-    DBG_vPrintf(TRUE, "[NET] -----------\r\n");
 }
 
 PUBLIC void SendData(){//データを送信する関数
@@ -429,10 +363,11 @@ PUBLIC void SendData(){//データを送信する関数
 
 	ZPS_teStatus eStatus = ZPS_eAplAfUnicastDataReq(
 					hAPduInst,
+					0x1337,     // Profile ID
+					u16LastKnownNodeAddr,     // Destination short address
+					AN1229_ZBP_COORDINATOR_MYENDPOINT_ENDPOINT,     // Source endpoint
+					AN1229_ZBP_SLEEPINGENDDEVICE_MYENDPOINT_ENDPOINT,     // Destination endpoint
 					0x1234,     // Cluster ID
-				    AN1229_ZBP_SLEEPINGENDDEVICE_MYENDPOINT_ENDPOINT, // Source EP (SED)
-				    AN1229_ZBP_COORDINATOR_MYENDPOINT_ENDPOINT,       // Destination EP (Coordinator)
-					u16LastKnownNodeAddr,     // Destination short addres
 					eSecurityMode,
 					APP_TX_OPTION_ACK_REQUIRED,
 					&u8TransactionSequenceNumber
@@ -594,14 +529,6 @@ PRIVATE void vWaitForNetworkFormation(ZPS_tsAfEvent sStackEvent)
             DBG_vPrintf(TRACE_APP, "APP: Network Started\r\n");
             DBG_vPrintf(TRACE_APP, "APP: Channel - %d\r\n", ZPS_u8AplZdoGetRadioChannel());
 
-            {
-                 void *pvNwk = ZPS_pvAplZdoGetNwkHandle();
-                 uint64 u64ExtPanId = ZPS_u64NwkNibGetEpid(pvNwk);
-                 uint16 u16CoordShort = ZPS_u16AplZdoGetNwkAddr();
-                 DBG_vPrintf(TRACE_APP, "APP: Ext PAN ID - %016llx\r\n", u64ExtPanId);
-                 DBG_vPrintf(TRACE_APP, "APP: Coord Short Addr - 0x%04x\r\n", u16CoordShort);
-            }
-
             /* turn on joining */
             ZPS_eAplZdoPermitJoining(0xff);
 
@@ -691,31 +618,11 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
 
             case ZPS_EVENT_NWK_NEW_NODE_HAS_JOINED:
             {
-                uint16 u16JoinedAddr = sStackEvent.uEvent.sNwkJoinIndicationEvent.u16NwkAddr;
-                uint8 u8Lqi = sStackEvent.uEvent.sNwkJoinIndicationEvent.u8LinkQuality;
-                uint16 u16ParentAddr = 0xFFFF;
-                void *pvNwk = ZPS_pvAplZdoGetNwkHandle();
-                ZPS_tsNwkNib *psNib = ZPS_psNwkNibGetHandle(pvNwk);
 
-                if (psNib != NULL)
-                {
-                    uint8 u8Index;
-                    for (u8Index = 0; u8Index < psNib->sTblSize.u8NtActv; u8Index++)
-                    {
-                        ZPS_tsNwkActvNtEntry *psEntry = &psNib->sTbl.psNtActv[u8Index];
-                        if (psEntry->u16NwkAddr == u16JoinedAddr)
-                        {
-                            u16ParentAddr = psEntry->u16DeviceAddr;
-                            break;
-                        }
-                    }
-                }
-
-                DBG_vPrintf(TRACE_APP, "APP: New node joined 0x%04x LQI=%u Parent=0x%04x\r\n",
-                            u16JoinedAddr,
-                            u8Lqi,
-                            u16ParentAddr);
-                u16LastKnownNodeAddr = u16JoinedAddr;
+            	/*コメントアウト*/
+            	// DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: vCheckStackEvent: ZPS_EVENT_NEW_NODE_HAS_JOINED, NwkAddr=0x%04x\n",
+            	// sStackEvent.uEvent.sNwkJoinIndicationEvent.u16NwkAddr);
+            	u16LastKnownNodeAddr = sStackEvent.uEvent.sNwkJoinIndicationEvent.u16NwkAddr;
             }
             break;
 

@@ -59,7 +59,6 @@
 #include "config.h"
 #include "zps_gen.h"
 
-
 /****************************************************************************/
 /***        Macro Definitions                                             ***/
 /****************************************************************************/
@@ -218,12 +217,11 @@ PUBLIC void SendData(){ //データを送信する関数
 	ZPS_teStatus eStatus;
 	ZPS_teAplAfSecurityMode eSecurityMode = ZPS_E_APL_AF_UNSECURE;
 
-	eStatus = ZPS_eAplAfUnicastDataReq(
-							hAPduInst,
-							0x1234,     // Cluster ID
-						    AN1229_ZBP_SLEEPINGENDDEVICE_MYENDPOINT_ENDPOINT, /* Src EP (SED) */
-						    AN1229_ZBP_COORDINATOR_MYENDPOINT_ENDPOINT,       /* Dst EP (Coordinator) */
-						    COORDINATOR_ADR,                                  /* 宛先ショートアドレス */
+	eStatus = ZPS_eAplAfUnicastDataReq(hAPduInst,
+							0x1337,
+							0x1234,
+							AN1229_ZBP_SLEEPINGENDDEVICE_MYENDPOINT_ENDPOINT,
+							COORDINATOR_ADR,
 							eSecurityMode,
 							APP_TX_OPTION_ACK_REQUIRED,
 							&u8TransactionSequenceNumber);

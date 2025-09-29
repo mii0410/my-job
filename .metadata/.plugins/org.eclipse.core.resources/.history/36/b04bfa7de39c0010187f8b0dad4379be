@@ -22,7 +22,6 @@ typedef enum {
            ENDDEVICE_COMMAND,
            SEND_COMMAND,
            RESULTS_COMMAND,
-           STATUS_COMMAND,
            RX_COMMAND, /* UART 受信コマンド */
            ROUTE_RECOVER_COMMAND, /* ルート再探索要求 */
            ROUTE_STATUS_COMMAND /* ルート監視情報表示 */
