@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <jendefs.h>
 #define COMMAND_SIZE 64
 
 /* UART から受信したコマンド文字列 */
@@ -23,6 +24,8 @@ static uint8 cmd_index = 0;
 
 PUBLIC uint8_t RxByte[128];
 static int cmd = 0;
+
+static bool_t bCommandReady = FALSE;
 
 /*---------------------------------------------------------------------------
  * 名称: CMD
@@ -50,6 +53,7 @@ static void vResetCommandBuffer(void)
 {
     memset(command, 0, sizeof(command));
     cmd_index = 0;
+    bCommandReady = FALSE;
 }
 
 //PUBLIC uint8_t RxByte[128];
@@ -142,9 +146,17 @@ PUBLIC void vReadCharInterrupt(void)
     if (rxByte == '\r' || rxByte == '\n')
     {
         /* 改行を検出したらコマンドを確定する */
-        if (cmd_index < COMMAND_SIZE)
+    	if (cmd_index > 0U)
         {
-            command[cmd_index] = '\0';
+            if (cmd_index < COMMAND_SIZE)
+            {
+                command[cmd_index] = '\0';
+            }
+            bCommandReady = TRUE;
+        }
+        else
+        {
+            vResetCommandBuffer();
         }
         cmd_index = 0;
     }
@@ -170,9 +182,15 @@ PUBLIC commandType vReadCommand(void)
 {
     commandType type = NO_COMMAND;
 
-    if (strlen(command) == 0U)
+    if (!bCommandReady)
     {
         return NO_COMMAND;
+    }
+
+    if (strlen(command) == 0U)
+    {
+        vResetCommandBuffer();
+    	return NO_COMMAND;
     }
 
     if (strcmp(command, "send") == 0)
