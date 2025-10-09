@@ -60,7 +60,6 @@
 #include <zps_apl_zdo.h>
 #include <zps_nwk_nib.h>
 
-
 /****************************************************************************/
 /***        Macro Definitions                                             ***/
 /****************************************************************************/
@@ -95,8 +94,6 @@ PRIVATE void vClearLastKnownNodeAddr(void);
 PUBLIC void APP_vSetCommand(uint8 command);
 PUBLIC void SendData(void);
 PRIVATE void vPrintNetworkStatus(void);
-PRIVATE void vDrainQueueOnOverrun(tszQueue *psQueue, const char *pcQueueName);
-PRIVATE void vReleaseApduIfPresent(ZPS_tsAfEvent *psEvent);
 
 
 
@@ -258,7 +255,11 @@ PUBLIC void APP_vtaskCoordinator ( void )
     ZPS_tsAfEvent sStackEvent;
     sStackEvent.eType = ZPS_EVENT_NONE;
 
-    bool_t bEventReady = ZQ_bQueueReceive(&APP_msgZpsEvents, &sStackEvent);
+    /* check if any messages to collect */
+    if ( ZQ_bQueueReceive(&APP_msgZpsEvents, &sStackEvent) )
+    {
+        //DBG_vPrintf(TRACE_APP, "APP: No event to process\n"); コメントアウト
+    }
 
     if ( ZTIMER_eGetState(u8App_tmr1sec) == E_ZTIMER_STATE_EXPIRED )
     {
@@ -284,16 +285,16 @@ PUBLIC void APP_vtaskCoordinator ( void )
         }
         break;
 
-        case E_RUNNING:
-        {
-            if (bEventReady)
-            {
-                do
-                {
-                    vHandleStackEvent(sStackEvent);
-                } while (ZQ_bQueueReceive(&APP_msgZpsEvents, &sStackEvent));
-            }
+        case E_RUNNING:        {//////////ここに入ってないのかも(入ってた)///////////////
+        	//デバッグ用
+//        	static int loopCounter = 0;
+//            if (++loopCounter >= 1000) {
+//                DBG_vPrintf(TRUE, "OK\n");
+//                loopCounter = 0;
+//            }
+
         	vHandleStackEvent(sStackEvent);
+         	// vReadCommandFromUart(); // okayama
         	vReadInputCommand();/*キーボードから読み取った文字を判別する関数*/
         }
         break;
@@ -501,68 +502,6 @@ PRIVATE void vWaitForNetworkFormation(ZPS_tsAfEvent sStackEvent)
     }
 }
 
-PRIVATE void vDrainQueueOnOverrun(tszQueue *psQueue, const char *pcQueueName)
-{
-    /* This helper follows the recovery guidance from JN-UG-3113 by making sure the flooded queue is purged safely. */
-    if (NULL == psQueue)
-    {
-        return;
-    }
-
-    DBG_vPrintf(TRACE_APP, "APP: Clearing %s after queue overrun as recommended by JN-UG-3113\n", pcQueueName);
-
-    ZPS_tsAfEvent sPendingEvent;
-    while (ZQ_bQueueReceive(psQueue, &sPendingEvent))
-    {
-        vReleaseApduIfPresent(&sPendingEvent);
-    }
-}
-
-PRIVATE void vReleaseApduIfPresent(ZPS_tsAfEvent *psEvent)
-{
-    /* Ensure that any APDU associated with a discarded event is released to avoid memory pressure. */
-    if (NULL == psEvent)
-    {
-        return;
-    }
-
-    switch (psEvent->eType)
-    {
-        case ZPS_EVENT_APS_DATA_INDICATION:
-        {
-            if (psEvent->uEvent.sApsDataIndEvent.hAPduInst)
-            {
-                PDUM_eAPduFreeAPduInstance(psEvent->uEvent.sApsDataIndEvent.hAPduInst);
-            }
-        }
-        break;
-
-        case ZPS_EVENT_APS_INTERPAN_DATA_INDICATION:
-        {
-            if (psEvent->uEvent.sApsInterPanDataIndEvent.hAPduInst)
-            {
-                PDUM_eAPduFreeAPduInstance(psEvent->uEvent.sApsInterPanDataIndEvent.hAPduInst);
-            }
-        }
-        break;
-
-        case ZPS_EVENT_APS_ZGP_DATA_INDICATION:
-        {
-            if (psEvent->uEvent.sApsZgpDataIndEvent.hAPduInst)
-            {
-                PDUM_eAPduFreeAPduInstance(psEvent->uEvent.sApsZgpDataIndEvent.hAPduInst);
-            }
-        }
-        break;
-
-        default:
-        {
-            /* Nothing to free for other event types. */
-        }
-        break;
-    }
-}
-
 /****************************************************************************
  *
  * NAME: vHandleStackEvent
@@ -673,31 +612,30 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
 
             case ZPS_EVENT_ERROR:
             {
-            	ZPS_teStatus eError = sStackEvent.uEvent.sAfErrorEvent.eError;
             	DBG_vPrintf(TRACE_APP, "APP: Monitor Sensors ZPS_EVENT_ERROR\n");
-            	DBG_vPrintf(TRACE_APP, "    Error Code %d\n", eError);
+                DBG_vPrintf(TRACE_APP, "    Error Code %d\n", sStackEvent.uEvent.sAfErrorEvent.eError);
 
-            	if (ZPS_ERROR_OS_MESSAGE_QUEUE_OVERRUN == eError)
-            	{
-            		void *pvMessage = sStackEvent.uEvent.sAfErrorEvent.uErrorData.sAfErrorOsMessageOverrun.hMessage;
-            		DBG_vPrintf(TRACE_APP, "    Queue handle %p\n", pvMessage);
-            		/* Manual JN-UG-3113 asks us to drain the impacted queue so that the stack can resume safely. */
-            		if (pvMessage == (void*)&APP_msgZpsEvents)
-            		{
-            			vDrainQueueOnOverrun(&APP_msgZpsEvents, "APP_msgZpsEvents");
-            		}
-            		else if (pvMessage == (void*)&APP_msgMyEndPointEvents)
-            		{
-            		    vDrainQueueOnOverrun(&APP_msgMyEndPointEvents, "APP_msgMyEndPointEvents");
-            		}
-            		else
-            		{
-            		    DBG_vPrintf(TRACE_APP, "    Queue overrun reported on unknown handle.\n");
-            		}
-            	}
+                if (ZPS_ERROR_OS_MESSAGE_QUEUE_OVERRUN == sStackEvent.uEvent.sAfErrorEvent.eError)
+                {
+                	DBG_vPrintf(TRACE_APP, "    Queue handle %d\n",sStackEvent.uEvent.sAfErrorEvent.uErrorData.sAfErrorOsMessageOverrun.hMessage);
+                }
             }
             break;
 
+            case ZPS_EVENT_NWK_POLL_CONFIRM:
+            {
+                DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_NEW_POLL_COMPLETE, status = %d\n",
+                            sStackEvent.uEvent.sNwkPollConfirmEvent.u8Status );
+            }
+            break;
+
+            case ZPS_EVENT_NWK_JOINED_AS_ROUTER:
+            case ZPS_EVENT_NWK_JOINED_AS_ENDDEVICE:
+            case ZPS_EVENT_NWK_STARTED:
+            case ZPS_EVENT_NWK_FAILED_TO_START:
+            case ZPS_EVENT_NWK_FAILED_TO_JOIN:
+            case ZPS_EVENT_NWK_DISCOVERY_COMPLETE:
+                /* Deliberate fall through */
             default:
             {
                 DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: unhandled event %d\n", sStackEvent.eType);

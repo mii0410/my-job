@@ -93,8 +93,6 @@ PRIVATE void vStartup(void);
 PRIVATE void vWaitForNetworkDiscovery(ZPS_tsAfEvent sStackEvent);
 PRIVATE void vWaitForNetworkJoin(ZPS_tsAfEvent sStackEvent);
 PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent);
-PRIVATE void vDrainQueueOnOverrun(tszQueue *psQueue, const char *pcQueueName);
-PRIVATE void vReleaseApduIfPresent(ZPS_tsAfEvent *psEvent);
 PRIVATE void vClearDiscNT(void);
 PRIVATE bool_t bLoadDeviceState(void);
 
@@ -129,15 +127,13 @@ PUBLIC uint8_t count2 = 1;
 
 PUBLIC void  APP_vSetCommand(uint8 command)
 {
-	switch (command)
+	switch(command)
 	{
-	    case 2:
-	        DBG_vPrintf(TRUE, "inputcommand : %d \n", command);
-	        break;
-
-	    default:
-	        break;
-	}
+	case 2:
+	{
+		DBG_vPrintf(TRUE, "inputcommand : %d \n", command);
+		break;
+	}}
 }
 
 PRIVATE void vReadInputCommand()
@@ -379,8 +375,7 @@ PUBLIC void APP_vtaskSleepingEndDevice (void)
 
 
 	sStackEvent.eType = ZPS_EVENT_NONE;
-    bool_t bEventReady = ZQ_bQueueReceive(&APP_msgZpsEvents, &sStackEvent);
-    if (bEventReady)
+	if (ZQ_bQueueReceive (&APP_msgZpsEvents, &sStackEvent ) )
 	{
 		DBG_vPrintf(TRACE_APP, "APP: No event to process!\n");
 	}
@@ -407,15 +402,9 @@ PUBLIC void APP_vtaskSleepingEndDevice (void)
 
 	case E_RUNNING:
 	{
-		/* Process every pending stack event to avoid queue overruns as advised by JN-UG-3113. */
-		if (bEventReady)
-		{
-			do
-			{
-				vHandleStackEvent(sStackEvent);
-			} while (ZQ_bQueueReceive(&APP_msgZpsEvents, &sStackEvent));
-		}
-		vReadInputCommand();
+		vHandleStackEvent(sStackEvent);
+		vReadInputCommand(); //’Ç‰ÁŠÖ”
+
 	}
 	break;
 
@@ -626,68 +615,6 @@ PRIVATE void vWaitForNetworkJoin(ZPS_tsAfEvent sStackEvent)
 	}
 }
 
-PRIVATE void vDrainQueueOnOverrun(tszQueue *psQueue, const char *pcQueueName)
-{
-    /* Follow JN-UG-3113 recovery guidance by emptying overrun queues safely. */
-    if (NULL == psQueue)
-    {
-        return;
-    }
-
-    DBG_vPrintf(TRACE_APP, "APP: Clearing %s after queue overrun as recommended by JN-UG-3113\n", pcQueueName);
-
-    ZPS_tsAfEvent sPendingEvent;
-    while (ZQ_bQueueReceive(psQueue, &sPendingEvent))
-    {
-        vReleaseApduIfPresent(&sPendingEvent);
-    }
-}
-
-PRIVATE void vReleaseApduIfPresent(ZPS_tsAfEvent *psEvent)
-{
-    /* Ensure any APDU linked to a discarded event is returned to the pool. */
-    if (NULL == psEvent)
-    {
-        return;
-    }
-
-    switch (psEvent->eType)
-    {
-        case ZPS_EVENT_APS_DATA_INDICATION:
-        {
-            if (psEvent->uEvent.sApsDataIndEvent.hAPduInst)
-            {
-                PDUM_eAPduFreeAPduInstance(psEvent->uEvent.sApsDataIndEvent.hAPduInst);
-            }
-        }
-        break;
-
-        case ZPS_EVENT_APS_INTERPAN_DATA_INDICATION:
-        {
-            if (psEvent->uEvent.sApsInterPanDataIndEvent.hAPduInst)
-            {
-                PDUM_eAPduFreeAPduInstance(psEvent->uEvent.sApsInterPanDataIndEvent.hAPduInst);
-            }
-        }
-        break;
-
-        case ZPS_EVENT_APS_ZGP_DATA_INDICATION:
-        {
-            if (psEvent->uEvent.sApsZgpDataIndEvent.hAPduInst)
-            {
-                PDUM_eAPduFreeAPduInstance(psEvent->uEvent.sApsZgpDataIndEvent.hAPduInst);
-            }
-        }
-        break;
-
-        default:
-        {
-            /* Nothing to release for other event types. */
-        }
-        break;
-    }
-}
-
 /****************************************************************************
  *
  * NAME: vHandleStackEvent
@@ -771,27 +698,12 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
 
 		case ZPS_EVENT_ERROR:
 		{
-        	ZPS_teStatus eError = sStackEvent.uEvent.sAfErrorEvent.eError;
 			DBG_vPrintf(TRACE_APP, "APP: Monitor Sensors ZPS_EVENT_ERROR\n");
-			DBG_vPrintf(TRACE_APP, "    Error Code %d\n", eError);
+			DBG_vPrintf(TRACE_APP, "    Error Code %d\n", sStackEvent.uEvent.sAfErrorEvent.eError);
 
-			if (ZPS_ERROR_OS_MESSAGE_QUEUE_OVERRUN == eError)
+			if (ZPS_ERROR_OS_MESSAGE_QUEUE_OVERRUN == sStackEvent.uEvent.sAfErrorEvent.eError)
 			{
-				void *pvMessage = sStackEvent.uEvent.sAfErrorEvent.uErrorData.sAfErrorOsMessageOverrun.hMessage;
-				DBG_vPrintf(TRACE_APP, "    Queue handle %p\n", pvMessage);
-				/* Manual JN-UG-3113 asks us to drain the impacted queue so that the stack can resume safely. */
-				if (pvMessage == (void*)&APP_msgZpsEvents)
-				{
-					vDrainQueueOnOverrun(&APP_msgZpsEvents, "APP_msgZpsEvents");
-				}
-				else if (pvMessage == (void*)&APP_msgMyEndPointEvents)
-				{
-					vDrainQueueOnOverrun(&APP_msgMyEndPointEvents, "APP_msgMyEndPointEvents");
-				}
-				else
-				{
-					DBG_vPrintf(TRACE_APP, "    Queue overrun reported on unknown handle.\n");
-				}
+				DBG_vPrintf(TRACE_APP, "    Queue handle %d\n", sStackEvent.uEvent.sAfErrorEvent.uErrorData.sAfErrorOsMessageOverrun.hMessage);
 			}
 		}
 		break;
