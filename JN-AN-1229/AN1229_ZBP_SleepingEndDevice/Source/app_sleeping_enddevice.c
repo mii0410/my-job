@@ -435,6 +435,7 @@ PRIVATE void vStartup(void)
 	PRIVATE uint8 u8Channel = 11;
 
 	vClearDiscNT();
+	ZPS_eAplAibSetApsUseExtendedPanId(0);
 	/* Set channel to scan and start stack */
 	ZPS_psAplAibGetAib()->pau32ApsChannelMask[0] = 1 << u8Channel;
 	/* Start the network stack as a end device */

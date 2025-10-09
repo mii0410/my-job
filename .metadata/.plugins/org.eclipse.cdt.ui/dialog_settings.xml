@@ -6,6 +6,12 @@
 		<item value="227191" key="searchFlags"/>
 		<item value="false" key="caseSensitive"/>
 		<list key="previousPatterns">
+			<item value="ZPS_EVENT_NEW_POLL_COMPLETE"/>
+			<item value="status"/>
+			<item value="APP_vInitialiseCoordinator"/>
+			<item value="senddata"/>
+			<item value="command"/>
+			<item value="ZPS_EVENT_NWK_STATUS_INDICATION"/>
 			<item value="currentCommand"/>
 			<item value="ZPS_u64AplZdoGetIeeeAddr"/>
 			<item value="EUI64"/>

@@ -147,8 +147,8 @@ PUBLIC void vAppMain(void)
 
     	     DBG_vUartInit (DBG_E_UART_0, DBG_E_UART_BAUD_RATE_115200);
     	     vAHI_UartEnable(DBG_E_UART_0); // okayama
-    	     vAHI_Uart0RegisterCallback(&vReadCharInterrupt); // terminal‚©‚ç‚Ì•¶Žš“ü—Í
-    	     vAHI_Uart1RegisterCallback(&vReadCharInterrupt);
+    	     vAHI_Uart0RegisterCallback(vUartCallback); // terminal‚©‚ç‚Ì•¶Žš“ü—Í
+    	     vAHI_Uart1RegisterCallback(vUartCallback);
     	     vAHI_UartSetInterrupt(DBG_E_UART_0,
     	      	    		              FALSE,
     	       	    		              FALSE,                    // Enable Rx line status

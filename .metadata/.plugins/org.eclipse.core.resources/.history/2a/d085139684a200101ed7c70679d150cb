@@ -435,6 +435,13 @@ PRIVATE void vStartup(void)
 	PRIVATE uint8 u8Channel = 11;
 
 	vClearDiscNT();
+	/* Allow joining to a newly formed network by clearing the stored
+	 * extended PAN ID before each discovery attempt.  Without this the
+	 * end device keeps using the previous extended PAN ID saved in the
+	 * AIB, so when the coordinator forms a fresh network the join request
+	 * is rejected with status 0xca (202).
+	 */
+	ZPS_eAplAibSetApsUseExtendedPanId(0);
 	/* Set channel to scan and start stack */
 	ZPS_psAplAibGetAib()->pau32ApsChannelMask[0] = 1 << u8Channel;
 	/* Start the network stack as a end device */
@@ -761,7 +768,7 @@ PUBLIC void vClearDiscNT(void)
 	void * thisNet = ZPS_pvAplZdoGetNwkHandle();
 	thisNib = ZPS_psNwkNibGetHandle(thisNet);
 
-	memset(thisNib->sTbl.psNtDisc, 0, sizeof(ZPS_tsNwkDiscNtEntry) * thisNib->sTblSize.u16NtDisc);
+	memset(thisNib->sTbl.psNtDisc, 0, sizeof(ZPS_tsNwkDiscNtEntry) * thisNib->sTblSize.u8NtDisc);
 }
 
 /****************************************************************************/

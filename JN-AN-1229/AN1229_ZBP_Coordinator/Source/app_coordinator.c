@@ -89,8 +89,10 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent);
 
 //追加
 PRIVATE void vReadInputCommand();
+PRIVATE void vUpdateLastKnownNodeAddr(uint16 u16ShortAddr);
+PRIVATE void vClearLastKnownNodeAddr(void);
 PUBLIC void APP_vSetCommand(uint8 command);
-PUBLIC void SendData();
+PUBLIC void SendData(void);
 PRIVATE void vPrintNetworkStatus(void);
 
 
@@ -124,17 +126,6 @@ PUBLIC uint8 au8DefaultTCLinkKey[16] = {0x5a, 0x69, 0x67, 0x42, 0x65, 0x65, 0x41
 PRIVATE uint16 u16LastKnownNodeAddr = 0xFFFF;
 //追加関数
 
-// 元コードAPP_vSetCommandが怪しいので修正
-//{
-// switch(command)
-// {
-// case 2:
-// {
-//	 DBG_vPrintf(TRUE, "inputcommand : %d \n", command);
-// }
-//
-// }
-//}
 PUBLIC void APP_vSetCommand(uint8 command)
 {
     switch(command)
@@ -364,7 +355,7 @@ PRIVATE void vPrintNetworkStatus(void)
     DBG_vPrintf(TRUE, "[NET] -----------\r\n");
 }
 
-PUBLIC void SendData(){//データを送信する関数
+PUBLIC void SendData(void){//データを送信する関数
 	uint8 u8TransactionSequenceNumber;
 	PDUM_thAPduInstance hAPduInst;
 
@@ -374,27 +365,20 @@ PUBLIC void SendData(){//データを送信する関数
         return;
     }
 
-//    // ここでペイロードを書き込む（例: 2バイトのダミーデータ）
-//    uint16 u16Offset = 0;
-//    uint8 payload[2] = { 0xBE, 0xEF };
-//    u16Offset += PDUM_u16APduInstanceWriteNBO(hAPduInst, u16Offset, "a\x02", payload);
-//    PDUM_eAPduInstanceSetPayloadSize(hAPduInst, u16Offset);
-
-
-    ZPS_teAplAfSecurityMode eSecurityMode = ZPS_E_APL_AF_UNSECURE;  // 必要なら変更
     if (0xFFFF == u16LastKnownNodeAddr) {
     		DBG_vPrintf(TRUE, "APP: No known destination for unicast\n");
     		PDUM_eAPduFreeAPduInstance(hAPduInst);
     		return;
     }
 
+    DBG_vPrintf(TRUE, "APP: Sending unicast to 0x%04x\n", u16LastKnownNodeAddr);
 	ZPS_teStatus eStatus = ZPS_eAplAfUnicastDataReq(
 					hAPduInst,
 					0x1234,     // Cluster ID
 				    AN1229_ZBP_SLEEPINGENDDEVICE_MYENDPOINT_ENDPOINT, // Source EP (SED)
 				    AN1229_ZBP_COORDINATOR_MYENDPOINT_ENDPOINT,       // Destination EP (Coordinator)
 					u16LastKnownNodeAddr,     // Destination short addres
-					eSecurityMode,
+					ZPS_E_APL_AF_UNSECURE,
 					APP_TX_OPTION_ACK_REQUIRED,
 					&u8TransactionSequenceNumber
 	);
@@ -407,94 +391,33 @@ PUBLIC void SendData(){//データを送信する関数
     } else {
     	DBG_vPrintf(TRUE, "Unicast OK (tsn=%d)\n", u8TransactionSequenceNumber);
     }
-//    //ユニキャスト
-//    uint64 unicastMacAddrCOM4 = 0x001bc50122016bc6;
-//    ZPS_teStatus eStatus = ZPS_eAplAfUnicastIeeeDataReq(
-//            hAPduInst,
-//            0x1337,     // Profile ID（アプリ）
-//            0x1234,     // Cluster ID（EP1のクラスタ）
-//            0x01,       // Dst EP
-//            unicastMacAddrCOM4,		// COM4addr
-//            eSecurityMode,
-//            0,          // Tx options（必要ならAPS ACK等のビットを設定）
-//            &u8TransactionSequenceNumber
-//    );
-
-//	uint8 u8TransactionSequenceNumber;
-//	ZPS_tsNwkNib * thisNib;
-//	thisNib = ZPS_psNwkNibGetHandle(ZPS_pvAplZdoGetNwkHandle());
-//	PDUM_thAPduInstance hAPduInst;
-//	hAPduInst = PDUM_hAPduAllocateAPduInstance(apduZDP);
-//
-//	uint16 u16Offset = 0;
-//	uint16 i;
-//
-//	if (hAPduInst == PDUM_INVALID_HANDLE)
-//	{
-//		DBG_vPrintf(TRUE, "PDUM_INVALID_HANDLE\n");
-//		return;
-//	}
-//
-//	ZPS_teStatus eStatus;
-//	ZPS_teAplAfSecurityMode  eSecurityMode = (ZPS_E_APL_AF_UNSECURE);
-//
-//	// ブロードキャスト通信（今後ほかの通信方式を選択できるようにするならunicast通信部分を修正してswitch文にしようかokayama）
-//	eStatus = ZPS_eAplAfBroadcastDataReq(
-//			hAPduInst,
-//			0x1337,
-//			0x01,
-//			0x01,
-//			ZPS_E_BROADCAST_ALL,  //Dest: All nodes
-//			eSecurityMode,
-//			0,
-//			&u8TransactionSequenceNumber
-//			);
-//    DBG_vPrintf(TRUE, "Send status: %d\n", eStatus);
-//    PDUM_eAPduFreeAPduInstance(hAPduInst);
-
-		//以下体裁が崩れていたので修正の必要がある可能性大(okayama)
-
-//		uint64 unicastMacAddrCOM6  = 0x001BC50122016BDD;
-//		eStatus=ZPS_eAplAfUnicastIeeeDataReq( //ユニキャスト通信
-//				hAPduInst,
-//				0x1337,
-//				0x01,
-//				0x01,
-//				unicastMacAddrCOM6,  //Dest: 64bit-COM6のEnddevice1
-//				eSecurityMode,
-//				0,
-//				&u8TransactionSequenceNumber
-//		);
-//
-//		uint64 unicastMacAddrCOM8  = 0x001BC50122016C13;
-//		eStatus=ZPS_eAplAfUnicastIeeeDataReq( //ユニキャスト通信
-//				hAPduInst,
-//				0x1337,
-//				x01,
-//				0x01,
-//				nicastMacAddrCOM8,  //Dest: 64bit-COM8のRouter1
-//				eSecurityMode,
-//				0,
-//				&u8TransactionSequenceNumber
-//				);
-//
-//		uint64 unicastMacAddrCOM9  = 0x001BC501220154B2;
-//		eStatus=ZPS_eAplAfUnicastIeeeDataReq( //ユニキャスト通信
-//				hAPduInst,
-//				0x1337,
-//				0x01,
-//				0x01,
-//				unicastMacAddrCOM9,  //Dest: 64bit-COM9のEnddevice2
-//				eSecurityMode,
-//				0,
-//				&u8TransactionSequenceNumber
-//				);
-
-	//currentCommand = NO_COMMAND;
 }
 
+PRIVATE void vUpdateLastKnownNodeAddr(uint16 u16ShortAddr)
+{
+    if (0xFFFF == u16ShortAddr)
+    {
+        DBG_vPrintf(TRUE, "APP: Ignoring invalid short address update 0x%04x\n", u16ShortAddr);
+        return;
+    }
 
+    if (u16LastKnownNodeAddr != u16ShortAddr)
+    {
+        DBG_vPrintf(TRUE, "APP: Updating known short address 0x%04x -> 0x%04x\n",
+                    u16LastKnownNodeAddr,
+                    u16ShortAddr);
+        u16LastKnownNodeAddr = u16ShortAddr;
+    }
+}
 
+PRIVATE void vClearLastKnownNodeAddr(void)
+{
+    if (0xFFFF != u16LastKnownNodeAddr)
+    {
+        DBG_vPrintf(TRUE, "APP: Clearing known short address (was 0x%04x)\n", u16LastKnownNodeAddr);
+    }
+    u16LastKnownNodeAddr = 0xFFFF;
+}
 
 
 
@@ -629,7 +552,7 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
                //DBG_vPrintf(TRACE_APP, "        EndPoint:%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u8DstEndpoint);
 
                 /* free the application protocol data unit (APDU) once it has been dealt with */
-                u16LastKnownNodeAddr = sStackEvent.uEvent.sApsDataIndEvent.uSrcAddress.u16Addr;
+            	vUpdateLastKnownNodeAddr(sStackEvent.uEvent.sApsDataIndEvent.uSrcAddress.u16Addr);
                 PDUM_eAPduFreeAPduInstance(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
             }
             break;
@@ -657,14 +580,14 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
             	 DBG_vPrintf(TRACE_APP,
             			 "APP: New node joined 0x%04x\r\n",
             	         u16JoinedAddr);
-            	 u16LastKnownNodeAddr = u16JoinedAddr;
+            	 vUpdateLastKnownNodeAddr(u16JoinedAddr);
             }
             break;
 
             case ZPS_EVENT_NWK_LEAVE_INDICATION:
             {
             	DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_LEAVE_INDICATION\n");
-                u16LastKnownNodeAddr = 0xFFFF;
+            	vClearLastKnownNodeAddr();
             }
             break;
 
