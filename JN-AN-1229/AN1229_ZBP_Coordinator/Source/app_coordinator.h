@@ -39,6 +39,8 @@
 /***        Macro Definitions                                             ***/
 /****************************************************************************/
 #include "ZQueue.h"
+#include "jendefs.h"
+#include "zps_apl_af.h"
 /****************************************************************************/
 /***        Type Definitions                                              ***/
 /****************************************************************************/
@@ -50,7 +52,6 @@ PUBLIC void APP_vInitialiseCoordinator(void);
 PUBLIC void APP_vtaskCoordinator (void);
 PUBLIC void APP_vSetCommand(uint8 command);
 PUBLIC void SendData();
-//PRIVATE int hexToDecimal();//(égÇ¡ÇƒÇ»Ç¢ÅH)
 /****************************************************************************/
 /***        External Variables                                            ***/
 /****************************************************************************/

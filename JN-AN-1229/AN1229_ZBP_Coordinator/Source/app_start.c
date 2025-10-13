@@ -43,16 +43,13 @@
 #include <app_pdm.h>
 #include "app_common.h"
 #include <app_coordinator.h>
-#include <zps_nwk_pub.h>
 #include "pdum_gen.h"
 #include "ZQueue.h"
 #include "portmacro.h"
 #include "zps_apl_af.h"
 #include "mac_vs_sap.h"
 #include "AppHardwareApi.h"
-#include "dbg.h"
 #include "ZTimer.h"
-
 #include "Utils.h"
 
 /****************************************************************************/
@@ -71,8 +68,8 @@
 #define TIMER_QUEUE_SIZE             8
 #define MLME_QUEQUE_SIZE             4
 #define MCPS_QUEUE_SIZE             24
-#define ZPS_QUEUE_SIZE               2
-#define APP_QUEUE_SIZE               2
+#define ZPS_QUEUE_SIZE               8
+#define APP_QUEUE_SIZE               8
 #define MCPS_DCFM_QUEUE_SIZE         8
 
 #if JENNIC_CHIP_FAMILY == JN517x
@@ -92,33 +89,32 @@ PRIVATE void vUartCallback(uint32 u32Device, uint32 u32ItemBitmap);
 /****************************************************************************/
 
 PUBLIC uint8 u8App_tmr1sec;
-/****************************************************************************/
-/***        Local Variables                                               ***/
-/****************************************************************************/
+
+
+/*local variables*/
+PRIVATE MAC_tsMcpsVsCfmData asMacMcpsDcfm[MCPS_DCFM_QUEUE_SIZE];
+PRIVATE zps_tsTimeEvent 	asTimeEvent[TIMER_QUEUE_SIZE];
+PRIVATE MAC_tsMcpsVsDcfmInd asMacMcpsDcfmInd[MCPS_QUEUE_SIZE];
+PRIVATE MAC_tsMlmeVsDcfmInd asMacMlmeVsDcfmInd[MLME_QUEQUE_SIZE];
+PRIVATE ZPS_tsAfEvent 		asAppEvents[APP_QUEUE_SIZE];
+PRIVATE ZPS_tsAfEvent 		asStackEvents[ZPS_QUEUE_SIZE];
+PRIVATE ZTIMER_tsTimer 		asTimers[4];
+
 PRIVATE void vUartCallback(uint32 u32Device, uint32 u32ItemBitmap)
 {
     (void)u32Device;
     (void)u32ItemBitmap;
     vReadCharInterrupt();
 }
+/****************************************************************************/
+/***        Local Variables                                               ***/
+/****************************************************************************/
 
-/*local variables*/
-PRIVATE MAC_tsMcpsVsCfmData asMacMcpsDcfm[MCPS_DCFM_QUEUE_SIZE];
-PRIVATE zps_tsTimeEvent asTimeEvent[TIMER_QUEUE_SIZE];
-PRIVATE MAC_tsMcpsVsDcfmInd asMacMcpsDcfmInd[MCPS_QUEUE_SIZE];
-PRIVATE MAC_tsMlmeVsDcfmInd  asMacMlmeVsDcfmInd[MLME_QUEQUE_SIZE];
-PRIVATE ZPS_tsAfEvent asAppEvents[APP_QUEUE_SIZE];
-PRIVATE ZPS_tsAfEvent asStackEvents[ZPS_QUEUE_SIZE];
-
-
-PRIVATE ZTIMER_tsTimer asTimers[4];
 
 /****************************************************************************/
 /***        Exported Functions                                            ***/
 /****************************************************************************/
-extern void vAHI_WatchdogRestart(void);
-extern void PWRM_vManagePower(void);
-extern void zps_taskZPS(void);
+PUBLIC void zps_taskZPS(void);
 
 /*****************************************************************************
  *
@@ -143,22 +139,18 @@ PUBLIC void vAppMain(void)
      */
     //DBG_vUartInit(DBG_E_UART_0, DBG_E_UART_BAUD_RATE_115200);
 
-    /*í«â¡ÉRÅ[Éh*/
+    // èâä˙âª
+    DBG_vUartInit (DBG_E_UART_0, DBG_E_UART_BAUD_RATE_115200);
+    vAHI_UartEnable(DBG_E_UART_0);
+    vAHI_Uart0RegisterCallback(vUartCallback); // terminalÇ©ÇÁÇÃï∂éöì¸óÕ
+    vAHI_UartSetInterrupt(DBG_E_UART_0,
+    					  FALSE,
+    					  FALSE,                    // Enable Rx line status
+    					  FALSE,                    // Enable Tx FIFO empty
+    					  TRUE,                     // Enable Rx Data
+    					  E_AHI_UART_FIFO_LEVEL_1); // Number of bits to wait in the Rx FIFO before triggering the interrupt (1,8,14)
 
-    	     DBG_vUartInit (DBG_E_UART_0, DBG_E_UART_BAUD_RATE_115200);
-    	     vAHI_UartEnable(DBG_E_UART_0); // okayama
-    	     vAHI_Uart0RegisterCallback(vUartCallback); // terminalÇ©ÇÁÇÃï∂éöì¸óÕ
-//    	     vAHI_Uart1RegisterCallback(vUartCallback);
-    	     vAHI_UartSetInterrupt(DBG_E_UART_0,
-    	      	    		              FALSE,
-    	       	    		              FALSE,                    // Enable Rx line status
-    	       	    		              FALSE,                    // Enable Tx FIFO empty
-    	        	    		          TRUE,                     // Enable Rx Data
-    	          	    		          E_AHI_UART_FIFO_LEVEL_1); // Number of bits to wait in the Rx FIFO before triggering the interrupt (1,8,14)
-
-
-
-    DBG_vPrintf(TRACE_APP, "\n\nAPP: Power Up\n");
+    DBG_vPrintf(TRACE_APP, "\nAPP: Power Up\n");
 
 #if JENNIC_CHIP_FAMILY==JN516x
     /*
@@ -173,14 +165,10 @@ PUBLIC void vAppMain(void)
      */
     if (bAHI_WatchdogResetEvent())
     {
-        DBG_vPrintf(TRACE_APP, "APP: Watchdog timer has reset device!\n");
+        DBG_vPrintf(TRACE_APP, "APP: Watchdog reset\n");
         vAHI_WatchdogStop();
         while (1);
     }
-    /* Define HIGH_POWER_ENABLE to enable high power module */
-    #ifdef HIGH_POWER_ENABLE
-        vAHI_HighPowerModuleEnable(TRUE, TRUE);
-    #endif
 
     /* Initialise various components */
     vInitialiseApp();
@@ -246,7 +234,6 @@ PRIVATE void vInitialiseApp(void)
     APP_vInitialiseCoordinator();
 
     app_vMainloop();
-
 }
 
 /****************************************************************************
@@ -262,6 +249,7 @@ PRIVATE void vInitialiseApp(void)
  ****************************************************************************/
 PRIVATE void vfExtendedStatusCallBack (ZPS_teExtendedStatus eExtendedStatus)
 {
+	// Ç±ÇÍÇ™ïpî≠Ç∑ÇÈèÍçáÇÕí≤êÆ
 	DBG_vPrintf(TRACE_APP, "ERROR: Extended status %x\n", eExtendedStatus);
 }
 
@@ -304,7 +292,6 @@ PUBLIC void APP_vSetUpHardware(void)
  ****************************************************************************/
 PUBLIC void APP_vInitResources(void)
 {
-
     /* Initialise the Z timer module */
     ZTIMER_eInit(asTimers, sizeof(asTimers) / sizeof(ZTIMER_tsTimer));
     /* Create Z timers */
@@ -316,8 +303,6 @@ PUBLIC void APP_vInitResources(void)
     ZQ_vQueueCreate(&APP_msgZpsEvents,           APP_QUEUE_SIZE,        sizeof(ZPS_tsAfEvent),       (uint8*)asAppEvents);
     ZQ_vQueueCreate(&APP_msgMyEndPointEvents,    ZPS_QUEUE_SIZE,        sizeof(ZPS_tsAfEvent),       (uint8*)asStackEvents);
 	ZQ_vQueueCreate(&zps_msgMcpsDcfm,            MCPS_DCFM_QUEUE_SIZE,  sizeof(MAC_tsMcpsVsCfmData),(uint8*)asMacMcpsDcfm);
-
-
 }
 
 /****************************************************************************
@@ -340,13 +325,6 @@ PUBLIC void app_vMainloop(void)
         APP_vtaskCoordinator();
         APP_vtaskMyEndPoint();
 
- //Ç±Ç±Ç©ÇÁí«â¡
-        uint8 cmd = vReadCommand();
-		 if(cmd != 0){
-           APP_vSetCommand(cmd);
-		}
-
-//Ç±Ç±Ç‹Ç≈
         ZTIMER_vTask();
         /* kick the watchdog timer */
         vAHI_WatchdogRestart();

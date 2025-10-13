@@ -25,35 +25,35 @@ app_start.o: ../../AN1229_ZBP_Coordinator/Source/app_start.c \
  ../../../../sdk/JN-SW-4170/Components/ZigbeeCommon/Include/ZQueue.h \
  ../../../../sdk/JN-SW-4170/Components/ZigbeeCommon/Include/ZTimer.h \
  ../../AN1229_ZBP_Coordinator/Source/app_coordinator.h \
- ../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_pub.h \
- ../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_config.h \
- ../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_sap.h \
- ../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_config.h \
+ ../../../../sdk/JN-SW-4170/Components/ZPSAPL/Include/zps_apl_af.h \
+ ../../../../sdk/JN-SW-4170/Components/ZPSMAC/Include/mac_vs_sap.h \
  ../../../../sdk/JN-SW-4170/Components/PDUM/Include/pdum_nwk.h \
  ../../../../sdk/JN-SW-4170/Components/PDUM/Include/pdum_common.h \
- ../../AN1229_ZBP_Coordinator/Source/pdum_gen.h \
+ ../../../../sdk/JN-SW-4170/Components/TimerServer/Include/tsv_pub.h \
+ ../../../../sdk/JN-SW-4170/Components/ZPSMAC/Include/zps_mac_if_table.h \
+ ../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_sap.h \
+ ../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_config.h \
  ../../../../sdk/JN-SW-4170/Components/PDUM/Include/pdum_apl.h \
  ../../../../sdk/JN-SW-4170/Components/PDUM/Include/pdum_common.h \
+ ../../../../sdk/JN-SW-4170/Components/ZPSAPL/Include/zps_apl.h \
+ ../../../../sdk/JN-SW-4170/Components/ZPSAPL/Include/zps_apl_aps.h \
+ ../../../../sdk/JN-SW-4170/Components/ZPSAPL/Include/zps_apl_zdo.h \
+ ../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_nib.h \
+ ../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_config.h \
+ ../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_sap.h \
+ ../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_slist.h \
+ ../../../../sdk/JN-SW-4170/Components/ZPSTSV/Include/zps_tsv.h \
+ ../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_sec.h \
+ ../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_pub.h \
+ ../../../../sdk/JN-SW-4170/Components/ZPSAPL/Include/zps_apl_zdp.h \
+ ../../../../sdk/JN-SW-4170/Components/ZPSAPL/Include/zps_apl_aib.h \
+ ../../../../sdk/JN-SW-4170/Components/AES_SW/Include/aessw_ccm.h \
+ ../../AN1229_ZBP_Coordinator/Source/pdum_gen.h \
  ../../../../sdk/JN-SW-4170/Components/ZigbeeCommon/Include/portmacro.h \
  ../../../../sdk/JN-SW-4170/Components/ZigbeeCommon/Include/portmacro_JN516x.h \
  ../../../../sdk/JN-SW-4170/Components/MicroSpecific/Include/MicroSPecific.h \
  ../../../../sdk/JN-SW-4170/Components/MicroSpecific/Include/MicroSpecific_JN516x.h \
  ../../../../sdk/JN-SW-4170/Components/MicroSpecific/Include/MicroSpecific_ba.h \
- ../../../../sdk/JN-SW-4170/Components/ZPSAPL/Include/zps_apl_af.h \
- ../../../../sdk/JN-SW-4170/Components/ZPSMAC/Include/mac_vs_sap.h \
- ../../../../sdk/JN-SW-4170/Components/TimerServer/Include/tsv_pub.h \
- ../../../../sdk/JN-SW-4170/Components/ZPSMAC/Include/zps_mac_if_table.h \
- ../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_sap.h \
- ../../../../sdk/JN-SW-4170/Components/ZPSAPL/Include/zps_apl.h \
- ../../../../sdk/JN-SW-4170/Components/ZPSAPL/Include/zps_apl_aps.h \
- ../../../../sdk/JN-SW-4170/Components/ZPSAPL/Include/zps_apl_zdo.h \
- ../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_nib.h \
- ../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_slist.h \
- ../../../../sdk/JN-SW-4170/Components/ZPSTSV/Include/zps_tsv.h \
- ../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_sec.h \
- ../../../../sdk/JN-SW-4170/Components/ZPSAPL/Include/zps_apl_zdp.h \
- ../../../../sdk/JN-SW-4170/Components/ZPSAPL/Include/zps_apl_aib.h \
- ../../../../sdk/JN-SW-4170/Components/AES_SW/Include/aessw_ccm.h \
  ../../Common/Source/Utils.h
 
 ../../../../sdk/JN-SW-4170/Components/Common/Include/jendefs.h:
@@ -108,23 +108,53 @@ app_start.o: ../../AN1229_ZBP_Coordinator/Source/app_start.c \
 
 ../../AN1229_ZBP_Coordinator/Source/app_coordinator.h:
 
-../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_pub.h:
+../../../../sdk/JN-SW-4170/Components/ZPSAPL/Include/zps_apl_af.h:
 
-../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_config.h:
-
-../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_sap.h:
-
-../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_config.h:
+../../../../sdk/JN-SW-4170/Components/ZPSMAC/Include/mac_vs_sap.h:
 
 ../../../../sdk/JN-SW-4170/Components/PDUM/Include/pdum_nwk.h:
 
 ../../../../sdk/JN-SW-4170/Components/PDUM/Include/pdum_common.h:
 
-../../AN1229_ZBP_Coordinator/Source/pdum_gen.h:
+../../../../sdk/JN-SW-4170/Components/TimerServer/Include/tsv_pub.h:
+
+../../../../sdk/JN-SW-4170/Components/ZPSMAC/Include/zps_mac_if_table.h:
+
+../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_sap.h:
+
+../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_config.h:
 
 ../../../../sdk/JN-SW-4170/Components/PDUM/Include/pdum_apl.h:
 
 ../../../../sdk/JN-SW-4170/Components/PDUM/Include/pdum_common.h:
+
+../../../../sdk/JN-SW-4170/Components/ZPSAPL/Include/zps_apl.h:
+
+../../../../sdk/JN-SW-4170/Components/ZPSAPL/Include/zps_apl_aps.h:
+
+../../../../sdk/JN-SW-4170/Components/ZPSAPL/Include/zps_apl_zdo.h:
+
+../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_nib.h:
+
+../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_config.h:
+
+../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_sap.h:
+
+../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_slist.h:
+
+../../../../sdk/JN-SW-4170/Components/ZPSTSV/Include/zps_tsv.h:
+
+../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_sec.h:
+
+../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_pub.h:
+
+../../../../sdk/JN-SW-4170/Components/ZPSAPL/Include/zps_apl_zdp.h:
+
+../../../../sdk/JN-SW-4170/Components/ZPSAPL/Include/zps_apl_aib.h:
+
+../../../../sdk/JN-SW-4170/Components/AES_SW/Include/aessw_ccm.h:
+
+../../AN1229_ZBP_Coordinator/Source/pdum_gen.h:
 
 ../../../../sdk/JN-SW-4170/Components/ZigbeeCommon/Include/portmacro.h:
 
@@ -135,35 +165,5 @@ app_start.o: ../../AN1229_ZBP_Coordinator/Source/app_start.c \
 ../../../../sdk/JN-SW-4170/Components/MicroSpecific/Include/MicroSpecific_JN516x.h:
 
 ../../../../sdk/JN-SW-4170/Components/MicroSpecific/Include/MicroSpecific_ba.h:
-
-../../../../sdk/JN-SW-4170/Components/ZPSAPL/Include/zps_apl_af.h:
-
-../../../../sdk/JN-SW-4170/Components/ZPSMAC/Include/mac_vs_sap.h:
-
-../../../../sdk/JN-SW-4170/Components/TimerServer/Include/tsv_pub.h:
-
-../../../../sdk/JN-SW-4170/Components/ZPSMAC/Include/zps_mac_if_table.h:
-
-../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_sap.h:
-
-../../../../sdk/JN-SW-4170/Components/ZPSAPL/Include/zps_apl.h:
-
-../../../../sdk/JN-SW-4170/Components/ZPSAPL/Include/zps_apl_aps.h:
-
-../../../../sdk/JN-SW-4170/Components/ZPSAPL/Include/zps_apl_zdo.h:
-
-../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_nib.h:
-
-../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_slist.h:
-
-../../../../sdk/JN-SW-4170/Components/ZPSTSV/Include/zps_tsv.h:
-
-../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_sec.h:
-
-../../../../sdk/JN-SW-4170/Components/ZPSAPL/Include/zps_apl_zdp.h:
-
-../../../../sdk/JN-SW-4170/Components/ZPSAPL/Include/zps_apl_aib.h:
-
-../../../../sdk/JN-SW-4170/Components/AES_SW/Include/aessw_ccm.h:
 
 ../../Common/Source/Utils.h:

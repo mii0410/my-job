@@ -2,6 +2,12 @@ app_sleeping_enddevice.o: \
  ../../AN1229_ZBP_SleepingEndDevice/Source/app_sleeping_enddevice.c \
  ../../../../sdk/JN-SW-4170/Components/Common/Include/jendefs.h \
  ../../../../sdk/JN-SW-4170/Components/DBG/Include/dbg.h \
+ ../../../../sdk/JN-SW-4170/Components/PDM/Include/pdm.h \
+ ../../../../sdk/JN-SW-4170/Components/Aes/Include/AHI_AES.h \
+ ../../../../sdk/JN-SW-4170/Components/PWRM/Include/pwrm.h \
+ ../../../../sdk/JN-SW-4170/Components/HardwareAPI/Include/AppHardwareApi.h \
+ ../../../../sdk/JN-SW-4170/Components/HardwareAPI/Include/AppHardwareApi_JN5169.h \
+ ../../../../sdk/JN-SW-4170/Components/HardwareAPI/Include/AppHardwareApi_JN516x.h \
  ../../../../sdk/JN-SW-4170/Components/ZPSAPL/Include/zps_apl_af.h \
  ../../../../sdk/JN-SW-4170/Components/ZPSMAC/Include/mac_vs_sap.h \
  ../../../../sdk/JN-SW-4170/Components/PDUM/Include/pdum_nwk.h \
@@ -32,32 +38,33 @@ app_sleeping_enddevice.o: \
  ../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_slist.h \
  ../../../../sdk/JN-SW-4170/Components/ZPSTSV/Include/zps_tsv.h \
  ../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_sec.h \
- ../../../../sdk/JN-SW-4170/Components/Aes/Include/AHI_AES.h \
  ../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_pub.h \
  ../../../../sdk/JN-SW-4170/Components/ZPSAPL/Include/zps_apl_zdp.h \
  ../../../../sdk/JN-SW-4170/Components/ZPSAPL/Include/zps_apl_aib.h \
  ../../../../sdk/JN-SW-4170/Components/AES_SW/Include/aessw_ccm.h \
- ../../../../sdk/JN-SW-4170/Components/PWRM/Include/pwrm.h \
- ../../../../sdk/JN-SW-4170/Components/HardwareAPI/Include/AppHardwareApi.h \
- ../../../../sdk/JN-SW-4170/Components/HardwareAPI/Include/AppHardwareApi_JN5169.h \
- ../../../../sdk/JN-SW-4170/Components/HardwareAPI/Include/AppHardwareApi_JN516x.h \
- ../../../../sdk/JN-SW-4170/Components/PDM/Include/pdm.h \
  ../../Common/Source/PDM_IDs.h ../../Common/Source/app_common.h \
  ../../../../sdk/JN-SW-4170/Components/ZigbeeCommon/Include/ZQueue.h \
  ../../../../sdk/JN-SW-4170/Components/ZigbeeCommon/Include/ZTimer.h \
  ../../AN1229_ZBP_SleepingEndDevice/Source/app_sleeping_enddevice.h \
- ../../../../sdk/JN-SW-4170/Components/DBG/Include/DBG.h \
- ../../../../sdk/JN-SW-4170/Components/DBG/Include/dbg_jtag.h \
- ../../../../sdk/JN-SW-4170/Components/DBG/Include/dbg.h \
- ../../../../sdk/JN-SW-4170/Components/DBG/Include/DBG_Uart.h \
  ../../AN1229_ZBP_SleepingEndDevice/Source/pdum_gen.h \
- ../../Common/Source/Utils.h ../../Common/Source/Time.h \
- ../../Common/Source/config.h \
+ ../../Common/Source/Utils.h ../../Common/Source/config.h \
  ../../AN1229_ZBP_SleepingEndDevice/Source/zps_gen.h
 
 ../../../../sdk/JN-SW-4170/Components/Common/Include/jendefs.h:
 
 ../../../../sdk/JN-SW-4170/Components/DBG/Include/dbg.h:
+
+../../../../sdk/JN-SW-4170/Components/PDM/Include/pdm.h:
+
+../../../../sdk/JN-SW-4170/Components/Aes/Include/AHI_AES.h:
+
+../../../../sdk/JN-SW-4170/Components/PWRM/Include/pwrm.h:
+
+../../../../sdk/JN-SW-4170/Components/HardwareAPI/Include/AppHardwareApi.h:
+
+../../../../sdk/JN-SW-4170/Components/HardwareAPI/Include/AppHardwareApi_JN5169.h:
+
+../../../../sdk/JN-SW-4170/Components/HardwareAPI/Include/AppHardwareApi_JN516x.h:
 
 ../../../../sdk/JN-SW-4170/Components/ZPSAPL/Include/zps_apl_af.h:
 
@@ -119,8 +126,6 @@ app_sleeping_enddevice.o: \
 
 ../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_sec.h:
 
-../../../../sdk/JN-SW-4170/Components/Aes/Include/AHI_AES.h:
-
 ../../../../sdk/JN-SW-4170/Components/ZPSNWK/Include/zps_nwk_pub.h:
 
 ../../../../sdk/JN-SW-4170/Components/ZPSAPL/Include/zps_apl_zdp.h:
@@ -128,16 +133,6 @@ app_sleeping_enddevice.o: \
 ../../../../sdk/JN-SW-4170/Components/ZPSAPL/Include/zps_apl_aib.h:
 
 ../../../../sdk/JN-SW-4170/Components/AES_SW/Include/aessw_ccm.h:
-
-../../../../sdk/JN-SW-4170/Components/PWRM/Include/pwrm.h:
-
-../../../../sdk/JN-SW-4170/Components/HardwareAPI/Include/AppHardwareApi.h:
-
-../../../../sdk/JN-SW-4170/Components/HardwareAPI/Include/AppHardwareApi_JN5169.h:
-
-../../../../sdk/JN-SW-4170/Components/HardwareAPI/Include/AppHardwareApi_JN516x.h:
-
-../../../../sdk/JN-SW-4170/Components/PDM/Include/pdm.h:
 
 ../../Common/Source/PDM_IDs.h:
 
@@ -149,19 +144,9 @@ app_sleeping_enddevice.o: \
 
 ../../AN1229_ZBP_SleepingEndDevice/Source/app_sleeping_enddevice.h:
 
-../../../../sdk/JN-SW-4170/Components/DBG/Include/DBG.h:
-
-../../../../sdk/JN-SW-4170/Components/DBG/Include/dbg_jtag.h:
-
-../../../../sdk/JN-SW-4170/Components/DBG/Include/dbg.h:
-
-../../../../sdk/JN-SW-4170/Components/DBG/Include/DBG_Uart.h:
-
 ../../AN1229_ZBP_SleepingEndDevice/Source/pdum_gen.h:
 
 ../../Common/Source/Utils.h:
-
-../../Common/Source/Time.h:
 
 ../../Common/Source/config.h:
 

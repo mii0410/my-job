@@ -35,6 +35,9 @@
 #ifndef APP_SLEEPING_ENDDEVICE_H_
 #define APP_SLEEPING_ENDDEVICE_H_
 
+#include "jendefs.h"
+#include "zps_apl_af.h"
+
 /****************************************************************************/
 /***        Macro Definitions                                             ***/
 /****************************************************************************/
@@ -49,7 +52,8 @@
 PUBLIC void APP_vInitialiseSleepingEndDevice(void);
 PUBLIC void APP_vtaskSleepingEndDevice (void);
 PUBLIC void SendData();
-unsigned int sleep(unsigned int seconds);
+PUBLIC void vWakeCallBack(void);
+
 /****************************************************************************/
 /***        External Variables                                            ***/
 /****************************************************************************/

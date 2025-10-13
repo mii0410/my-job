@@ -6,6 +6,13 @@
 		<item value="227191" key="searchFlags"/>
 		<item value="false" key="caseSensitive"/>
 		<list key="previousPatterns">
+			<item value="triggered"/>
+			<item value="vfExtendedStatusCallBack"/>
+			<item value="ZPS_vHandleAfTask"/>
+			<item value="ZPS_eAplAfTask"/>
+			<item value="ZQ_vQueueCreate"/>
+			<item value="vHandleStackEventsStackEvent"/>
+			<item value="vDrainQueueOnOverrun"/>
 			<item value="ZPS_EVENT_NEW_POLL_COMPLETE"/>
 			<item value="status"/>
 			<item value="APP_vInitialiseCoordinator"/>

@@ -46,14 +46,9 @@
 #include "ZTimer.h"
 #include "ZQueue.h"
 //追加
-#include <string.h>
-#include "DBG.h"
-#include "dbg_jtag.h"
-#include "DBG_Uart.h"
 #include "pdum_apl.h"
 #include "pdum_gen.h"
 #include "Utils.h"
-#include "Time.h"
 #include "config.h"
 #include "zps_gen.h"
 #include <zps_apl_aib.h>
@@ -87,36 +82,16 @@ PRIVATE void vStartup(void);
 PRIVATE void vWaitForNetworkFormation(ZPS_tsAfEvent sStackEvent);
 PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent);
 
+// コマンド制御
+PRIVATE void vReadInputCommand(void);
 
-//追加
-PRIVATE void vReadInputCommand();
+// 補助関数
 PRIVATE void vUpdateLastKnownNodeAddr(uint16 u16ShortAddr);
 PRIVATE void vClearLastKnownNodeAddr(void);
-PUBLIC void APP_vSetCommand(uint8 command);
-PUBLIC void SendData(void);
 PRIVATE void vPrintNetworkStatus(void);
 PRIVATE void vDrainQueueOnOverrun(tszQueue *psQueue, const char *pcQueueName);
 PRIVATE void vReleaseApduIfPresent(ZPS_tsAfEvent *psEvent);
-
-
-
-typedef enum
-{
-    E_STATE_IDLE,
-    E_STATE_ACTIVE_SCANNING,
-    E_STATE_ASSOCIATING,
-    E_STATE_ASSOCIATED
-}teState;
-
-typedef struct
-{
-    teState eState;
-    uint8   u8Channel;
-    uint8   u8TxPacketSeqNb;
-    uint8   u8RxPacketSeqNb;
-    uint16  u16Address;
-}tsEndDeviceData;
-
+PRIVATE void vLogUnexpectedAfErrorEvent(const ZPS_tsAfErrorEvent *psErrorEvent);
 /****************************************************************************/
 /***        Exported Variables                                            ***/
 /****************************************************************************/
@@ -131,17 +106,8 @@ PRIVATE uint16 u16LastKnownNodeAddr = 0xFFFF;
 
 PUBLIC void APP_vSetCommand(uint8 command)
 {
-    switch(command)
-    {
-        case 2:
-            DBG_vPrintf(TRUE, "inputcommand : %d \n", command);
-            break;
-
-        // 他のコマンド番号も必要ならここに追加
-        default:
-            DBG_vPrintf(TRUE, "unknown command: %d\n", command);
-            break;
-    }
+    /* 将来的な拡張用（今は使わない） */
+    DBG_vPrintf(TRACE_APP, "CMD: %d\n", command);
 }
 
 
@@ -227,7 +193,6 @@ PUBLIC void APP_vInitialiseCoordinator(void)
         /* Turn on joining */
         ZPS_eAplZdoPermitJoining(0xff);
 
-
         /* Re-start any other application software modules
          * HERE
          */
@@ -236,8 +201,6 @@ PUBLIC void APP_vInitialiseCoordinator(void)
     {
         /* Return the device to the start-up start if it was reset during the network formation stage */
         s_eDeviceState.eNodeState = E_STARTUP;
-
-
     }
 }
 
@@ -252,9 +215,8 @@ PUBLIC void APP_vInitialiseCoordinator(void)
  * void
  *
  ****************************************************************************/
-PUBLIC void APP_vtaskCoordinator ( void )
+PUBLIC void APP_vtaskCoordinator(void)
 {
-
     ZPS_tsAfEvent sStackEvent;
     sStackEvent.eType = ZPS_EVENT_NONE;
 
@@ -271,69 +233,57 @@ PUBLIC void APP_vtaskCoordinator ( void )
     switch (s_eDeviceState.eNodeState)
     {
         case E_STARTUP:
-        {
-            vStartup();
-
-        }
-        break;
+        	vStartup();
+        	break;
 
         case E_NETWORK_FORMATION:
-        {
-
         	vWaitForNetworkFormation(sStackEvent);
-        }
-        break;
+        	break;
 
         case E_RUNNING:
         {
-            if (bEventReady)
-            {
-                do
-                {
-                    vHandleStackEvent(sStackEvent);
-                } while (ZQ_bQueueReceive(&APP_msgZpsEvents, &sStackEvent));
-            }
-        	vHandleStackEvent(sStackEvent);
-        	vReadInputCommand();/*キーボードから読み取った文字を判別する関数*/
+        	 while(bEventReady)
+        	 {
+        		 vHandleStackEvent(sStackEvent);
+        		 bEventReady = ZQ_bQueueReceive(&APP_msgZpsEvents, &sStackEvent);
+        	 }
+        	 vReadInputCommand();/*キーボードから読み取った文字を判別する関数*/
         }
         break;
 
         default:
-        {
-        	/* Do nothing */
-        }
-        break;
+        	break;
     }
 }
 
 /****************************************************************************/
 /***        Local Functions                                               ***/
 /****************************************************************************/
-
-
 PRIVATE void vReadInputCommand()
 {
-  commandType currentCommand = NO_COMMAND;
-  currentCommand = vReadCommand (); //Utils.cの関数
+    commandType cmd = vReadCommand();  /* Utils.c：解析のみ */
+    if (cmd == NO_COMMAND) return;
+
  //DBG_vPrintf(TRUE, "%d\n", currentCommand); //現在のコマンドを表示
 
-  if (currentCommand == SEND_COMMAND)
+    switch (cmd)
     {
-	   DBG_vPrintf(TRUE, "SEND_COMMAND triggered\n");
-	   SendData();
-	   currentCommand = NO_COMMAND;
-    }
-  else if (currentCommand == STATUS_COMMAND)
-    {
-	   vPrintNetworkStatus();
-	   currentCommand = NO_COMMAND;
-    }
-  else if(currentCommand == RX_COMMAND){ //追加コード
+        case SEND_COMMAND:
+        {
+            DBG_vPrintf(TRACE_APP, "SEND_COMMAND\n");
+            SendData();
+        }
+        break;
 
-	  //SendData();
-	  DBG_vPrintf(TRUE, "5");
-	  currentCommand = NO_COMMAND;
-  }
+        case STATUS_COMMAND:
+            vPrintNetworkStatus();
+            break;
+
+        /* 必要に応じて追加 */
+        default:
+            DBG_vPrintf(TRACE_APP, "Unknown command: %d\n", (int)cmd);
+            break;
+    }
 }
 
 PRIVATE void vPrintNetworkStatus(void)
@@ -354,7 +304,8 @@ PRIVATE void vPrintNetworkStatus(void)
     DBG_vPrintf(TRUE, "[NET] -----------\r\n");
 }
 
-PUBLIC void SendData(void){//データを送信する関数
+PUBLIC void SendData(void)
+{
 	uint8 u8TransactionSequenceNumber;
 	PDUM_thAPduInstance hAPduInst;
 
@@ -381,7 +332,6 @@ PUBLIC void SendData(void){//データを送信する関数
 					APP_TX_OPTION_ACK_REQUIRED,
 					&u8TransactionSequenceNumber
 	);
-
 
     if (eStatus != ZPS_E_SUCCESS) {
         // エラー時のみAPDUをここで解放（成功時はスタックが管理）
@@ -433,7 +383,6 @@ PRIVATE void vClearLastKnownNodeAddr(void)
  ****************************************************************************/
 PRIVATE void vStartup(void)
 {
-
     /* display the startup splash screen */
     DBG_vPrintf(TRACE_APP, "APP: Begin Application startup\n");
 
@@ -477,13 +426,11 @@ PRIVATE void vWaitForNetworkFormation(ZPS_tsAfEvent sStackEvent)
             DBG_vPrintf(TRACE_APP, "APP: Network Started\r\n");
             DBG_vPrintf(TRACE_APP, "APP: Channel - %d\r\n", ZPS_u8AplZdoGetRadioChannel());
 
-            {
-                 void *pvNwk = ZPS_pvAplZdoGetNwkHandle();
-                 uint64 u64ExtPanId = ZPS_u64NwkNibGetEpid(pvNwk);
-                 uint16 u16CoordShort = ZPS_u16AplZdoGetNwkAddr();
-                 DBG_vPrintf(TRACE_APP, "APP: Ext PAN ID - %016llx\r\n", u64ExtPanId);
-                 DBG_vPrintf(TRACE_APP, "APP: Coord Short Addr - 0x%04x\r\n", u16CoordShort);
-            }
+            void *pvNwk = ZPS_pvAplZdoGetNwkHandle();
+            uint64 u64ExtPanId = ZPS_u64NwkNibGetEpid(pvNwk);
+            uint16 u16CoordShort = ZPS_u16AplZdoGetNwkAddr();
+            DBG_vPrintf(TRACE_APP, "APP: Ext PAN ID - %016llx\r\n", u64ExtPanId);
+            DBG_vPrintf(TRACE_APP, "APP: Coord Short Addr - 0x%04x\r\n", u16CoordShort);
 
             /* turn on joining */
             ZPS_eAplZdoPermitJoining(0xff);
@@ -516,6 +463,27 @@ PRIVATE void vDrainQueueOnOverrun(tszQueue *psQueue, const char *pcQueueName)
     {
         vReleaseApduIfPresent(&sPendingEvent);
     }
+}
+
+PRIVATE void vLogUnexpectedAfErrorEvent(const ZPS_tsAfErrorEvent *psErrorEvent)
+{
+    if (NULL == psErrorEvent)
+    {
+        return;
+    }
+
+    DBG_vPrintf(TRACE_APP, "    No queue overrun context for status %d; dumping raw error payload.\n", psErrorEvent->eError);
+
+    const uint8 *pu8ErrorBytes = (const uint8 *)&psErrorEvent->uErrorData;
+    const uint8 u8ErrorDataLength = (uint8)sizeof(psErrorEvent->uErrorData);
+
+    DBG_vPrintf(TRACE_APP, "    Error data bytes (%d):", u8ErrorDataLength);
+    uint8 i;
+    for (i = 0; i < u8ErrorDataLength; i++)
+    {
+        DBG_vPrintf(TRACE_APP, " %02x", pu8ErrorBytes[i]);
+    }
+    DBG_vPrintf(TRACE_APP, "\n");
 }
 
 PRIVATE void vReleaseApduIfPresent(ZPS_tsAfEvent *psEvent)
@@ -580,130 +548,124 @@ PRIVATE void vReleaseApduIfPresent(ZPS_tsAfEvent *psEvent)
  ****************************************************************************/
 PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
 {
-
-    if (ZPS_EVENT_NONE != sStackEvent.eType)
+    if (sStackEvent.eType == ZPS_EVENT_NONE)
     {
-        switch (sStackEvent.eType)
-        {
-             case ZPS_EVENT_APS_INTERPAN_DATA_INDICATION:
-             {
-                  DBG_vPrintf(TRACE_APP, "APP: event  ZPS_EVENT_APS_INTERPAN_DATA_INDICATION\n");
-                  PDUM_eAPduFreeAPduInstance(sStackEvent.uEvent.sApsInterPanDataIndEvent.hAPduInst);
-             }
-             break;
+    	return;
+    }
 
-             case ZPS_EVENT_APS_ZGP_DATA_INDICATION:
-             {
-            	 DBG_vPrintf(TRACE_APP, "APP: event  ZPS_EVENT_APS_ZGP_DATA_INDICATION\n");
+    switch (sStackEvent.eType)
+    {
+    	case ZPS_EVENT_APS_INTERPAN_DATA_INDICATION:
+    	{
+    		PDUM_eAPduFreeAPduInstance(sStackEvent.uEvent.sApsInterPanDataIndEvent.hAPduInst);
+    	}
+    	break;
 
-                 if (sStackEvent.uEvent.sApsZgpDataIndEvent.hAPduInst)
-                 {
+    	case ZPS_EVENT_APS_ZGP_DATA_INDICATION:
+    	{
+             if (sStackEvent.uEvent.sApsZgpDataIndEvent.hAPduInst)
+             {
                      PDUM_eAPduFreeAPduInstance(sStackEvent.uEvent.sApsZgpDataIndEvent.hAPduInst);
-                 }
              }
-             break;
+    	}
+    	break;
 
-            case ZPS_EVENT_APS_DATA_INDICATION:
-            {
- /*コメントアウト*///  DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_AF_DATA_INDICATION\n");
-
-                /* Process incoming cluster messages ... */
-               //DBG_vPrintf(TRACE_APP, "        Profile :%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u16ProfileId);
-               //DBG_vPrintf(TRACE_APP, "        Cluster :%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u16ClusterId);
-               //DBG_vPrintf(TRACE_APP, "        EndPoint:%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u8DstEndpoint);
-
-                /* free the application protocol data unit (APDU) once it has been dealt with */
-            	vUpdateLastKnownNodeAddr(sStackEvent.uEvent.sApsDataIndEvent.uSrcAddress.u16Addr);
-                PDUM_eAPduFreeAPduInstance(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
-            }
-            break;
-
-            case ZPS_EVENT_APS_DATA_CONFIRM:
-            {
-            	DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_APS_DATA_CONFIRM Status %d, Address 0x%04x\n",
-                            sStackEvent.uEvent.sApsDataConfirmEvent.u8Status,
-                            sStackEvent.uEvent.sApsDataConfirmEvent.uDstAddr.u16Addr);
-            }
-            break;
-
-            case ZPS_EVENT_APS_DATA_ACK:
-            {
-            	DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_APS_DATA_ACK Status %d, Address 0x%04x\n",
-                            sStackEvent.uEvent.sApsDataAckEvent.u8Status,
-                            sStackEvent.uEvent.sApsDataAckEvent.u16DstAddr);
-            }
-            break;
-
-            case ZPS_EVENT_NWK_NEW_NODE_HAS_JOINED:
-            {
-            	 uint16 u16JoinedAddr = sStackEvent.uEvent.sNwkJoinIndicationEvent.u16NwkAddr;
-
-            	 DBG_vPrintf(TRACE_APP,
-            			 "APP: New node joined 0x%04x\r\n",
-            	         u16JoinedAddr);
-            	 vUpdateLastKnownNodeAddr(u16JoinedAddr);
-            }
-            break;
-
-            case ZPS_EVENT_NWK_LEAVE_INDICATION:
-            {
-            	DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_LEAVE_INDICATION\n");
-            	vClearLastKnownNodeAddr();
-            }
-            break;
-
-            case ZPS_EVENT_NWK_LEAVE_CONFIRM:
-            {
-            	DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_LEAVE_CONFIRM\n");
-
-            }
-            break;
-
-            case ZPS_EVENT_NWK_STATUS_INDICATION:
-            {
-            	DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_NWK_STATUS_INDICATION\n");
-            }
-            break;
-
-            case ZPS_EVENT_NWK_ROUTE_DISCOVERY_CONFIRM:
-            {
-    /*コメントアウト*/  //      DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_ROUTE_DISCOVERY_CFM\n");
-            }
-            break;
-
-            case ZPS_EVENT_ERROR:
-            {
-            	ZPS_teStatus eError = sStackEvent.uEvent.sAfErrorEvent.eError;
-            	DBG_vPrintf(TRACE_APP, "APP: Monitor Sensors ZPS_EVENT_ERROR\n");
-            	DBG_vPrintf(TRACE_APP, "    Error Code %d\n", eError);
-
-            	if (ZPS_ERROR_OS_MESSAGE_QUEUE_OVERRUN == eError)
-            	{
-            		void *pvMessage = sStackEvent.uEvent.sAfErrorEvent.uErrorData.sAfErrorOsMessageOverrun.hMessage;
-            		DBG_vPrintf(TRACE_APP, "    Queue handle %p\n", pvMessage);
-            		/* Manual JN-UG-3113 asks us to drain the impacted queue so that the stack can resume safely. */
-            		if (pvMessage == (void*)&APP_msgZpsEvents)
-            		{
-            			vDrainQueueOnOverrun(&APP_msgZpsEvents, "APP_msgZpsEvents");
-            		}
-            		else if (pvMessage == (void*)&APP_msgMyEndPointEvents)
-            		{
-            		    vDrainQueueOnOverrun(&APP_msgMyEndPointEvents, "APP_msgMyEndPointEvents");
-            		}
-            		else
-            		{
-            		    DBG_vPrintf(TRACE_APP, "    Queue overrun reported on unknown handle.\n");
-            		}
-            	}
-            }
-            break;
-
-            default:
-            {
-                DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: unhandled event %d\n", sStackEvent.eType);
-            }
-            break;
+    	case ZPS_EVENT_APS_DATA_INDICATION:
+        {
+        	vUpdateLastKnownNodeAddr(sStackEvent.uEvent.sApsDataIndEvent.uSrcAddress.u16Addr);
+        	PDUM_eAPduFreeAPduInstance(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
         }
+        break;
+
+    	case ZPS_EVENT_APS_DATA_CONFIRM:
+    	{
+    		DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_APS_DATA_CONFIRM Status %d, Address 0x%04x\n",
+    								sStackEvent.uEvent.sApsDataConfirmEvent.u8Status,
+    								sStackEvent.uEvent.sApsDataConfirmEvent.uDstAddr.u16Addr);
+        }
+    	break;
+
+        case ZPS_EVENT_APS_DATA_ACK:
+        {
+        	DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_APS_DATA_ACK Status %d, Address 0x%04x\n",
+        							sStackEvent.uEvent.sApsDataAckEvent.u8Status,
+        							sStackEvent.uEvent.sApsDataAckEvent.u16DstAddr);
+        }
+        break;
+
+        case ZPS_EVENT_NWK_NEW_NODE_HAS_JOINED:
+        {
+        	uint16 u16JoinedAddr = sStackEvent.uEvent.sNwkJoinIndicationEvent.u16NwkAddr;
+
+        	DBG_vPrintf(TRACE_APP, "APP: New node joined 0x%04x\r\n",
+            	         	 	 	u16JoinedAddr);
+            	 	 	 	 	 	vUpdateLastKnownNodeAddr(u16JoinedAddr);
+        }
+        break;
+
+        case ZPS_EVENT_NWK_LEAVE_INDICATION:
+        {
+           	DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_LEAVE_INDICATION\n");
+          	vClearLastKnownNodeAddr();
+        }
+        break;
+
+
+        case ZPS_EVENT_NWK_STATUS_INDICATION:
+        {
+          	DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_NWK_STATUS_INDICATION\n");
+        }
+        break;
+
+        case ZPS_EVENT_NWK_ROUTE_DISCOVERY_CONFIRM:
+        {
+//      DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_ROUTE_DISCOVERY_CFM\n");
+        }
+        break;
+
+        case ZPS_EVENT_ERROR:
+        {
+        ZPS_teStatus eError = sStackEvent.uEvent.sAfErrorEvent.eError;
+
+        if (eError == 0) // 0は正常
+        {
+        	//DBG_vPrintf(TRACE_APP, "APP: (debug) Ignoring periodic Error Code 0 event (likely timer/keep-alive)\n");
+        	break;
+        }
+
+        DBG_vPrintf(TRACE_APP, "APP: Monitor Sensors ZPS_EVENT_ERROR\n");
+        DBG_vPrintf(TRACE_APP, "    Error Code %d\n", eError);
+
+        if (ZPS_ERROR_OS_MESSAGE_QUEUE_OVERRUN == eError)
+        {
+        	void *pvMessage = sStackEvent.uEvent.sAfErrorEvent.uErrorData.sAfErrorOsMessageOverrun.hMessage;
+        	DBG_vPrintf(TRACE_APP, "    Queue handle %p\n", pvMessage);
+        	/* Manual JN-UG-3113 asks us to drain the impacted queue so that the stack can resume safely. */
+        	if (pvMessage == (void*)&APP_msgZpsEvents)
+        	{
+        		vDrainQueueOnOverrun(&APP_msgZpsEvents, "APP_msgZpsEvents");
+        	}
+        	else if (pvMessage == (void*)&APP_msgMyEndPointEvents)
+        	{
+        		vDrainQueueOnOverrun(&APP_msgMyEndPointEvents, "APP_msgMyEndPointEvents");
+        	}
+        	else
+        	{
+        		DBG_vPrintf(TRACE_APP, "    Queue overrun reported on unknown handle.\n");
+        	}
+        }
+        else
+        {
+        	vLogUnexpectedAfErrorEvent(&sStackEvent.uEvent.sAfErrorEvent);
+        }
+        }
+        break;
+
+        default:
+        {
+        	DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: unhandled event %d\n", sStackEvent.eType);
+        }
+        break;
     }
 }
 

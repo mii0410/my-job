@@ -6,15 +6,10 @@
  */
 
 #include "Utils.h"
-#include "DBG.h"
-#include "dbg_jtag.h"
-#include "DBG_Uart.h"
+#include "dbg.h"
+#include "DBG_Uart.h" //
 #include <string.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
 
-#include <jendefs.h>
 #define COMMAND_SIZE 64
 
 /* UART から受信したコマンド文字列 */
@@ -22,8 +17,6 @@ static char command[COMMAND_SIZE];
 /* 入力中の文字数を管理するカウンタ */
 static uint8 cmd_index = 0;
 
-PUBLIC uint8_t RxByte[128];
-static int cmd = 0;
 
 static bool_t bCommandReady = FALSE;
 
@@ -33,15 +26,7 @@ static bool_t bCommandReady = FALSE;
  * 引数: なし
  * 戻り値: フラグ値
  *---------------------------------------------------------------------------*/
-PUBLIC int CMD(void)
-{
-    if (cmd == 3)
-    {
-        cmd = 0;
-        return 3;
-    }
-    return 0;
-}
+
 
 /*---------------------------------------------------------------------------
  * 名称: vResetCommandBuffer

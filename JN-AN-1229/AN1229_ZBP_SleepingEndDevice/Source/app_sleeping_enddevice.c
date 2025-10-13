@@ -36,29 +36,23 @@
 /***        Include files                                                 ***/
 /****************************************************************************/
 #include <jendefs.h>
-#include <string.h>
 #include <dbg.h>
+#include <pdm.h>
+#include <pwrm.h>
 #include <zps_apl_af.h>
 #include <zps_apl_aib.h>
-#include <pwrm.h>
-#include <pdm.h>
+#include <zps_apl_zdo.h>
 #include <PDM_IDs.h>
+
 #include "app_common.h"
 #include "app_sleeping_enddevice.h"
-//追加コード
-#include "zps_apl_zdo.h"
-#include <stdio.h>
-#include <unistd.h>
-#include "DBG.h"
-#include "dbg_jtag.h"
-#include "DBG_Uart.h"
+#include "ZTimer.h"
+#include "ZQueue.h"
 #include "pdum_apl.h"
 #include "pdum_gen.h"
 #include "Utils.h"
-#include "Time.h"
 #include "config.h"
 #include "zps_gen.h"
-
 
 /****************************************************************************/
 /***        Macro Definitions                                             ***/
@@ -69,18 +63,15 @@
 #define TRACE_APP 	TRUE
 #endif
 
-#define RESTART_TIME    APP_TIME_MS(1000)
-#define SLEEP_TIME      5 * 32000  /* sets a sleep period of 5 seconds */
-
 #ifndef ZPS_APL_AF_ACK_REQ
 #define APP_TX_OPTION_ACK_REQUIRED (1U << 2)
 #else
 #define APP_TX_OPTION_ACK_REQUIRED ZPS_APL_AF_ACK_REQ
 #endif
 
-#ifndef PDM_E_STATUS_OK_RESTORED
-#define PDM_E_STATUS_OK_RESTORED PDM_E_STATUS_OK
-#endif
+#define RESTART_TIME    APP_TIME_MS(1000)
+#define SLEEP_TIME      5 * 32000  /* sets a sleep period of 5 seconds */
+
 /****************************************************************************/
 /***        Type Definitions                                              ***/
 /****************************************************************************/
@@ -89,12 +80,20 @@
 /****************************************************************************/
 /***        Local Function Prototypes                                     ***/
 /****************************************************************************/
+PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent);
+
+PRIVATE void vReadInputCommand(void);               /* UARTコマンド実行を一元化 */
+PRIVATE void vDrainQueueOnOverrun(tszQueue *q, const char *name);
+PRIVATE void vReleaseApduIfPresent(ZPS_tsAfEvent *e);
+
+/* 送信ペイロード生成を分離（挙動は維持） */
+PRIVATE void vBuildAppPayload(PDUM_thAPduInstance h);
+
+
 PRIVATE void vStartup(void);
 PRIVATE void vWaitForNetworkDiscovery(ZPS_tsAfEvent sStackEvent);
 PRIVATE void vWaitForNetworkJoin(ZPS_tsAfEvent sStackEvent);
-PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent);
-PRIVATE void vDrainQueueOnOverrun(tszQueue *psQueue, const char *pcQueueName);
-PRIVATE void vReleaseApduIfPresent(ZPS_tsAfEvent *psEvent);
+
 PRIVATE void vClearDiscNT(void);
 PRIVATE bool_t bLoadDeviceState(void);
 
@@ -113,7 +112,6 @@ PUBLIC uint8 au8DefaultTCLinkKey[16]    = {0x5a, 0x69, 0x67, 0x42, 0x65, 0x65, 0
 		0x6c, 0x69, 0x61, 0x6e, 0x63, 0x65, 0x30, 0x39};
 
 PRIVATE void vReadInputCommand();
-PUBLIC void  APP_vSetCommand(uint8 command);
 PUBLIC void SendData();
 
 /****************************************************************************/
@@ -124,50 +122,14 @@ PUBLIC uint8_t count1 = 1;
 PUBLIC uint8_t count2 = 1;
 
 
-
-//追加関数
-
-PUBLIC void  APP_vSetCommand(uint8 command)
-{
-	switch (command)
-	{
-	    case 2:
-	        DBG_vPrintf(TRUE, "inputcommand : %d \n", command);
-	        break;
-
-	    default:
-	        break;
-	}
-}
-
 PRIVATE void vReadInputCommand()
 {
-
-	commandType currentCommand = NO_COMMAND;
-	currentCommand = vReadCommand (); //Utils.cの関数(謎にコメントアウトされてた)
-
-
-	int currCmd = 0;
-	currCmd = CMD();
-
-	if(currCmd == 3){
-			SendData();
-			currCmd = 0;
-		}
-
-	if (currentCommand == SEND_COMMAND)
-	{
-		DBG_vPrintf(TRUE,"Command : SEND_COMMAND\n");
-		SendData();//データ送信の関数
-		currentCommand = NO_COMMAND;
-	}
-	else if(currentCommand == RX_COMMAND){ //追加コード
-		  DBG_vPrintf(TRUE,"Command : RX_COMMAND\n");
-		  SendData();
-		  currentCommand = NO_COMMAND;
-	  }
-
-
+    commandType cmd = vReadCommand();
+    if (cmd == SEND_COMMAND || cmd == RX_COMMAND)
+    {
+        DBG_vPrintf(TRACE_APP, "APP: Command %d -> SendData()\n", cmd);
+        SendData();
+    }
 }
 
 PRIVATE bool_t bLoadDeviceState(void)
@@ -183,14 +145,6 @@ PRIVATE bool_t bLoadDeviceState(void)
 					sizeof(s_eDeviceState),
 					&u16DataBytesRead);
 
-	if ((PDM_E_STATUS_OK == eStatus) || (PDM_E_STATUS_OK_RESTORED == eStatus))
-	{
-		DBG_vPrintf(TRACE_APP,
-				"APP: Warm start - restored SED state %d\n",
-				s_eDeviceState.eNodeState);
-		return TRUE;
-	}
-
 	DBG_vPrintf(TRACE_APP,
 			"APP: No persisted SED context (status=%d)\n",
 			eStatus);
@@ -199,36 +153,33 @@ PRIVATE bool_t bLoadDeviceState(void)
 	return FALSE;
 }
 
+PRIVATE uint16 u16BuildDummyPayload(PDUM_thAPduInstance h)
+{
+    // ダミーデータ
+	uint16 offset = 0;
+    uint8 payload[4] = {6, count1++, 0x01, 0xa6};
+    offset += PDUM_u16APduInstanceWriteNBO(h, offset, "a\x10", payload);
+    PDUM_eAPduInstanceSetPayloadSize(h, offset);
+    return offset;
+}
+
 PUBLIC void SendData(){ //データを送信する関数
 	uint8 u8TransactionSequenceNumber = 0;
 	PDUM_thAPduInstance hAPduInst = PDUM_hAPduAllocateAPduInstance(apduZDP);
-
-	uint16 u16Offset = 0;
-	u16Offset += PDUM_u16APduInstanceWriteNBO(hAPduInst, u16Offset,"a\x10", RxByte); //16進数センサデータ
-
-	//ダミーデータを生成（ラズパイ無し）
-	uint8_t tttive[4];
-	memset(tttive, 0, sizeof(tttive));
-	tttive[0] = 6;
-	tttive[1] = count1;
-	tttive[2] = 0x01;
-	tttive[3] = 0xa6;
-	count1++;
-	u16Offset += PDUM_u16APduInstanceWriteNBO(hAPduInst, u16Offset, "a\x10", tttive);
-
-
-	PDUM_eAPduInstanceSetPayloadSize(hAPduInst, u16Offset);
+    if (hAPduInst == PDUM_INVALID_HANDLE)
+    {
+        DBG_vPrintf(TRUE, "APP: PDUM allocate fail\n");
+        return;
+    }
 
 	ZPS_teStatus eStatus;
-	ZPS_teAplAfSecurityMode eSecurityMode = ZPS_E_APL_AF_UNSECURE;
-
 	eStatus = ZPS_eAplAfUnicastDataReq(
 							hAPduInst,
 							0x1234,     // Cluster ID
 						    AN1229_ZBP_SLEEPINGENDDEVICE_MYENDPOINT_ENDPOINT, /* Src EP (SED) */
 						    AN1229_ZBP_COORDINATOR_MYENDPOINT_ENDPOINT,       /* Dst EP (Coordinator) */
 						    COORDINATOR_ADR,                                  /* 宛先ショートアドレス */
-							eSecurityMode,
+						    ZPS_E_APL_AF_UNSECURE,
 							APP_TX_OPTION_ACK_REQUIRED,
 							&u8TransactionSequenceNumber);
 	if (ZPS_E_SUCCESS != eStatus)
@@ -245,8 +196,6 @@ PUBLIC void vWakeCallBack(void)
 
 	 //DBG_vPrintf(TRACE_APP, "APP: Polling for data\n");
 	 ZPS_eAplZdoPoll();
-
-
 }
 
 
@@ -265,57 +214,6 @@ PUBLIC void vWakeCallBack(void)
 PUBLIC void APP_vInitialiseSleepingEndDevice(void)
 {
 	(void)bLoadDeviceState();
-
-	// 下記の機能はbLoadDeviceStateに格納
-//		/* Initialise ZBPro stack */
-//		ZPS_eAplAfInit();
-//
-//		ZPS_vAplSecSetInitialSecurityState(ZPS_ZDO_PRECONFIGURED_LINK_KEY,
-//				au8DefaultTCLinkKey,
-//				0x00,
-//				ZPS_APS_GLOBAL_LINK_KEY);
-//		/* Initialise other software modules
-//		 * HERE
-//		 */
-//
-//		 /* Always initialise any peripherals used by the application
-//		  * HERE
-//		  */
-//
-//		/* If the device state has been restored from flash, re-start the stack
-//		 * and set the application running again. Note that if there is more than 1 state
-//		 * where the network has already joined, then the other states should also be included
-//		 * in the test below
-//		 * E.g. E_RUNNING_1, E_RUNNING_2......
-//		 * if (E_RUNNING_1 == s_eDeviceState || E_RUNNING_2 == s_eDeviceState)
-//		 */
-//		if (E_RUNNING == s_eDeviceState.eNodeState)
-//		{
-//
-//	uint16 u16DataBytesRead;
-//
-//	/* If required, at this point delete the network context from flash, perhaps upon some condition
-//	 * For example, check if a button is being held down at reset, and if so request the Persistent
-//	 * Data Manager to delete all its records:
-//	 * e.g. bDeleteRecords = vCheckButtons();
-//	 * Alternatively, always call PDM_vDelete() if context saving is not required.
-//	 */
-//	if (bDeleteRecords)
-//	{
-//		DBG_vPrintf(TRACE_APP, "APP: Deleting all records from flash\n");
-//		PDM_vDeleteAllDataRecords();
-//	}
-//
-//
-//	/* Restore any application data previously saved to flash
-//	 * All Application records must be loaded before the call to
-//	 * ZPS_eAplAfInit
-//	 */
-//	s_eDeviceState.eNodeState = E_STARTUP;
-//	PDM_eReadDataFromRecord(PDM_ID_APP_SED,
-//			&s_eDeviceState,
-//			sizeof(s_eDeviceState),
-//			&u16DataBytesRead);
 
 	/* Initialise ZBPro stack */
 	ZPS_eAplAfInit();
@@ -710,12 +608,12 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
 		{
 		case ZPS_EVENT_APS_DATA_INDICATION:
 		{
-			DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_AF_DATA_INDICATION\n");
+//			DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_AF_DATA_INDICATION\n");
 
 			/* Process incoming cluster messages ... */
-			DBG_vPrintf(TRACE_APP, "Profile :%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u16ProfileId);
-			DBG_vPrintf(TRACE_APP, "Cluster :%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u16ClusterId);
-			DBG_vPrintf(TRACE_APP, "EndPoint:%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u8DstEndpoint);
+//			DBG_vPrintf(TRACE_APP, "Profile :%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u16ProfileId);
+//			DBG_vPrintf(TRACE_APP, "Cluster :%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u16ClusterId);
+//			DBG_vPrintf(TRACE_APP, "EndPoint:%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u8DstEndpoint);
 
 			/* free the application protocol data unit (APDU) once it has been dealt with */
 			PDUM_eAPduFreeAPduInstance(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
