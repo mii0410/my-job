@@ -94,7 +94,6 @@ PRIVATE PWRM_DECLARE_CALLBACK_DESCRIPTOR(PreSleep);
 
 
 PUBLIC uint8 u8App_tmr1sec;
-PUBLIC void SendData();  //’Ç‰ÁŠÖ”
 /****************************************************************************/
 /***        Local Variables                                               ***/
 /****************************************************************************/
@@ -300,7 +299,7 @@ PWRM_CALLBACK(Wakeup)
     /* Initialise the debug diagnostics module to use UART0 at 115K Baud;
      * Do not use UART 1 if LEDs are used, as it shares DIO with the LEDS
      */
-    DBG_vUartInit(DBG_E_UART_0, DBG_E_UART_BAUD_RATE_115200);
+    //DBG_vUartInit(DBG_E_UART_0, DBG_E_UART_BAUD_RATE_115200);
     DBG_vPrintf(TRACE_APP, "\n\nAPP: Woken up (CB)\n");
 
     /* Restore Mac settings (turns radio on) */
@@ -402,23 +401,15 @@ PUBLIC void APP_vInitResources(void)
 PUBLIC void app_vMainloop(void)
 {
 	uint64 u64Addr = ZPS_u64AplZdoGetIeeeAddr();
-	DBG_vPrintf(TRUE, "IEEE Addr: %016llX\n", u64Addr);DBG_vPrintf(TRUE, "IEEE Addr: %08x%08x\n",
-            (uint32)(u64Addr >> 32),  // ãˆÊ32bit
-            (uint32)(u64Addr & 0xFFFFFFFF)); // ‰ºˆÊ32bit
+	DBG_vPrintf(TRUE, "IEEE Addr: %08x%08x\n",
+	            (uint32)(u64Addr >> 32),
+	            (uint32)(u64Addr & 0xFFFFFFFF));
 
     /* idle task commences on exit from OS start call */
     while (TRUE) {
         zps_taskZPS();
         APP_vtaskSleepingEndDevice();
         APP_vtaskMyEndPoint();
-
-        //‚±‚±‚©‚ç’Ç‰Á
-//                uint8 cmd = vReadCommand();
-//        		 if(cmd != 0){
-//                   APP_vSetCommand();
-//        		}
-
-        //‚±‚±‚Ü‚Å
 
         ZTIMER_vTask();
         /* kick the watchdog timer */

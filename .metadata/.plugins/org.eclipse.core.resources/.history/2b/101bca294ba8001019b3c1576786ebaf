@@ -412,14 +412,6 @@ PUBLIC void app_vMainloop(void)
         APP_vtaskSleepingEndDevice();
         APP_vtaskMyEndPoint();
 
-        //‚±‚±‚©‚ç’Ç‰Á
-//                uint8 cmd = vReadCommand();
-//        		 if(cmd != 0){
-//                   APP_vSetCommand();
-//        		}
-
-        //‚±‚±‚Ü‚Å
-
         ZTIMER_vTask();
         /* kick the watchdog timer */
         vAHI_WatchdogRestart();

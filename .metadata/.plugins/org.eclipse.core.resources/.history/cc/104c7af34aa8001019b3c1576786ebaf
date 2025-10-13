@@ -106,7 +106,7 @@ PUBLIC pwrm_tsWakeTimerEvent sWake;
 /***        Local Variables                                               ***/
 /****************************************************************************/
 PRIVATE tsDeviceDesc s_eDeviceState;
-
+PUBLIC uint8_t count1 = 1;
 //追加
 PUBLIC uint8 au8DefaultTCLinkKey[16]    = {0x5a, 0x69, 0x67, 0x42, 0x65, 0x65, 0x41, 0x6c,
 		0x6c, 0x69, 0x61, 0x6e, 0x63, 0x65, 0x30, 0x39};
@@ -118,7 +118,6 @@ PUBLIC void SendData();
 /***        Exported Functions                                            ***/
 /****************************************************************************/
 
-PUBLIC uint8_t count1 = 1;
 
 PRIVATE void vReadInputCommand()
 {
@@ -606,7 +605,7 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
 		{
 		case ZPS_EVENT_APS_DATA_INDICATION:
 		{
-//			DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_AF_DATA_INDICATION\n");
+			DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_AF_DATA_INDICATION\n");
 
 			/* Process incoming cluster messages ... */
 //			DBG_vPrintf(TRACE_APP, "Profile :%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u16ProfileId);
@@ -615,6 +614,7 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
 
 			/* free the application protocol data unit (APDU) once it has been dealt with */
 			PDUM_eAPduFreeAPduInstance(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
+			//PWRM_eScheduleActivity(&sWake, SLEEP_TIME, vWakeCallBack);
 		}
 		break;
 
@@ -694,12 +694,23 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
 
 		case ZPS_EVENT_NWK_POLL_CONFIRM:
 		{
-			DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_NEW_POLL_COMPLETE, status = %d\n",
-					sStackEvent.uEvent.sNwkPollConfirmEvent.u8Status );
-
-//スリープ状態するのに必要なコード　3/3個目
-		PWRM_eScheduleActivity(&sWake, SLEEP_TIME, vWakeCallBack);
-
+			uint8 status = sStackEvent.uEvent.sNwkPollConfirmEvent.u8Status;
+		    if (status == 0)
+		    {
+		        DBG_vPrintf(TRUE, "APP: Poll successful — checking for data\n");
+		    }
+		    else
+		    {
+		        DBG_vPrintf(TRUE, "APP: No data pending (Poll status %d)\n", status);
+		        /* データがなければ自発的に送信して再スリープ */
+		        SendData();
+		        PWRM_eScheduleActivity(&sWake, SLEEP_TIME, vWakeCallBack);
+		    }
+//			DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_NEW_POLL_COMPLETE, status = %d\n",
+//					sStackEvent.uEvent.sNwkPollConfirmEvent.u8Status );
+//
+////スリープ状態するのに必要なコード　3/3個目
+//		PWRM_eScheduleActivity(&sWake, SLEEP_TIME, vWakeCallBack);
 		}
 		break;
 

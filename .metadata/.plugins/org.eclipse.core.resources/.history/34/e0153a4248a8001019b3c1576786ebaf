@@ -82,11 +82,11 @@
 /****************************************************************************/
 PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent);
 
-PRIVATE void vReadInputCommand(void);               /* UARTã‚³ãƒãƒ³ãƒ‰å®Ÿè¡Œã‚’ä¸€å…ƒåŒ– */
+PRIVATE void vReadInputCommand(void);               /* UARTƒRƒ}ƒ“ƒhÀs‚ğˆêŒ³‰» */
 PRIVATE void vDrainQueueOnOverrun(tszQueue *q, const char *name);
 PRIVATE void vReleaseApduIfPresent(ZPS_tsAfEvent *e);
 
-/* é€ä¿¡ãƒšã‚¤ãƒ­ãƒ¼ãƒ‰ç”Ÿæˆã‚’åˆ†é›¢ï¼ˆæŒ™å‹•ã¯ç¶­æŒï¼‰ */
+/* ‘—MƒyƒCƒ[ƒh¶¬‚ğ•ª—£i‹““®‚ÍˆÛj */
 PRIVATE void vBuildAppPayload(PDUM_thAPduInstance h);
 
 
@@ -106,8 +106,8 @@ PUBLIC pwrm_tsWakeTimerEvent sWake;
 /***        Local Variables                                               ***/
 /****************************************************************************/
 PRIVATE tsDeviceDesc s_eDeviceState;
-
-//è¿½åŠ 
+PUBLIC uint8_t count1 = 1;
+//’Ç‰Á
 PUBLIC uint8 au8DefaultTCLinkKey[16]    = {0x5a, 0x69, 0x67, 0x42, 0x65, 0x65, 0x41, 0x6c,
 		0x6c, 0x69, 0x61, 0x6e, 0x63, 0x65, 0x30, 0x39};
 
@@ -118,7 +118,6 @@ PUBLIC void SendData();
 /***        Exported Functions                                            ***/
 /****************************************************************************/
 
-PUBLIC uint8_t count1 = 1;
 
 PRIVATE void vReadInputCommand()
 {
@@ -153,7 +152,7 @@ PRIVATE bool_t bLoadDeviceState(void)
 
 PRIVATE uint16 u16BuildDummyPayload(PDUM_thAPduInstance h)
 {
-    // ãƒ€ãƒŸãƒ¼ãƒ‡ãƒ¼ã‚¿
+    // ƒ_ƒ~[ƒf[ƒ^
 	uint16 offset = 0;
     uint8 payload[4] = {6, count1++, 0x01, 0xa6};
     offset += PDUM_u16APduInstanceWriteNBO(h, offset, "a\x10", payload);
@@ -161,7 +160,7 @@ PRIVATE uint16 u16BuildDummyPayload(PDUM_thAPduInstance h)
     return offset;
 }
 
-PUBLIC void SendData(){ //ãƒ‡ãƒ¼ã‚¿ã‚’é€ä¿¡ã™ã‚‹é–¢æ•°
+PUBLIC void SendData(){ //ƒf[ƒ^‚ğ‘—M‚·‚éŠÖ”
 	uint8 u8TransactionSequenceNumber = 0;
 	PDUM_thAPduInstance hAPduInst = PDUM_hAPduAllocateAPduInstance(apduZDP);
     if (hAPduInst == PDUM_INVALID_HANDLE)
@@ -176,7 +175,7 @@ PUBLIC void SendData(){ //ãƒ‡ãƒ¼ã‚¿ã‚’é€ä¿¡ã™ã‚‹é–¢æ•°
 							0x1234,     // Cluster ID
 						    AN1229_ZBP_SLEEPINGENDDEVICE_MYENDPOINT_ENDPOINT, /* Src EP (SED) */
 						    AN1229_ZBP_COORDINATOR_MYENDPOINT_ENDPOINT,       /* Dst EP (Coordinator) */
-						    COORDINATOR_ADR,                                  /* å®›å…ˆã‚·ãƒ§ãƒ¼ãƒˆã‚¢ãƒ‰ãƒ¬ã‚¹ */
+						    COORDINATOR_ADR,                                  /* ˆ¶æƒVƒ‡[ƒgƒAƒhƒŒƒX */
 						    ZPS_E_APL_AF_UNSECURE,
 							APP_TX_OPTION_ACK_REQUIRED,
 							&u8TransactionSequenceNumber);
@@ -190,7 +189,7 @@ PUBLIC void SendData(){ //ãƒ‡ãƒ¼ã‚¿ã‚’é€ä¿¡ã™ã‚‹é–¢æ•°
 
 PUBLIC void vWakeCallBack(void)
 {
-	/* schedule device to go to sleep, then poll for data */ //é€ä¿¡ãƒ‡ãƒ¼ã‚¿ãŒãªã„ã‹coordinatorã«å°‹ã­ã¦ã„ã‚‹
+	/* schedule device to go to sleep, then poll for data */ //‘—Mƒf[ƒ^‚ª‚È‚¢‚©coordinator‚Éq‚Ë‚Ä‚¢‚é
 
 	 //DBG_vPrintf(TRACE_APP, "APP: Polling for data\n");
 	 ZPS_eAplZdoPoll();
@@ -450,7 +449,7 @@ PRIVATE void vWaitForNetworkDiscovery(ZPS_tsAfEvent sStackEvent)
 			/* network joined so advance to running state */
 			s_eDeviceState.eNodeState = E_RUNNING;
 
-//ã‚¹ãƒªãƒ¼ãƒ—çŠ¶æ…‹ã™ã‚‹ã®ã«å¿…è¦ãªã‚³ãƒ¼ãƒ‰ã€€1/3å€‹ç›®
+//ƒXƒŠ[ƒvó‘Ô‚·‚é‚Ì‚É•K—v‚ÈƒR[ƒh@1/3ŒÂ–Ú
 		   PWRM_eScheduleActivity(&sWake, SLEEP_TIME, vWakeCallBack);
 
 
@@ -506,7 +505,7 @@ PRIVATE void vWaitForNetworkJoin(ZPS_tsAfEvent sStackEvent)
 					&s_eDeviceState,
 					sizeof(s_eDeviceState));
 
-/*ã‚¹ãƒªãƒ¼ãƒ—çŠ¶æ…‹ã™ã‚‹ã®ã«å¿…è¦ãªã‚³ãƒ¼ãƒ‰ã€€2/3å€‹ç›®
+/*ƒXƒŠ[ƒvó‘Ô‚·‚é‚Ì‚É•K—v‚ÈƒR[ƒh@2/3ŒÂ–Ú
 			PWRM_eScheduleActivity(&sWake, SLEEP_TIME, vWakeCallBack);
 */
 		}
@@ -697,7 +696,7 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
 			DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_NEW_POLL_COMPLETE, status = %d\n",
 					sStackEvent.uEvent.sNwkPollConfirmEvent.u8Status );
 
-//ã‚¹ãƒªãƒ¼ãƒ—çŠ¶æ…‹ã™ã‚‹ã®ã«å¿…è¦ãªã‚³ãƒ¼ãƒ‰ã€€3/3å€‹ç›®
+//ƒXƒŠ[ƒvó‘Ô‚·‚é‚Ì‚É•K—v‚ÈƒR[ƒh@3/3ŒÂ–Ú
 		PWRM_eScheduleActivity(&sWake, SLEEP_TIME, vWakeCallBack);
 
 		}

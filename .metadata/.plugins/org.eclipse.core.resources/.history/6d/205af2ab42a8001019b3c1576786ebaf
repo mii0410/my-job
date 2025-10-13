@@ -94,7 +94,6 @@ PRIVATE PWRM_DECLARE_CALLBACK_DESCRIPTOR(PreSleep);
 
 
 PUBLIC uint8 u8App_tmr1sec;
-PUBLIC void SendData();  //í«â¡ä÷êî
 /****************************************************************************/
 /***        Local Variables                                               ***/
 /****************************************************************************/
@@ -300,7 +299,7 @@ PWRM_CALLBACK(Wakeup)
     /* Initialise the debug diagnostics module to use UART0 at 115K Baud;
      * Do not use UART 1 if LEDs are used, as it shares DIO with the LEDS
      */
-    DBG_vUartInit(DBG_E_UART_0, DBG_E_UART_BAUD_RATE_115200);
+    //DBG_vUartInit(DBG_E_UART_0, DBG_E_UART_BAUD_RATE_115200);
     DBG_vPrintf(TRACE_APP, "\n\nAPP: Woken up (CB)\n");
 
     /* Restore Mac settings (turns radio on) */
@@ -411,14 +410,6 @@ PUBLIC void app_vMainloop(void)
         zps_taskZPS();
         APP_vtaskSleepingEndDevice();
         APP_vtaskMyEndPoint();
-
-        //Ç±Ç±Ç©ÇÁí«â¡
-//                uint8 cmd = vReadCommand();
-//        		 if(cmd != 0){
-//                   APP_vSetCommand();
-//        		}
-
-        //Ç±Ç±Ç‹Ç≈
 
         ZTIMER_vTask();
         /* kick the watchdog timer */

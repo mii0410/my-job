@@ -166,7 +166,7 @@ PUBLIC void vAppMain(void)
 
 
 
-    DBG_vPrintf(TRACE_APP, "\nAPP: Power Up\n");
+    DBG_vPrintf(TRACE_APP, "\n\nAPP: Power Up\n");
 #if JENNIC_CHIP_FAMILY == JN516x
     /*
      * Initialise the stack overflow exception to trigger if the end of the
@@ -197,7 +197,8 @@ PUBLIC void vAppMain(void)
     APP_vInitResources();
     APP_vSetUpHardware();
     vInitialiseApp();
-    app_vMainloop();
+   app_vMainloop();
+
 }
 
 
@@ -413,10 +414,10 @@ PUBLIC void app_vMainloop(void)
         APP_vtaskMyEndPoint();
 
         //‚±‚±‚©‚ç’Ç‰Á
-//                uint8 cmd = vReadCommand();
-//        		 if(cmd != 0){
-//                   APP_vSetCommand();
-//        		}
+                uint8 cmd = vReadCommand();
+        		 if(cmd != 0){
+                   APP_vSetCommand();
+        		}
 
         //‚±‚±‚Ü‚Å
 

@@ -120,6 +120,8 @@ PUBLIC void SendData();
 
 PUBLIC uint8_t count1 = 1;
 
+
+
 PRIVATE void vReadInputCommand()
 {
     commandType cmd = vReadCommand();

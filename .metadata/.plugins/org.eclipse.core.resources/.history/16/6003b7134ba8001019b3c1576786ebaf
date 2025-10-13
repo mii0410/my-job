@@ -94,7 +94,6 @@ PRIVATE PWRM_DECLARE_CALLBACK_DESCRIPTOR(PreSleep);
 
 
 PUBLIC uint8 u8App_tmr1sec;
-PUBLIC void SendData();  //追加関数
 /****************************************************************************/
 /***        Local Variables                                               ***/
 /****************************************************************************/
@@ -300,8 +299,8 @@ PWRM_CALLBACK(Wakeup)
     /* Initialise the debug diagnostics module to use UART0 at 115K Baud;
      * Do not use UART 1 if LEDs are used, as it shares DIO with the LEDS
      */
-    DBG_vUartInit(DBG_E_UART_0, DBG_E_UART_BAUD_RATE_115200);
-    DBG_vPrintf(TRACE_APP, "\n\nAPP: Woken up (CB)\n");
+    //DBG_vUartInit(DBG_E_UART_0, DBG_E_UART_BAUD_RATE_115200);
+    DBG_vPrintf(TRACE_APP, "\nAPP: Woken up (CB)\n");
 
     /* Restore Mac settings (turns radio on) */
     vMAC_RestoreSettings();
@@ -309,6 +308,15 @@ PWRM_CALLBACK(Wakeup)
     APP_vSetUpHardware();
     ZTIMER_vWake();
     SendData();	//文字列送信コード
+
+    /* 起床時にポーリング要求を送信 */
+    ZPS_teStatus ePoll = ZPS_eAplZdoPoll();
+    if (ePoll != ZPS_E_SUCCESS) {
+        DBG_vPrintf(TRUE, "APP: Poll failed %d, sending data instead\n", ePoll);
+        SendData();  // Poll失敗時のみ直接送信
+    } else {
+        DBG_vPrintf(TRACE_APP, "APP: Poll request sent\n");
+    }
 }
 
 /****************************************************************************
@@ -402,23 +410,15 @@ PUBLIC void APP_vInitResources(void)
 PUBLIC void app_vMainloop(void)
 {
 	uint64 u64Addr = ZPS_u64AplZdoGetIeeeAddr();
-	DBG_vPrintf(TRUE, "IEEE Addr: %016llX\n", u64Addr);DBG_vPrintf(TRUE, "IEEE Addr: %08x%08x\n",
-            (uint32)(u64Addr >> 32),  // 上位32bit
-            (uint32)(u64Addr & 0xFFFFFFFF)); // 下位32bit
+	DBG_vPrintf(TRUE, "IEEE Addr: %08x%08x\n",
+	            (uint32)(u64Addr >> 32),
+	            (uint32)(u64Addr & 0xFFFFFFFF));
 
     /* idle task commences on exit from OS start call */
     while (TRUE) {
         zps_taskZPS();
         APP_vtaskSleepingEndDevice();
         APP_vtaskMyEndPoint();
-
-        //ここから追加
-//                uint8 cmd = vReadCommand();
-//        		 if(cmd != 0){
-//                   APP_vSetCommand();
-//        		}
-
-        //ここまで
 
         ZTIMER_vTask();
         /* kick the watchdog timer */
