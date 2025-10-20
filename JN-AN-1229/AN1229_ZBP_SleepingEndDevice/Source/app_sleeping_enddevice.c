@@ -151,14 +151,21 @@ PRIVATE bool_t bLoadDeviceState(void)
 	return FALSE;
 }
 
-PRIVATE uint16 u16BuildDummyPayload(PDUM_thAPduInstance h)
+PRIVATE void vBuildAppPayload(PDUM_thAPduInstance h)
 {
-    // ダミーデータ
-	uint16 offset = 0;
-    uint8 payload[4] = {6, count1++, 0x01, 0xa6};
-    offset += PDUM_u16APduInstanceWriteNBO(h, offset, "a\x10", payload);
+    uint8 *pu8Payload;
+    uint16 offset = 0;
+
+    pu8Payload = PDUM_pvAPduInstanceGetPayload(h);
+
+    // ダミーデータ "HELLO" を格納
+    const char *msg = "HELLO";
+    while (msg[offset] != '\0') {
+        pu8Payload[offset] = msg[offset];
+        offset++;
+    }
+
     PDUM_eAPduInstanceSetPayloadSize(h, offset);
-    return offset;
 }
 
 PUBLIC void SendData(){ //データを送信する関数
@@ -169,6 +176,8 @@ PUBLIC void SendData(){ //データを送信する関数
         DBG_vPrintf(TRUE, "APP: PDUM allocate fail\n");
         return;
     }
+
+    vBuildAppPayload(hAPduInst);
 
 	ZPS_teStatus eStatus;
 	eStatus = ZPS_eAplAfUnicastDataReq(
@@ -606,13 +615,13 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
 		{
 		case ZPS_EVENT_APS_DATA_INDICATION:
 		{
-//			DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_AF_DATA_INDICATION\n");
+			DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_AF_DATA_INDICATION\n");
 
 			/* Process incoming cluster messages ... */
 //			DBG_vPrintf(TRACE_APP, "Profile :%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u16ProfileId);
 //			DBG_vPrintf(TRACE_APP, "Cluster :%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u16ClusterId);
 //			DBG_vPrintf(TRACE_APP, "EndPoint:%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u8DstEndpoint);
-
+			SendData();
 			/* free the application protocol data unit (APDU) once it has been dealt with */
 			PDUM_eAPduFreeAPduInstance(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
 		}

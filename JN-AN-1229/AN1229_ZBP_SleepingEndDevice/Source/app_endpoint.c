@@ -120,9 +120,9 @@ void APP_vtaskMyEndPoint (void)
 
                 /* Process incoming cluster messages for this endpoint... */
                 DBG_vPrintf(TRACE_APP, "    Data Indication:\r\n");
-                DBG_vPrintf(TRACE_APP, "        Profile :%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u16ProfileId);
-                DBG_vPrintf(TRACE_APP, "        Cluster :%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u16ClusterId);
-                DBG_vPrintf(TRACE_APP, "        EndPoint:%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u8DstEndpoint);
+                DBG_vPrintf(TRACE_APP, "   		Profile :%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u16ProfileId);
+                DBG_vPrintf(TRACE_APP, "    	Cluster :%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u16ClusterId);
+                DBG_vPrintf(TRACE_APP, "   		EndPoint:%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u8DstEndpoint);
 
 
 

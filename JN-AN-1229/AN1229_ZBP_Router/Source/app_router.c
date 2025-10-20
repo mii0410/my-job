@@ -18,9 +18,6 @@
 #include "app_router.h"
 
 //追加コード
-#include "DBG.h"
-#include "dbg_jtag.h"
-#include "DBG_Uart.h"
 #include "pdum_apl.h"
 #include "pdum_gen.h"
 #include "Utils.h"
@@ -54,6 +51,11 @@
 #define ROUTE_MONITOR_REJOIN_INTERVAL     ZTIMER_TIME_SEC(30)
 #define ROUTE_MONITOR_MAX_ROUTE_RETRY     3
 #define ROUTE_MONITOR_MAX_REJOIN_ATTEMPT  2
+
+#define APP_CLUSTER_ID   MYPROFILE_MYCLUSTER_CLUSTER_ID
+#define APP_SRC_EP       AN1229_ZBP_ROUTER_MYENDPOINT_ENDPOINT
+#define APP_DST_EP       AN1229_ZBP_COORDINATOR_MYENDPOINT_ENDPOINT
+
 
 
 /****************************************************************************/
@@ -188,15 +190,12 @@ PRIVATE void vSendDataInternal(uint16 u16RequestedDest)
     /* デモ用の送信処理 */
     uint8 u8TransactionSequenceNumber = 0;
     PDUM_thAPduInstance hAPduInst = PDUM_hAPduAllocateAPduInstance(apduZDP);
-    uint16 u16Offset = 0;
-    uint8 au8Payload[4] = {0};
-    uint16 u16DstAddr = u16ResolveDestinationAddress(u16RequestedDest);
 
-    au8Payload[0] = 6;
-    au8Payload[1] = count1;
-    au8Payload[2] = 0x01;
-    au8Payload[3] = 0xA6;
-    count1++;
+    uint8 au8Payload[4] = { 6, count1++, 0x01, 0xA6 };
+    uint8 *pu8 = PDUM_pvAPduInstanceGetPayload(hAPduInst);
+    uint16 u16Len = sizeof(au8Payload);
+    memcpy(pu8, au8Payload, u16Len);
+    PDUM_eAPduInstanceSetPayloadSize(hAPduInst, u16Len);
 
     if (hAPduInst == PDUM_INVALID_HANDLE)
     {
@@ -209,14 +208,13 @@ PRIVATE void vSendDataInternal(uint16 u16RequestedDest)
 
     /* 以下は送信要求のサンプルコード。実際に使用する際は必要な処理を追加する。 */
     ZPS_teStatus eStatus;
-    ZPS_teAplAfSecurityMode eSecurityMode = ZPS_E_APL_AF_UNSECURE;
 
     eStatus = ZPS_eAplAfUnicastDataReq(hAPduInst,
                                        0x1337,
-                                       u16DstAddr,
-                                       0x01,
-                                       0x01,
-                                       eSecurityMode,
+                                       AN1229_ZBP_SLEEPINGENDDEVICE_MYENDPOINT_ENDPOINT, // Source EP (SED)
+                                       AN1229_ZBP_COORDINATOR_MYENDPOINT_ENDPOINT,       // Destination EP (Coordinator)
+                                       COORDINATOR_ADR,
+                                       ZPS_E_APL_AF_UNSECURE,
                                        APP_TX_OPTION_ACK_REQUIRED,
                                        &u8TransactionSequenceNumber);
 
@@ -235,33 +233,6 @@ PRIVATE void vSendDataInternal(uint16 u16RequestedDest)
                     u16DstAddr,
                     u8TransactionSequenceNumber);
     }
-
-    /* 一例として IEEE アドレス指定で送信する場合の参考コード */
-    /*
-    uint64 u64UnicastMacAddr  = 0x001BC50122016BD5ULL;
-    eStatus = ZPS_eAplAfUnicastIeeeDataReq(
-                    hAPduInst,
-                    0x1337,
-                    0x01,
-                    0x01,
-                    u64UnicastMacAddr,
-                    eSecurityMode,
-                    0,
-                    &u8TransactionSequenceNumber);
-    */
-
-    /* ブロードキャスト送信のサンプル */
-    /*
-    eStatus = ZPS_eAplAfBroadcastDataReq(
-                    hAPduInst,
-                    0x1337,
-                    0x01,
-                    0x01,
-                    ZPS_E_BROADCAST_ZC_ZR,
-                    eSecurityMode,
-                    0,
-                    &u8TransactionSequenceNumber);
-    */
 }
 
 PRIVATE uint16 u16ResolveDestinationAddress(uint16 u16RequestedDest)

@@ -65,7 +65,7 @@
 #else
 	#define TRACE_APP 	TRUE
 #endif
-
+#define APP_MAX_LOG_PAYLOAD_BYTES   16U
 tszQueue APP_msgMyEndPointEvents;
 tszQueue APP_msgZpsEvents;
 
@@ -103,24 +103,24 @@ void APP_vtaskMyEndPoint (void)
             case ZPS_EVENT_APS_DATA_INDICATION: //何かしら他端末からのデータを受信した(受信したデータを扱う場合はここの部分を変更させる)
             {
 
-                uint16 u16bytesread;
-                uint8_t i = 0;
-                uint8_t u8LQI = 0;
-                uint8_t addr = 0;
-                uint8_t Rxbyte[3];//受信データを格納する配列
-
-
-                u16bytesread = PDUM_u16APduInstanceReadNBO(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst,0,"a\x10",&Rxbyte);
-                addr = sStackEvent.uEvent.sApsDataIndEvent.uSrcAddress.u16Addr;
-                u8LQI = 0;
-                //u8LQI = sStackEvent.uEvent.sApsDataIndEvent.u8LinkQuality;
-                vAHI_UartWriteData(DBG_E_UART_0, Rxbyte[0]); //受信したセンサの識別番号
-                vAHI_UartWriteData(DBG_E_UART_0, Rxbyte[1]); //受信した各センサの順番
-                vAHI_UartWriteData(DBG_E_UART_0, addr); //受信したデータの送信元のshortアドレス
-                vAHI_UartWriteData(DBG_E_UART_0, u8LQI); //受信したデータのLQI値
-                vAHI_UartWriteData(DBG_E_UART_0, Rxbyte[2]); //受信したデータ１つ目
-                vAHI_UartWriteData(DBG_E_UART_0, Rxbyte[3]);//受信したデータ２つ目
-                memset(Rxbyte, 0, sizeof(Rxbyte));
+//                uint16 u16bytesread;
+//                uint8_t i = 0;
+//                uint8_t u8LQI = 0;
+//                uint8_t addr = 0;
+//                uint8_t Rxbyte[3];//受信データを格納する配列
+//
+//
+//                u16bytesread = PDUM_u16APduInstanceReadNBO(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst,0,"a\x10",&Rxbyte);
+//                addr = sStackEvent.uEvent.sApsDataIndEvent.uSrcAddress.u16Addr;
+//                u8LQI = 0;
+//                //u8LQI = sStackEvent.uEvent.sApsDataIndEvent.u8LinkQuality;
+//                vAHI_UartWriteData(DBG_E_UART_0, Rxbyte[0]); //受信したセンサの識別番号
+//                vAHI_UartWriteData(DBG_E_UART_0, Rxbyte[1]); //受信した各センサの順番
+//                vAHI_UartWriteData(DBG_E_UART_0, addr); //受信したデータの送信元のshortアドレス
+//                vAHI_UartWriteData(DBG_E_UART_0, u8LQI); //受信したデータのLQI値
+//                vAHI_UartWriteData(DBG_E_UART_0, Rxbyte[2]); //受信したデータ１つ目
+//                vAHI_UartWriteData(DBG_E_UART_0, Rxbyte[3]);//受信したデータ２つ目
+//                memset(Rxbyte, 0, sizeof(Rxbyte));
 
 
                 /* free the application protocol data unit (APDU) once it has been dealt with */

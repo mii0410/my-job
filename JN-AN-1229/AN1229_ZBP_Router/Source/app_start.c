@@ -46,8 +46,8 @@
 #define TIMER_QUEUE_SIZE             8
 #define MLME_QUEQUE_SIZE             4
 #define MCPS_QUEUE_SIZE             24
-#define ZPS_QUEUE_SIZE               2
-#define APP_QUEUE_SIZE               2
+#define ZPS_QUEUE_SIZE               8
+#define APP_QUEUE_SIZE               8
 #define MCPS_DCFM_QUEUE_SIZE         8
 
 #if JENNIC_CHIP_FAMILY == JN517x

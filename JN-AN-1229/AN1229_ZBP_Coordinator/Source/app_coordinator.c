@@ -572,6 +572,38 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
 
     	case ZPS_EVENT_APS_DATA_INDICATION:
         {
+        	uint16 cluster  = sStackEvent.uEvent.sApsDataIndEvent.u16ClusterId;
+        	uint8  dstEp    = sStackEvent.uEvent.sApsDataIndEvent.u8DstEndpoint;
+
+        	/* 自アプリのクラスタとEPだけを可視化 */
+        	if (cluster == 0x1234 && dstEp == AN1229_ZBP_COORDINATOR_MYENDPOINT_ENDPOINT)
+        	{
+        		uint8 *pData = PDUM_pvAPduInstanceGetPayload(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
+        		uint16 len   = PDUM_u16APduInstanceGetPayloadSize(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
+        		uint16 i;
+
+        		DBG_vPrintf(TRUE, "COORD: Received %d bytes (Cluster 0x%04x)\r\n", len, cluster);
+
+        		/* HEX */
+        		DBG_vPrintf(TRUE, "  HEX : ");
+        		for (i = 0; i < len; i++) {
+        			DBG_vPrintf(TRUE, "%02x ", pData[i]);
+        		}
+        		DBG_vPrintf(TRUE, "\r\n");
+
+        		/* ASCII（非表示文字は'.'） */
+        		DBG_vPrintf(TRUE, "  TEXT: ");
+        		for (i = 0; i < len; i++) {
+        			uint8 c = pData[i];
+        			if (c >= 0x20 && c <= 0x7E) {
+        				DBG_vPrintf(TRUE, "%c", c);
+        			} else {
+        				DBG_vPrintf(TRUE, ".");
+        			}
+        		}
+        		DBG_vPrintf(TRUE, "\r\n");
+        	}
+            DBG_vPrintf(TRUE, "\r\n");
         	vUpdateLastKnownNodeAddr(sStackEvent.uEvent.sApsDataIndEvent.uSrcAddress.u16Addr);
         	PDUM_eAPduFreeAPduInstance(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
         }

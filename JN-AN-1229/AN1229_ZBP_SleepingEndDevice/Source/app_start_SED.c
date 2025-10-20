@@ -308,7 +308,6 @@ PWRM_CALLBACK(Wakeup)
 
     APP_vSetUpHardware();
     ZTIMER_vWake();
-    SendData();	//文字列送信コード
 }
 
 /****************************************************************************
@@ -384,8 +383,6 @@ PUBLIC void APP_vInitResources(void)
     ZQ_vQueueCreate(&APP_msgZpsEvents,           APP_QUEUE_SIZE,        sizeof(ZPS_tsAfEvent),       (uint8*)asAppEvents);
     ZQ_vQueueCreate(&APP_msgMyEndPointEvents,    ZPS_QUEUE_SIZE,        sizeof(ZPS_tsAfEvent),       (uint8*)asStackEvents);
 	ZQ_vQueueCreate(&zps_msgMcpsDcfm,            MCPS_DCFM_QUEUE_SIZE,  sizeof(MAC_tsMcpsVsCfmData),(uint8*)asMacMcpsDcfm);
-
-
 }
 
 /****************************************************************************
