@@ -156,13 +156,13 @@ PUBLIC void vAppMain(void)
     /*追加コード*/
     DBG_vUartInit (DBG_E_UART_0, DBG_E_UART_BAUD_RATE_115200);
 
-        	     vAHI_Uart0RegisterCallback(vUartCallback); // terminalからの文字入力
-        	     vAHI_UartSetInterrupt(DBG_E_UART_0,
-        	      	    		              FALSE,
-        	       	    		              FALSE,                    // Enable Rx line status
-        	       	    		              FALSE,                    // Enable Tx FIFO empty
-        	        	    		          TRUE,                     // Enable Rx Data
-        	          	    		          E_AHI_UART_FIFO_LEVEL_1); // Number of bits to wait in the Rx FIFO before triggering the interrupt (1,8,14)
+    vAHI_Uart0RegisterCallback(vUartCallback); // terminalからの文字入力
+    vAHI_UartSetInterrupt(DBG_E_UART_0,
+    		FALSE,
+    		FALSE,                    // Enable Rx line status
+    		FALSE,                    // Enable Tx FIFO empty
+    		TRUE,                     // Enable Rx Data
+    		E_AHI_UART_FIFO_LEVEL_1); // Number of bits to wait in the Rx FIFO before triggering the interrupt (1,8,14)
 
 
 
@@ -213,8 +213,9 @@ PUBLIC void vAppMain(void)
  ****************************************************************************/
 void vAppRegisterPWRMCallbacks(void)
 {
-    PWRM_vRegisterPreSleepCallback(PreSleep);
-    PWRM_vRegisterWakeupCallback(Wakeup);
+	// スリープモードは無効化しました
+//    PWRM_vRegisterPreSleepCallback(PreSleep);
+//    PWRM_vRegisterWakeupCallback(Wakeup);
 }
 
 /****************************************************************************/
@@ -274,10 +275,10 @@ PRIVATE void vInitialiseApp(void)
  ****************************************************************************/
 PWRM_CALLBACK(PreSleep)
 {
-   DBG_vPrintf(TRACE_APP, "APP: Going to sleep (CB)\n");
-   vAppApiSaveMacSettings();
-   ZTIMER_vSleep();
-
+	// スリープモードは無効化しました
+//   DBG_vPrintf(TRACE_APP, "APP: Going to sleep (CB)\n");
+//   vAppApiSaveMacSettings();
+//   ZTIMER_vSleep();
 }
 
 /****************************************************************************
@@ -292,22 +293,23 @@ PWRM_CALLBACK(PreSleep)
 
 PWRM_CALLBACK(Wakeup)
 {
-	/* Wait until FALSE i.e. on XTAL  - otherwise uart data will be at wrong speed */
-    while (bAHI_GetClkSource() == TRUE);
-    /* Now we are running on the XTAL, optimise the flash memory wait states. */
-    vAHI_OptimiseWaitStates();
-
-    /* Initialise the debug diagnostics module to use UART0 at 115K Baud;
-     * Do not use UART 1 if LEDs are used, as it shares DIO with the LEDS
-     */
-    DBG_vUartInit(DBG_E_UART_0, DBG_E_UART_BAUD_RATE_115200);
-    DBG_vPrintf(TRACE_APP, "\n\nAPP: Woken up (CB)\n");
-
-    /* Restore Mac settings (turns radio on) */
-    vMAC_RestoreSettings();
-
-    APP_vSetUpHardware();
-    ZTIMER_vWake();
+//	sleepモードは無効化しました
+//	/* Wait until FALSE i.e. on XTAL  - otherwise uart data will be at wrong speed */
+//    while (bAHI_GetClkSource() == TRUE);
+//    /* Now we are running on the XTAL, optimise the flash memory wait states. */
+//    vAHI_OptimiseWaitStates();
+//
+//    /* Initialise the debug diagnostics module to use UART0 at 115K Baud;
+//     * Do not use UART 1 if LEDs are used, as it shares DIO with the LEDS
+//     */
+//    DBG_vUartInit(DBG_E_UART_0, DBG_E_UART_BAUD_RATE_115200);
+//    DBG_vPrintf(TRACE_APP, "\n\nAPP: Woken up (CB)\n");
+//
+//    /* Restore Mac settings (turns radio on) */
+//    vMAC_RestoreSettings();
+//
+//    APP_vSetUpHardware();
+//    ZTIMER_vWake();
 }
 
 /****************************************************************************
@@ -398,27 +400,14 @@ PUBLIC void APP_vInitResources(void)
  ****************************************************************************/
 PUBLIC void app_vMainloop(void)
 {
-	uint64 u64Addr = ZPS_u64AplZdoGetIeeeAddr();
-	DBG_vPrintf(TRUE, "IEEE Addr: %016llX\n", u64Addr);DBG_vPrintf(TRUE, "IEEE Addr: %08x%08x\n",
-            (uint32)(u64Addr >> 32),  // 上位32bit
-            (uint32)(u64Addr & 0xFFFFFFFF)); // 下位32bit
+    uint64 u64Addr = ZPS_u64AplZdoGetIeeeAddr();
+    DBG_vPrintf(TRUE, "IEEE Addr: %016llX\n", u64Addr);
 
-    /* idle task commences on exit from OS start call */
     while (TRUE) {
         zps_taskZPS();
         APP_vtaskSleepingEndDevice();
         APP_vtaskMyEndPoint();
-
-        //ここから追加
-//                uint8 cmd = vReadCommand();
-//        		 if(cmd != 0){
-//                   APP_vSetCommand();
-//        		}
-
-        //ここまで
-
         ZTIMER_vTask();
-        /* kick the watchdog timer */
         vAHI_WatchdogRestart();
         PWRM_vManagePower();
     }

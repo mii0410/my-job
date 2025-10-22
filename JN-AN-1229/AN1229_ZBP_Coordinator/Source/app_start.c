@@ -325,6 +325,7 @@ PUBLIC void app_vMainloop(void)
         APP_vtaskCoordinator();
         APP_vtaskMyEndPoint();
 
+
         ZTIMER_vTask();
         /* kick the watchdog timer */
         vAHI_WatchdogRestart();

@@ -87,15 +87,8 @@ uint8_t p = 0;
 void APP_vtaskMyEndPoint (void)
 {
     ZPS_tsAfEvent sStackEvent;
-    sStackEvent.eType = ZPS_EVENT_NONE;
 
-    /* check if any messages to collect */
-    if ( ZQ_bQueueReceive(&APP_msgMyEndPointEvents, &sStackEvent) )
-    {
-        //DBG_vPrintf(TRACE_APP, "APP: No event to process\n");
-    }
-
-    if (ZPS_EVENT_NONE != sStackEvent.eType)
+    while (ZQ_bQueueReceive(&APP_msgMyEndPointEvents, &sStackEvent))
     {
         switch (sStackEvent.eType)
         {
@@ -121,7 +114,26 @@ void APP_vtaskMyEndPoint (void)
 //                vAHI_UartWriteData(DBG_E_UART_0, Rxbyte[2]); //受信したデータ１つ目
 //                vAHI_UartWriteData(DBG_E_UART_0, Rxbyte[3]);//受信したデータ２つ目
 //                memset(Rxbyte, 0, sizeof(Rxbyte));
+                uint16 cluster = sStackEvent.uEvent.sApsDataIndEvent.u16ClusterId;
+                uint8  dstEp   = sStackEvent.uEvent.sApsDataIndEvent.u8DstEndpoint;
 
+                /* まずは何が来ているか可視化（HEX＋安全ASCII） */
+                uint8 *p = PDUM_pvAPduInstanceGetPayload(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
+                uint16 n = PDUM_u16APduInstanceGetPayloadSize(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
+                uint16 i;
+
+                DBG_vPrintf(TRUE, "COORD/EP: RX ind cluster=0x%04x dstEp=%d len=%d\r\n", cluster, dstEp, n);
+
+                DBG_vPrintf(TRUE, "  HEX : ");
+                for (i = 0; i < n; i++) { DBG_vPrintf(TRUE, "%02x ", p[i]); }
+                DBG_vPrintf(TRUE, "\r\n");
+
+                DBG_vPrintf(TRUE, "  TEXT: ");
+                for (i = 0; i < n; i++) {
+                    uint8 c = p[i];
+                    DBG_vPrintf(TRUE, "%c", (c >= 0x20 && c <= 0x7E) ? c : '.');
+                }
+                DBG_vPrintf(TRUE, "\r\n");
 
                 /* free the application protocol data unit (APDU) once it has been dealt with */
                 PDUM_eAPduFreeAPduInstance(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);

@@ -1,4 +1,4 @@
-02:10:36 **** Incremental Build of configuration Coordinator for project JN-AN-1229-ZPS-Application-Template ****
+11:41:50 **** Incremental Build of configuration Coordinator for project JN-AN-1229-ZPS-Application-Template ****
 make TRACE=1 JENNIC_CHIP=JN5169 JENNIC_CHIP_FAMILY=JN516x all 
 Building trace version ...
 Building numbered PDM IDs version ...
@@ -12,9 +12,9 @@ Linking AN1229_ZBP_Coordinator_JN5169.elf ...
 /c/NXP/bstudio_nxp/sdk/Tools/ba-elf-ba2-r36379/bin/ba-elf-gcc -march=ba2 -mcpu=jn51xx -mredzone-size=4 -mbranch-cost=3 -fomit-frame-pointer -Os -fshort-enums -flto  -nostartfiles -L../../../../sdk/JN-SW-4170/Chip/JN5169/Build -L../../../../sdk/JN-SW-4170/Chip/JN5169/Library -L../../../../sdk/JN-SW-4170/Platform/DK4/Library -L../../../../sdk/JN-SW-4170/Components/Library -Wl,--gc-sections -Wl,--defsym=__stack_size=5000 -Wl,--defsym,__minimum_heap_size=2000 -TAppBuildZBPro.ld -o AN1229_ZBP_Coordinator_JN5169.elf -Wl,--start-group irq_JN516x.o portasm_JN516x.o port_JN516x.o pdum_gen.o pdum_apdu.o zps_gen.o app_start.o app_coordinator.o app_endpoint.o appZdpExtraction.o appZpsBeaconHandler.o app_pdm.o Utils.o ZQueue.o ZTimer.o app_zps_link_keys.o -lJPT_JN5169 -lZPSMAC_Mini_SOC_JN516x -lPWRM_JN516x -lZPSTSV_JN516x -lAES_SW_JN516x -lPDUM_JN516x -lZPSAPL_JN516x -lRandom_JN516x -lPDM_EEPROM_NO_RTOS_JN516x -lDBG_JN516x -lZPSNWK_JN516x -lMiniMac_JN5169 -lMiniMacShim_JN516x -lMMAC_JN5169 -lJPT_JN5169 -lAes_JN516x -lHardwareApi_JN5169 -lMicroSpecific_JN516x -lBoot_JN516x -lBoardLib_JN516x -Wl,--end-group -Wl,-Map,AN1229_ZBP_Coordinator_JN5169.map 	 	 
 /c/NXP/bstudio_nxp/sdk/Tools/ba-elf-ba2-r36379/bin/ba-elf-size AN1229_ZBP_Coordinator_JN5169.elf 
    text	   data	    bss	    dec	    hex	filename
- 116993	   1368	  19881	 138242	  21c02	AN1229_ZBP_Coordinator_JN5169.elf
+ 117188	   1364	  19881	 138433	  21cc1	AN1229_ZBP_Coordinator_JN5169.elf
 Generating binary ...
 /c/NXP/bstudio_nxp/sdk/Tools/ba-elf-ba2-r36379/bin/ba-elf-objcopy -S -O binary AN1229_ZBP_Coordinator_JN5169.elf AN1229_ZBP_Coordinator_JN5169.bin
 
-02:10:45 Build Finished (took 8s.798ms)
+11:42:00 Build Finished (took 9s.757ms)
 

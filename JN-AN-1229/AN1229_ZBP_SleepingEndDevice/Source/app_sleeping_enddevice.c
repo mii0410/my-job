@@ -96,7 +96,7 @@ PRIVATE void vWaitForNetworkJoin(ZPS_tsAfEvent sStackEvent);
 
 PRIVATE void vClearDiscNT(void);
 PRIVATE bool_t bLoadDeviceState(void);
-
+PRIVATE bool_t bPollOutstanding = FALSE; /* 送信済みPollが未完了ならTRUE */
 /****************************************************************************/
 /***        Exported Variables                                            ***/
 /****************************************************************************/
@@ -153,19 +153,11 @@ PRIVATE bool_t bLoadDeviceState(void)
 
 PRIVATE void vBuildAppPayload(PDUM_thAPduInstance h)
 {
-    uint8 *pu8Payload;
-    uint16 offset = 0;
-
-    pu8Payload = PDUM_pvAPduInstanceGetPayload(h);
-
-    // ダミーデータ "HELLO" を格納
-    const char *msg = "HELLO";
-    while (msg[offset] != '\0') {
-        pu8Payload[offset] = msg[offset];
-        offset++;
-    }
-
-    PDUM_eAPduInstanceSetPayloadSize(h, offset);
+    static const uint8 msg[] = "hello world";
+    uint8 *buf = PDUM_pvAPduInstanceGetPayload(h);
+    uint16 i, len = (uint16)(sizeof(msg) - 1); /* NUL無し */
+    for (i = 0; i < len; i++) { buf[i] = msg[i]; }
+    PDUM_eAPduInstanceSetPayloadSize(h, len);
 }
 
 PUBLIC void SendData(){ //データを送信する関数
@@ -183,11 +175,11 @@ PUBLIC void SendData(){ //データを送信する関数
 	eStatus = ZPS_eAplAfUnicastDataReq(
 							hAPduInst,
 							0x1234,     // Cluster ID
-						    AN1229_ZBP_SLEEPINGENDDEVICE_MYENDPOINT_ENDPOINT, /* Src EP (SED) */
-						    AN1229_ZBP_COORDINATOR_MYENDPOINT_ENDPOINT,       /* Dst EP (Coordinator) */
+						    AN1229_ZBP_SLEEPINGENDDEVICE_MYENDPOINT_ENDPOINT, /* src = ED */
+						    AN1229_ZBP_COORDINATOR_MYENDPOINT_ENDPOINT,       /* dst = COORD */
 						    COORDINATOR_ADR,                                  /* 宛先ショートアドレス */
 						    ZPS_E_APL_AF_UNSECURE,
-							APP_TX_OPTION_ACK_REQUIRED,
+							0, // Tx_option(ここでは必要なし)
 							&u8TransactionSequenceNumber);
 	if (ZPS_E_SUCCESS != eStatus)
 	{
@@ -199,10 +191,11 @@ PUBLIC void SendData(){ //データを送信する関数
 
 PUBLIC void vWakeCallBack(void)
 {
+	// スリープモードを無効化しました
 	/* schedule device to go to sleep, then poll for data */ //送信データがないかcoordinatorに尋ねている
 
 	 //DBG_vPrintf(TRACE_APP, "APP: Polling for data\n");
-	 ZPS_eAplZdoPoll();
+	 //ZPS_eAplZdoPoll();
 }
 
 
@@ -254,7 +247,8 @@ PUBLIC void APP_vInitialiseSleepingEndDevice(void)
 		}
 
 		/* Start the poll/sleep cycle */
-		ZPS_eAplZdoPoll();
+		// スリープモード無効化に伴いpollは不要に
+		//ZPS_eAplZdoPoll();
 
 		/* Re-start any other application software modules
 		 * HERE
@@ -285,10 +279,10 @@ PUBLIC void APP_vtaskSleepingEndDevice (void)
 
 	sStackEvent.eType = ZPS_EVENT_NONE;
     bool_t bEventReady = ZQ_bQueueReceive(&APP_msgZpsEvents, &sStackEvent);
-    if (bEventReady)
-	{
-		DBG_vPrintf(TRACE_APP, "APP: No event to process!\n");
-	}
+//    if (bEventReady)
+//	{
+//		DBG_vPrintf(TRACE_APP, "APP: No event to process!\n");
+//	}
 
 	switch (s_eDeviceState.eNodeState)
 	{
@@ -312,15 +306,21 @@ PUBLIC void APP_vtaskSleepingEndDevice (void)
 
 	case E_RUNNING:
 	{
-		/* Process every pending stack event to avoid queue overruns as advised by JN-UG-3113. */
-		if (bEventReady)
-		{
-			do
-			{
-				vHandleStackEvent(sStackEvent);
-			} while (ZQ_bQueueReceive(&APP_msgZpsEvents, &sStackEvent));
-		}
-		vReadInputCommand();
+	    /* まずは溜まっているイベントを捌く */
+	    while (bEventReady) {
+	        vHandleStackEvent(sStackEvent);
+	        bEventReady = ZQ_bQueueReceive(&APP_msgZpsEvents, &sStackEvent);
+	    }
+
+	    /* 前回のPOLLが完了していれば新しいPOLLを出す */
+	    if (!bPollOutstanding) {
+	        if (ZPS_E_SUCCESS == ZPS_eAplZdoPoll()) {
+	            bPollOutstanding = TRUE;
+	            //DBG_vPrintf(TRACE_APP, "SED: Poll sent．\n");
+	        }
+	    }
+
+	    vReadInputCommand();
 	}
 	break;
 
@@ -459,8 +459,8 @@ PRIVATE void vWaitForNetworkDiscovery(ZPS_tsAfEvent sStackEvent)
 			/* network joined so advance to running state */
 			s_eDeviceState.eNodeState = E_RUNNING;
 
-//スリープ状態するのに必要なコード　1/3個目
-		   PWRM_eScheduleActivity(&sWake, SLEEP_TIME, vWakeCallBack);
+			//スリープ状態するのに必要なコード　1/3個目(使うなら)
+			//PWRM_eScheduleActivity(&sWake, SLEEP_TIME, vWakeCallBack);
 
 
 			/* Save the application state to flash. Note that all records may be saved at any time by the PDM:
@@ -515,9 +515,8 @@ PRIVATE void vWaitForNetworkJoin(ZPS_tsAfEvent sStackEvent)
 					&s_eDeviceState,
 					sizeof(s_eDeviceState));
 
-/*スリープ状態するのに必要なコード　2/3個目
-			PWRM_eScheduleActivity(&sWake, SLEEP_TIME, vWakeCallBack);
-*/
+			//スリープ状態するのに必要なコード　2/3個目 (使うなら)
+			//PWRM_eScheduleActivity(&sWake, SLEEP_TIME, vWakeCallBack);
 		}
 		else if (ZPS_EVENT_NWK_FAILED_TO_JOIN == sStackEvent.eType)
 		{
@@ -615,13 +614,23 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
 		{
 		case ZPS_EVENT_APS_DATA_INDICATION:
 		{
-			DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_AF_DATA_INDICATION\n");
+//			DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_AF_DATA_INDICATION\n");
+//
+//		    uint16 cluster = sStackEvent.uEvent.sApsDataIndEvent.u16ClusterId;
+//		    uint8  dstEp   = sStackEvent.uEvent.sApsDataIndEvent.u8DstEndpoint;
+//
+//		    if (cluster == 0x1234 &&
+//		        dstEp == AN1229_ZBP_SLEEPINGENDDEVICE_MYENDPOINT_ENDPOINT)
+//		    {
+//		        DBG_vPrintf(TRUE, "SED: Data from Coord -> reply hello\n");
+//		        SendData();
+//		    }
 
 			/* Process incoming cluster messages ... */
 //			DBG_vPrintf(TRACE_APP, "Profile :%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u16ProfileId);
 //			DBG_vPrintf(TRACE_APP, "Cluster :%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u16ClusterId);
 //			DBG_vPrintf(TRACE_APP, "EndPoint:%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u8DstEndpoint);
-			SendData();
+			//SendData();
 			/* free the application protocol data unit (APDU) once it has been dealt with */
 			PDUM_eAPduFreeAPduInstance(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
 		}
@@ -703,12 +712,12 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
 
 		case ZPS_EVENT_NWK_POLL_CONFIRM:
 		{
-			DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_NEW_POLL_COMPLETE, status = %d\n",
-					sStackEvent.uEvent.sNwkPollConfirmEvent.u8Status );
+//			DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_NEW_POLL_COMPLETE, status = %d\n",
+//					sStackEvent.uEvent.sNwkPollConfirmEvent.u8Status );
+			bPollOutstanding = FALSE; /* 次のPOLLを許可 */
 
-//スリープ状態するのに必要なコード　3/3個目
-		PWRM_eScheduleActivity(&sWake, SLEEP_TIME, vWakeCallBack);
-
+			// スリープ状態するのに必要なコード　3/3個目 (使うなら)
+			//PWRM_eScheduleActivity(&sWake, SLEEP_TIME, vWakeCallBack);
 		}
 		break;
 

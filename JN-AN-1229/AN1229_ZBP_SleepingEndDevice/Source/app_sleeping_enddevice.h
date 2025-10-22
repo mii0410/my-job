@@ -52,7 +52,7 @@
 PUBLIC void APP_vInitialiseSleepingEndDevice(void);
 PUBLIC void APP_vtaskSleepingEndDevice (void);
 PUBLIC void SendData();
-PUBLIC void vWakeCallBack(void);
+//PUBLIC void vWakeCallBack(void); // スリープモード（つかうならコメントアウトを外す）
 
 /****************************************************************************/
 /***        External Variables                                            ***/

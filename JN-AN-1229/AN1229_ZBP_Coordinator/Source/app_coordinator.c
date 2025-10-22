@@ -325,11 +325,11 @@ PUBLIC void SendData(void)
 	ZPS_teStatus eStatus = ZPS_eAplAfUnicastDataReq(
 					hAPduInst,
 					0x1234,     // Cluster ID
-				    AN1229_ZBP_SLEEPINGENDDEVICE_MYENDPOINT_ENDPOINT, // Source EP (SED)
-				    AN1229_ZBP_COORDINATOR_MYENDPOINT_ENDPOINT,       // Destination EP (Coordinator)
+				    AN1229_ZBP_COORDINATOR_MYENDPOINT_ENDPOINT,       /* src = COORD */
+				    AN1229_ZBP_SLEEPINGENDDEVICE_MYENDPOINT_ENDPOINT, /* dst = ED */
 					u16LastKnownNodeAddr,     // Destination short addres
 					ZPS_E_APL_AF_UNSECURE,
-					APP_TX_OPTION_ACK_REQUIRED,
+					0, // TX_option(‚±‚±‚Å‚Í•K—v‚È‚µ)
 					&u8TransactionSequenceNumber
 	);
 

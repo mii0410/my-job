@@ -84,28 +84,20 @@ tszQueue APP_msgZpsEvents;
 void APP_vtaskMyEndPoint (void)
 {
     ZPS_tsAfEvent sStackEvent;
-    sStackEvent.eType = ZPS_EVENT_NONE;
 
-    /* check if any messages to collect */
-    if (  ZQ_bQueueReceive (&APP_msgMyEndPointEvents, &sStackEvent) )
-    {
-        DBG_vPrintf(TRACE_APP, "APP: No event to process\n");
-    }
-
-    if (ZPS_EVENT_NONE != sStackEvent.eType)
-    {
+    while (ZQ_bQueueReceive(&APP_msgMyEndPointEvents, &sStackEvent)) {
         switch (sStackEvent.eType)
         {
             case ZPS_EVENT_APS_INTERPAN_DATA_INDICATION:
             {
-                 DBG_vPrintf(TRACE_APP, "APP: event  ZPS_EVENT_APS_INTERPAN_DATA_INDICATION\n");
+                 //DBG_vPrintf(TRACE_APP, "APP: event  ZPS_EVENT_APS_INTERPAN_DATA_INDICATION\n");
                  PDUM_eAPduFreeAPduInstance(sStackEvent.uEvent.sApsInterPanDataIndEvent.hAPduInst);
             }
             break;
 
             case ZPS_EVENT_APS_ZGP_DATA_INDICATION:
             {
-                DBG_vPrintf(TRACE_APP, "APP: event  ZPS_EVENT_APS_ZGP_DATA_INDICATION\n");
+                //DBG_vPrintf(TRACE_APP, "APP: event  ZPS_EVENT_APS_ZGP_DATA_INDICATION\n");
                 if (sStackEvent.uEvent.sApsZgpDataIndEvent.hAPduInst)
                 {
                     PDUM_eAPduFreeAPduInstance(sStackEvent.uEvent.sApsZgpDataIndEvent.hAPduInst);
@@ -116,16 +108,26 @@ void APP_vtaskMyEndPoint (void)
 
             case ZPS_EVENT_APS_DATA_INDICATION:
             {
-                DBG_vPrintf(TRACE_APP, "APP: APP_taskEndPoint: ZPS_EVENT_AF_DATA_INDICATION\n");
+                //DBG_vPrintf(TRACE_APP, "APP: APP_taskEndPoint: ZPS_EVENT_AF_DATA_INDICATION\n");
 
                 /* Process incoming cluster messages for this endpoint... */
-                DBG_vPrintf(TRACE_APP, "    Data Indication:\r\n");
-                DBG_vPrintf(TRACE_APP, "   		Profile :%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u16ProfileId);
-                DBG_vPrintf(TRACE_APP, "    	Cluster :%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u16ClusterId);
-                DBG_vPrintf(TRACE_APP, "   		EndPoint:%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u8DstEndpoint);
+//                DBG_vPrintf(TRACE_APP, "    Data Indication:\r\n");
+//                DBG_vPrintf(TRACE_APP, "   		Profile :%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u16ProfileId);
+//                DBG_vPrintf(TRACE_APP, "    	Cluster :%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u16ClusterId);
+//                DBG_vPrintf(TRACE_APP, "   		EndPoint:%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u8DstEndpoint);
 
+                uint16 cluster = sStackEvent.uEvent.sApsDataIndEvent.u16ClusterId;
+                uint8  dstEp   = sStackEvent.uEvent.sApsDataIndEvent.u8DstEndpoint;
 
+                /* まずは何が来ているか見える化 */
+                DBG_vPrintf(TRUE, "SED: RX ind cluster=0x%04x dstEp=%d\r\n", cluster, dstEp);
 
+                /* 自アプリだけ返信（クラスタIDとED側のEPはあなたの定義に合わせる） */
+                if (cluster == 0x1234)
+                {
+                    DBG_vPrintf(TRUE, "SED: Data from Coord -> reply 'hello world'\r\n");
+                    SendData();  /* app_sleeping_enddevice.c 側の実装を呼ぶ */
+                }
                 /* free the application protocol data unit (APDU) once it has been dealt with */
                 PDUM_eAPduFreeAPduInstance(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
             }
