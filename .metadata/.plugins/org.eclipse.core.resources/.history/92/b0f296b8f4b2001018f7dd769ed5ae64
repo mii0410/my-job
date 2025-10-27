@@ -139,9 +139,6 @@ PUBLIC void vAppMain(void)
      * Do not use UART 1 if LEDs are used, as it shares DIO with the LEDS
      */
 
-    DBG_vUartInit(DBG_E_UART_0, DBG_E_UART_BAUD_RATE_115200);
-    DBG_vPrintf(TRUE, "\nAPP: DBG init UART0 115200．\n");
-
     vAHI_UartSetInterrupt(DBG_E_UART_0,
     		FALSE,
     		FALSE,                    // Enable Rx line status

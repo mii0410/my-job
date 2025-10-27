@@ -164,7 +164,7 @@ PRIVATE void vBuildAppPayload(PDUM_thAPduInstance h)
 
 PUBLIC void SendData(){ //データを送信する関数
 	uint8 u8TransactionSequenceNumber = 0;
-	PDUM_thAPduInstance hAPduInst = PDUM_hAPduAllocateAPduInstance(apduMyData);
+	PDUM_thAPduInstance hAPduInst = PDUM_hAPduAllocateAPduInstance(apduZDP);
     if (hAPduInst == PDUM_INVALID_HANDLE)
     {
         DBG_vPrintf(TRUE, "APP: PDUM allocate fail\n");

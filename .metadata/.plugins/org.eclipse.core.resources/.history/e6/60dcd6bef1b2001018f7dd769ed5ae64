@@ -86,37 +86,6 @@ PUBLIC uint8 au8DefaultTCLinkKey[16]    = {0x5a, 0x69, 0x67, 0x42, 0x65, 0x65, 0
 /****************************************************************************/
 /***        Exported Functions                                            ***/
 /****************************************************************************/
-
-/* ファイル先頭付近に追加 */
-static const char* sStateName(uint8_t s)
-{
-    switch (s) {
-    case E_STARTUP:          return "E_STARTUP";
-    case E_DISCOVERY:        return "E_DISCOVERY";
-    case E_JOINING_NETWORK:  return "E_JOINING_NETWORK";
-    case E_RUNNING:          return "E_RUNNING";
-    /* 他にあれば追記 */
-    default:                 return "?";
-    }
-}
-
-static const char* sEvtName(uint8_t e)
-{
-    switch (e) {
-    case ZPS_EVENT_NONE:                         return "ZPS_EVENT_NONE";
-    case ZPS_EVENT_ERROR:                        return "ZPS_EVENT_ERROR";
-    case ZPS_EVENT_NWK_DISCOVERY_COMPLETE:       return "NWK_DISCOVERY_COMPLETE";
-    case ZPS_EVENT_NWK_JOINED_AS_ROUTER:         return "NWK_JOINED_AS_ROUTER";
-    case ZPS_EVENT_NWK_FAILED_TO_JOIN:           return "NWK_FAILED_TO_JOIN";
-    case ZPS_EVENT_NWK_LEAVE_INDICATION:         return "NWK_LEAVE_INDICATION";
-    case ZPS_EVENT_NWK_LEAVE_CONFIRM:            return "NWK_LEAVE_CONFIRM";
-    case ZPS_EVENT_APS_DATA_INDICATION:          return "APS_DATA_INDICATION";
-    case ZPS_EVENT_APS_DATA_CONFIRM:             return "APS_DATA_CONFIRM";
-    /* 必要に応じて追加 */
-    default:                                     return "?";
-    }
-}
-
 /****************************************************************************
  *
  * NAME: APP_vInitialiseRouter
@@ -214,7 +183,6 @@ PUBLIC void APP_vtaskRouter ( void )
 {
     ZPS_tsAfEvent sStackEvent;
 
-
     if (!ZQ_bQueueReceive(&APP_msgZpsEvents, &sStackEvent)) {
         sStackEvent.eType = ZPS_EVENT_NONE;
     }
@@ -223,11 +191,6 @@ PUBLIC void APP_vtaskRouter ( void )
     {
     	ZTIMER_eStart (u8App_tmr1sec, ZTIMER_TIME_SEC(1) );
     }
-    DBG_vPrintf(TRACE_APP, "APP: state=%s(%d)，evt=%s(%d)．\n",
-                sStateName(s_eDeviceState.eNodeState),
-                s_eDeviceState.eNodeState,
-                sEvtName(sStackEvent.eType),
-                sStackEvent.eType);
 
     switch (s_eDeviceState.eNodeState)
     {
@@ -287,14 +250,14 @@ PRIVATE void vStartup(void)
     ZPS_eAplAibSetApsUseExtendedPanId(0);
 
     /* Set channel to scan and start stack */
-    ZPS_psAplAibGetAib()->pau32ApsChannelMask[0] = (1UL << u8Channel);
+    ZPS_psAplAibGetAib()->pau32ApsChannelMask[0] = 1 << u8Channel;
 
     ZPS_teStatus eStatus = ZPS_eAplZdoStartStack();
     if (ZPS_E_SUCCESS == eStatus)
     {
        s_eDeviceState.eNodeState = E_DISCOVERY;
 
-       // 初回のアクティブスキャンを明示キック
+       // 追加：初回のアクティブスキャンを明示キック
        ZPS_eAplZdoDiscoverNetworks(ZPS_psAplAibGetAib()->pau32ApsChannelMask[0]);
 
        /* Move channel counter to next channel */
@@ -323,7 +286,6 @@ PRIVATE void vStartup(void)
  ****************************************************************************/
 PRIVATE void vWaitForNetworkDiscovery(ZPS_tsAfEvent sStackEvent)
 {
-	DBG_vPrintf(TRUE, "APP: vWaitForNetworkDiscovery enter，evt=%d．\n", sStackEvent.eType);
     /* wait for the node to complete network discovery */
     if (ZPS_EVENT_NONE != sStackEvent.eType)
     {
@@ -426,7 +388,6 @@ PRIVATE void vWaitForNetworkDiscovery(ZPS_tsAfEvent sStackEvent)
  ****************************************************************************/
 PRIVATE void vWaitForNetworkJoin(ZPS_tsAfEvent sStackEvent)
 {
-	DBG_vPrintf(TRUE, "APP: vWaitForNetworkJoin enter，evt=%d．\n", sStackEvent.eType);
      uint64 u64ExtPANID;
     /* wait for the node to complete network joining */
     if (ZPS_EVENT_NONE != sStackEvent.eType)

@@ -223,7 +223,7 @@ PUBLIC void APP_vtaskRouter ( void )
     {
     	ZTIMER_eStart (u8App_tmr1sec, ZTIMER_TIME_SEC(1) );
     }
-    DBG_vPrintf(TRACE_APP, "APP: state=%s(%d)，evt=%s(%d)．\n",
+    DBG_vPrintf(TRUE, "APP: state=%s(%d)，evt=%s(%d)．\n",
                 sStateName(s_eDeviceState.eNodeState),
                 s_eDeviceState.eNodeState,
                 sEvtName(sStackEvent.eType),

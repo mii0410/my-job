@@ -309,7 +309,7 @@ PUBLIC void SendData(void)
 	uint8 u8TransactionSequenceNumber;
 	PDUM_thAPduInstance hAPduInst;
 
-	hAPduInst = PDUM_hAPduAllocateAPduInstance(apduMyData);
+	hAPduInst = PDUM_hAPduAllocateAPduInstance(apduZDP);
     if (hAPduInst == PDUM_INVALID_HANDLE) {
         DBG_vPrintf(TRUE, "PDUM_INVALID_HANDLE\n");
         return;
