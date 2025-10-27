@@ -1,0 +1,350 @@
+/*****************************************************************************
+ *
+ * モジュール: JN-AN-1184 ZigBeePro Application Template
+ *
+ * コンポーネント: app_start.c
+ *
+ * 概要: ルータの初期化および起動処理
+ *
+ ****************************************************************************/
+/****************************************************************************/
+/***        インクルードファイル                                                                                                                   ***/
+/****************************************************************************/
+#include <jendefs.h>
+#include <AppApi.h>
+#include <pwrm.h>
+#include <dbg.h>
+#include <dbg_uart.h>
+#include <app_pdm.h>
+#include <app_router.h>
+#include <zps_nwk_pub.h>
+#include "app_common.h"
+#include "pdum_gen.h"
+#include "portmacro.h"
+#include "zps_apl_af.h"
+#include "mac_vs_sap.h"
+#include "AppHardwareApi.h"
+#include "dbg.h"
+#include "ZTimer.h"
+
+#include "Utils.h"
+#include "ZQueue.h"
+
+/****************************************************************************/
+/***        マクロ定義                                                                                                                                ***/
+/****************************************************************************/
+#ifndef DEBUG_APP
+	#define TRACE_APP 	FALSE
+#else
+	#define TRACE_APP 	TRUE
+#endif
+
+/****************************************************************************/
+/***        型定義                                                                                                                                    ***/
+/****************************************************************************/
+/*#defines*/
+#define TIMER_QUEUE_SIZE             8
+#define MLME_QUEQUE_SIZE             4
+#define MCPS_QUEUE_SIZE             24
+#define ZPS_QUEUE_SIZE               8
+#define APP_QUEUE_SIZE               8
+#define MCPS_DCFM_QUEUE_SIZE         8
+
+#if JENNIC_CHIP_FAMILY == JN517x
+#define NVIC_INT_PRIO_LEVEL_BBC     (7)
+#endif
+
+
+/****************************************************************************/
+/***        ローカル関数プロトタイプ                                                                                                          ***/
+/****************************************************************************/
+PUBLIC void APP_vInitResources(void);
+PUBLIC void APP_vSetUpHardware(void);
+PUBLIC void SendData();  //追加関数
+PUBLIC void app_vMainloop(void);
+PRIVATE void vInitialiseApp(void);
+PRIVATE void vfExtendedStatusCallBack (ZPS_teExtendedStatus eExtendedStatus);
+PRIVATE void vUartCallback(uint32 u32Device, uint32 u32ItemBitmap);
+/****************************************************************************
+ *
+ * 関数名: vfExtendedStatusCallBack
+ *
+ * 概要: ZPS 拡張ステータスエラーの通知をログ出力する
+ *
+ * 戻り値: void
+ *
+ ****************************************************************************/
+PRIVATE void vfExtendedStatusCallBack (ZPS_teExtendedStatus eExtendedStatus);
+
+/****************************************************************************/
+/***        グローバル関数                                                                                                                        ***/
+/****************************************************************************/
+PUBLIC uint8 u8App_tmr1sec;
+PUBLIC uint8 u8RouteRecoveryTimer;
+
+/****************************************************************************/
+/***        ローカル変数                                                                                                                            ***/
+/****************************************************************************/
+PRIVATE void vUartCallback(uint32 u32Device, uint32 u32ItemBitmap)
+{
+    (void)u32Device;
+    (void)u32ItemBitmap;
+    vReadCharInterrupt();
+}
+/*local variables*/
+PRIVATE MAC_tsMcpsVsCfmData asMacMcpsDcfm[MCPS_DCFM_QUEUE_SIZE];
+PRIVATE zps_tsTimeEvent asTimeEvent[TIMER_QUEUE_SIZE];
+PRIVATE MAC_tsMcpsVsDcfmInd asMacMcpsDcfmInd[MCPS_QUEUE_SIZE];
+PRIVATE MAC_tsMlmeVsDcfmInd  asMacMlmeVsDcfmInd[MLME_QUEQUE_SIZE];
+PRIVATE ZPS_tsAfEvent asAppEvents[APP_QUEUE_SIZE];
+PRIVATE ZPS_tsAfEvent asStackEvents[ZPS_QUEUE_SIZE];
+
+
+PRIVATE ZTIMER_tsTimer asTimers[5];
+/****************************************************************************/
+/***        公開関数								                          ***/
+/****************************************************************************/
+
+extern void vAHI_WatchdogRestart(void);
+extern void PWRM_vManagePower(void);
+extern void zps_taskZPS(void);
+
+/****************************************************************************
+ *
+ * 関数名: vAppMain
+ *
+ * 概要:
+ * コールドスタート時のアプリケーションエントリポイント
+ *
+ * 戻り値:
+ * なし（呼び出し元へは戻らない）
+ *
+ ****************************************************************************/
+PUBLIC void vAppMain(void)
+{
+    /* 水晶発振器へ切り替わるまで待機し、UART 速度を安定させる */
+    while (bAHI_GetClkSource() == TRUE);
+    /* 水晶発振器で動作している間にフラッシュメモリの待ち状態を最適化 */
+    vAHI_OptimiseWaitStates();
+
+    /* デバッグダイアグノスティクスモジュールを UART0（115200bps）で初期化する。
+     * LED を利用する場合は UART1 が共有されるため使用しないこと。
+     */
+
+    /* UART 初期化 */
+       DBG_vUartInit (DBG_E_UART_0, DBG_E_UART_BAUD_RATE_115200);
+
+                     vAHI_Uart0RegisterCallback(vUartCallback); // 受信割り込みでターミナル入力を処理
+                     vAHI_UartSetInterrupt(DBG_E_UART_0,
+                                           FALSE,
+                                           FALSE,                    // 受信ラインステータス割り込み無効
+                                           FALSE,                    // 送信 FIFO 空割り込み無効
+                                           TRUE,                     // 受信データ割り込みを有効化
+                                           E_AHI_UART_FIFO_LEVEL_1); // 受信 FIFO が割り込みを発生させるしきい値
+                     DBG_vPrintf(TRACE_APP, "\n\nAPP: Power Up\n");
+#if JENNIC_CHIP_FAMILY==JN516x
+    /*
+     * スタック領域の終端へ到達した際に例外が発生するよう設定する。
+     * 必要に応じてリンカスクリプト側でスタックサイズを調整する。
+     */
+    vAHI_SetStackOverflow(TRUE, (uint32)&_stack_low_water_mark);
+#endif
+    /* ウォッチドッグタイマ満了によるリセットを検出する。不要であればコメントアウトする。 */
+
+    if (bAHI_WatchdogResetEvent())
+    {
+        DBG_vPrintf(TRACE_APP, "APP: Watchdog timer has reset device!\n");
+        vAHI_WatchdogStop();
+        while (1);
+    }
+
+    /* ROM 実装のソフトウェアモジュールを初期化 */
+    #ifndef JENNIC_MAC_MiniMacShim
+        (void)u32AppApiInit(NULL, NULL, NULL, NULL, NULL, NULL);
+    #endif
+    /* HIGH_POWER_ENABLE を定義すると高出力モジュールを有効化できる */
+    #ifdef HIGH_POWER_ENABLE
+        vAHI_HighPowerModuleEnable(TRUE, TRUE);
+    #endif
+    vInitialiseApp();
+}
+
+/****************************************************************************
+ *
+ * 関数名: vAppRegisterPWRMCallbacks
+ *
+ * 概要:
+ * 電源管理コールバックの登録処理（本アプリケーションではスリープしないため処理なし）
+ *
+ * 戻り値:
+ * なし
+ *
+ ****************************************************************************/
+void vAppRegisterPWRMCallbacks(void)
+{
+    /* デバイスがスリープしないため登録は不要 */
+}
+
+/****************************************************************************/
+/***        ローカル関数                                                                                                                            ***/
+/****************************************************************************/
+/****************************************************************************
+ *
+ * 関数名: vInitialiseApp
+ *
+ * 概要:
+ * JenOS モジュールおよびアプリケーションの初期化を行う
+ *
+ * 戻り値:
+ * void
+ *
+ ****************************************************************************/
+PRIVATE void vInitialiseApp(void)
+{
+    /* JenOS モジュールを初期化する。スリープしないノードでも電源マネージャを初期化しておくと
+     * アイドルタスク中にドーズできる。 */
+    PWRM_vInit(E_AHI_SLEEP_OSCON_RAMON);
+
+    /*
+     * PDM を初期化する。アプリケーションで定義した鍵 (g_sKey) を利用する場合はここで設定する。
+     * eFuse に保存された鍵を利用する場合はポインタを NULL に設定し、この構造体を削除する。
+     */
+#ifdef PDM_EEPROM
+        PDM_eInitialise(63);
+        PDM_vRegisterSystemCallback(vPdmEventHandlerCallback);
+#else
+        PDM_vInit(7, 1, 64 * 1024 , NULL, NULL, NULL, &g_sKey);
+#endif
+    /* PDUM（プロトコルデータユニットマネージャ）を初期化 */
+    PDUM_vInit();
+
+    /* スタックエラー通知用コールバックを登録 */
+    ZPS_vExtendedStatusSetCallback(vfExtendedStatusCallBack);
+
+    /* アプリケーションリソースとハードウェアを初期化 */
+    APP_vInitResources();
+    APP_vSetUpHardware();
+    APP_vInitialiseRouter();
+
+    /* デモ用送信を 5 秒後に開始 */
+    ZTIMER_eStart(u8SecondTimer, ZTIMER_TIME_MSEC(5000));
+
+    app_vMainloop();
+}
+
+/****************************************************************************
+ *
+ * NAME: vfExtendedStatusCallBack
+ *
+ * DESCRIPTION:
+ * ZPS extended error callback .
+ *
+ * RETURNS:
+ * void
+ *
+ ****************************************************************************/
+PRIVATE void vfExtendedStatusCallBack (ZPS_teExtendedStatus eExtendedStatus)
+{
+	DBG_vPrintf(TRACE_APP, "ERROR: Extended status %x\n", eExtendedStatus);
+}
+
+
+/****************************************************************************
+ *
+ * 関数名: APP_vSetUpHardware
+ *
+ * 概要:
+ * 割り込みなどのハードウェア初期設定を行う
+ *
+ * 戻り値:
+ * void
+ *
+ ****************************************************************************/
+PUBLIC void APP_vSetUpHardware(void)
+{
+#if (JENNIC_CHIP_FAMILY == JN517x)
+    u32AHI_Init();
+    vAHI_InterruptSetPriority(MICRO_ISR_MASK_BBC,     NVIC_INT_PRIO_LEVEL_BBC );
+#else
+    TARGET_INITIALISE();
+    /* 割り込み優先度をクリア */
+    SET_IPL(0);
+    portENABLE_INTERRUPTS();
+#endif
+}
+
+
+/****************************************************************************
+ *
+ * 関数名: APP_vInitResources
+ *
+ * 概要:
+ * タイマやキューなどのリソースを初期化する
+ *
+ * 戻り値:
+ * void
+ *
+ ****************************************************************************/
+PUBLIC void APP_vInitResources(void)
+{
+    /* Z タイマモジュールを初期化 */
+    ZTIMER_eInit(asTimers, sizeof(asTimers) / sizeof(ZTIMER_tsTimer));
+
+    /* Z タイマを生成 */
+    ZTIMER_eOpen(&u8App_tmr1sec,    NULL,    NULL, ZTIMER_FLAG_PREVENT_SLEEP);
+
+    /* 5秒タイマーの設定 */
+    ZTIMER_eOpen(&u8SecondTimer, SendData, NULL, ZTIMER_FLAG_PREVENT_SLEEP);
+
+    /* ルート再探索および再参加待機用タイマを生成 */
+    ZTIMER_eOpen(&u8RouteRecoveryTimer, NULL, NULL, ZTIMER_FLAG_PREVENT_SLEEP);
+
+
+    ZQ_vQueueCreate(&zps_msgMlmeDcfmInd,         MLME_QUEQUE_SIZE,      sizeof(MAC_tsMlmeVsDcfmInd), (uint8*)asMacMlmeVsDcfmInd);
+    ZQ_vQueueCreate(&zps_msgMcpsDcfmInd,         MCPS_QUEUE_SIZE,       sizeof(MAC_tsMcpsVsDcfmInd), (uint8*)asMacMcpsDcfmInd);
+    ZQ_vQueueCreate(&zps_TimeEvents,             TIMER_QUEUE_SIZE,      sizeof(zps_tsTimeEvent),     (uint8*)asTimeEvent);
+    ZQ_vQueueCreate(&APP_msgZpsEvents,           APP_QUEUE_SIZE,        sizeof(ZPS_tsAfEvent),       (uint8*)asAppEvents);
+    ZQ_vQueueCreate(&APP_msgMyEndPointEvents,    ZPS_QUEUE_SIZE,        sizeof(ZPS_tsAfEvent),       (uint8*)asStackEvents);
+	ZQ_vQueueCreate(&zps_msgMcpsDcfm,            MCPS_DCFM_QUEUE_SIZE,  sizeof(MAC_tsMcpsVsCfmData),(uint8*)asMacMcpsDcfm);
+
+
+}
+
+/****************************************************************************
+ *
+ * 関数名: app_vMainloop
+ *
+ * 概要:
+ * アプリケーションのメインループを実行する
+ *
+ * 戻り値:
+ * void
+ *
+ ****************************************************************************/
+PUBLIC void app_vMainloop(void)
+{
+    /* OS 起動後はアイドルタスクから処理を開始 */
+    while (TRUE) {
+        zps_taskZPS();
+        APP_vtaskRouter();
+        APP_vtaskMyEndPoint();
+
+//        //ここから追加
+//                       uint8 cmd = vReadCommand();
+//               		 if(cmd != 0){
+//                          APP_vSetCommand();
+//               		}
+//
+//        //ここまで
+
+
+        ZTIMER_vTask();
+        /* ウォッチドッグタイマをキック */
+        vAHI_WatchdogRestart();
+        PWRM_vManagePower();
+    }
+}
+
+/****************************************************************************/
+/***        END OF FILE                                                   ***/
+/****************************************************************************/

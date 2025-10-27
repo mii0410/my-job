@@ -39,7 +39,9 @@ app_endpoint.o: ../../AN1229_ZBP_Router/Source/app_endpoint.c \
  ../../Common/Source/app_common.h \
  ../../../../sdk/JN-SW-4170/Components/ZigbeeCommon/Include/ZQueue.h \
  ../../../../sdk/JN-SW-4170/Components/ZigbeeCommon/Include/ZTimer.h \
- ../../AN1229_ZBP_Router/Source/app_router.h
+ ../../AN1229_ZBP_Router/Source/app_router.h \
+ ../../AN1229_ZBP_Router/Source/pdum_gen.h \
+ ../../AN1229_ZBP_Router/Source/zps_gen.h
 
 ../../../../sdk/JN-SW-4170/Components/Common/Include/jendefs.h:
 
@@ -122,3 +124,7 @@ app_endpoint.o: ../../AN1229_ZBP_Router/Source/app_endpoint.c \
 ../../../../sdk/JN-SW-4170/Components/ZigbeeCommon/Include/ZTimer.h:
 
 ../../AN1229_ZBP_Router/Source/app_router.h:
+
+../../AN1229_ZBP_Router/Source/pdum_gen.h:
+
+../../AN1229_ZBP_Router/Source/zps_gen.h:

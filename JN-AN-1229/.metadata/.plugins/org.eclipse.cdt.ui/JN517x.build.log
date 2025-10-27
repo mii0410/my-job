@@ -1,0 +1,9 @@
+17:43:58 **** Clean-only build of configuration Router for project JN517x ****
+make TRACE=1 JENNIC_CHIP=JN5179 JENNIC_CHIP_FAMILY=JN517x clean 
+Cannot run program "make": Launching failed
+
+Error: Program "make" not found in PATH
+PATH=[C:/NXP/bstudio_nxp/jre/bin/client;C:/NXP/bstudio_nxp/jre/bin;C:/NXP/bstudio_nxp/jre/lib/i386;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\PowerShell\7\;C:\Program Files\Git\cmd;C:\Users\okaya\AppData\Local\Programs\Python\Python313\Scripts\;C:\Users\okaya\AppData\Local\Programs\Python\Python313\;C:\Users\okaya\AppData\Local\Programs\Python\Launcher\;C:\texlive\2025\bin\windows;C:\Users\okaya\AppData\Local\Programs\Microsoft VS Code\bin;C:\NXP\bstudio_nxp;]
+
+17:43:58 Build Finished (took 190ms)
+

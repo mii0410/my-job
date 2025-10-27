@@ -1,0 +1,12 @@
+17:43:56 **** Clean-only build of configuration Router for project JN516x ****
+make TRACE=1 JENNIC_CHIP=JN5169 JENNIC_CHIP_FAMILY=JN516x clean 
+Building trace version ...
+Building numbered PDM IDs version ...
+JENNIC_MAC is Mini MAC shim 
+JENNIC_MAC_PLATFORM is SOC
+Building trace version ...
+rm -f irq_JN516x.o portasm_JN516x.o port_JN516x.o pdum_gen.o pdum_apdu.o zps_gen.o app_start.o app_router.o app_endpoint.o appZdpExtraction.o appZpsBeaconHandler.o app_pdm.o Utils.o ZQueue.o ZTimer.o app_zps_link_keys.o irq_JN516x.d portasm_JN516x.d port_JN516x.d pdum_gen.d pdum_apdu.d zps_gen.d app_start.d app_router.d app_endpoint.d appZdpExtraction.d appZpsBeaconHandler.d app_pdm.d Utils.d ZQueue.d ZTimer.d app_zps_link_keys.d AN1229_ZBP_Router_JN5169*.bin AN1229_ZBP_Router_JN5169*.elf AN1229_ZBP_Router_JN5169*.map
+rm -f ../../AN1229_ZBP_Router/Source/pdum_gen.* ../../AN1229_ZBP_Router/Source/zps_gen*.* ../../AN1229_ZBP_Router/Source/pdum_apdu.S
+
+17:43:58 Build Finished (took 2s.631ms)
+

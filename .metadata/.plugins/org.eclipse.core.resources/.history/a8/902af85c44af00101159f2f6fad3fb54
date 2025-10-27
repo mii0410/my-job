@@ -1,0 +1,210 @@
+/*****************************************************************************
+ *
+ * MODULE:				JN-AN-1184 ZigBeePro Application Template
+ *
+ * COMPONENT:			app_endpoint.c
+ *
+ * DESCRIPTION:			End Point Event Handler
+ *
+ *****************************************************************************
+ *
+ * This software is owned by NXP B.V. and/or its supplier and is protected
+ * under applicable copyright laws. All rights are reserved. We grant You,
+ * and any third parties, a license to use this software solely and
+ * exclusively on NXP products [NXP Microcontrollers such as JN5169, JN5168,
+ * JN5164, JN5161].
+ * You, and any third parties must reproduce the copyright and warranty notice
+ * and any other legend of ownership on each copy or partial copy of the
+ * software.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Copyright NXP B.V. 2015. All rights reserved
+ *
+ ****************************************************************************/
+/****************************************************************************/
+/***        Include files                                                 ***/
+/****************************************************************************/
+#include <jendefs.h>
+#include <dbg.h>
+#include <zps_apl_af.h>
+#include "app_common.h"
+#include "app_router.h"
+#include "pdum_gen.h"
+#include "zps_gen.h"
+
+/****************************************************************************/
+/***        Macro Definitions                                             ***/
+/****************************************************************************/
+#ifndef DEBUG_APP
+	#define TRACE_APP 	FALSE
+#else
+	#define TRACE_APP 	TRUE
+#endif
+
+/****************************************************************************/
+/***        Type Definitions                                              ***/
+/****************************************************************************/
+
+/****************************************************************************/
+/***        Local Function Prototypes                                     ***/
+/****************************************************************************/
+
+/****************************************************************************/
+/***        Exported Variables                                            ***/
+/****************************************************************************/
+static uint16 u16LastKnownEdShort = 0xFFFF;
+/****************************************************************************/
+/***        Local Variables                                               ***/
+/****************************************************************************/
+tszQueue APP_msgMyEndPointEvents;
+tszQueue APP_msgZpsEvents;
+/****************************************************************************/
+/***        Exported Functions                                            ***/
+/****************************************************************************/
+/****************************************************************************
+ *
+ * NAME: APP_taskEndpoint
+ *
+ * DESCRIPTION:
+ * End Point event handling
+ *
+ * RETURNS:
+ * void
+ *
+ ****************************************************************************/
+/* 受信→送信の中継ヘルパ */
+static void vForwardPayload(const ZPS_tsAfEvent *ev, uint16 u16DstShortAddr, uint8 u8DstEp)
+{
+    PDUM_thAPduInstance hTx = PDUM_hAPduAllocateAPduInstance(apduApp);
+    if (hTx == PDUM_INVALID_HANDLE) {
+        DBG_vPrintf(TRUE, "RTR: APDU alloc failed\r\n");
+        return;
+    }
+    uint8  *pRx   = PDUM_pvAPduInstanceGetPayload(ev->uEvent.sApsDataIndEvent.hAPduInst);
+    uint16  rxLen = PDUM_u16APduInstanceGetPayloadSize(ev->uEvent.sApsDataIndEvent.hAPduInst);
+    uint16  maxTx = PDUM_u16APduGetSize(apduApp);
+    if (rxLen > maxTx) rxLen = maxTx; /* 念のため過大防止 */
+
+    uint8 *pTx = PDUM_pvAPduInstanceGetPayload(hTx);
+    memcpy(pTx, pRx, rxLen);
+    PDUM_eAPduInstanceSetPayloadSize(hTx, rxLen);
+
+    uint8 tsn;
+    ZPS_teStatus st = ZPS_eAplAfUnicastDataReq(
+        hTx,
+        APP_CLUSTER_ID,
+        APP_EP_ROUTER,        /* Router自身のEP */
+        u8DstEp,              /* 宛先EP */
+        u16DstShortAddr,      /* 宛先Short */
+        ZPS_E_APL_AF_UNSECURE,
+        0,
+        &tsn
+    );
+    if (st != ZPS_E_SUCCESS) {
+        DBG_vPrintf(TRUE, "RTR: forward fail %d\r\n", st);
+        PDUM_eAPduFreeAPduInstance(hTx);
+    } else {
+        DBG_vPrintf(TRACE_APP, "RTR: forward ok tsn=%d\r\n", tsn);
+    }
+}
+
+void APP_vtaskMyEndPoint ( void )
+{
+    ZPS_tsAfEvent sStackEvent;
+
+    while (ZQ_bQueueReceive(&APP_msgMyEndPointEvents, &sStackEvent))
+    {
+        switch (sStackEvent.eType)
+        {
+        case ZPS_EVENT_APS_DATA_INDICATION:
+        {
+            uint16 cluster = sStackEvent.uEvent.sApsDataIndEvent.u16ClusterId;
+            uint8  srcEp   = sStackEvent.uEvent.sApsDataIndEvent.u8SrcEndpoint;
+            uint8  dstEp   = sStackEvent.uEvent.sApsDataIndEvent.u8DstEndpoint;
+            uint16 srcShort= sStackEvent.uEvent.sApsDataIndEvent.uSrcAddress.u16Addr;
+
+            if (cluster == APP_CLUSTER_ID) {
+
+                /* ED から来たなら，最新EDアドレスを記憶して C へ中継 */
+                if (srcEp == APP_EP_SED && dstEp == APP_EP_ROUTER) {
+                    u16LastKnownEdShort = srcShort;
+                    vForwardPayload(&sStackEvent, /*to C*/ 0x0000, APP_EP_COORD);
+                }
+                /* C から来たなら，記憶している ED 宛に中継（未記憶なら捨てる） */
+                else if (srcEp == APP_EP_COORD && dstEp == APP_EP_ROUTER) {
+                    if (u16LastKnownEdShort != 0xFFFF) {
+                        vForwardPayload(&sStackEvent, u16LastKnownEdShort, APP_EP_SED);
+                    } else {
+                        DBG_vPrintf(TRUE, "RTR: no ED yet，drop\r\n");
+                    }
+                }
+            }
+            PDUM_eAPduFreeAPduInstance(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
+        }
+        break;
+
+        case ZPS_EVENT_APS_DATA_CONFIRM:
+        {
+        	DBG_vPrintf(TRACE_APP, "APP: APP_taskEndPoint: ZPS_EVENT_APS_DATA_CONFIRM Status %d, Address 0x%04x\n",
+        			sStackEvent.uEvent.sApsDataConfirmEvent.u8Status,
+        			sStackEvent.uEvent.sApsDataConfirmEvent.uDstAddr.u16Addr);
+        }
+        break;
+
+        case ZPS_EVENT_APS_DATA_ACK:
+        {
+        	DBG_vPrintf(TRACE_APP, "APP: APP_taskEndPoint: ZPS_EVENT_APS_DATA_ACK Status %d, Address 0x%04x\n",
+        			sStackEvent.uEvent.sApsDataAckEvent.u8Status,
+        			sStackEvent.uEvent.sApsDataAckEvent.u16DstAddr);
+        }
+        break;
+
+        default:
+        {
+        	// DBG_vPrintf(TRACE_APP, "APP: APP_taskEndPoint: unhandled event %d\n", sStackEvent.eType);
+        }
+        break;
+        }
+    }
+}
+/****************************************************************************
+ *
+ * NAME: APP_vGenCallback
+ *
+ * DESCRIPTION:
+ * Stack callback
+ *
+ * RETURNS:
+ * void
+ *
+ ****************************************************************************/
+PUBLIC void APP_vGenCallback(uint8 u8Endpoint, ZPS_tsAfEvent *psStackEvent)
+{
+    if ( u8Endpoint == 0 )
+    {
+    	ZQ_bQueueSend(&APP_msgZpsEvents, (void*) psStackEvent);
+    }
+    else
+    {
+    	ZQ_bQueueSend(&APP_msgMyEndPointEvents, (void*) psStackEvent);
+    }
+}
+
+/****************************************************************************/
+/***        Local Functions                                               ***/
+/****************************************************************************/
+
+/****************************************************************************/
+/***        END OF FILE                                                   ***/
+/****************************************************************************/

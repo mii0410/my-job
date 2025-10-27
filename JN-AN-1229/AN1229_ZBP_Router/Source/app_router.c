@@ -1,11 +1,39 @@
 /*****************************************************************************
- * モジュール:    JN-AN-1184 ZigBeePro Application Template
- * コンポーネント: app_router.c
- * 概要:       ルータアプリケーション
-******************************************************************************/
-
+ *
+ * MODULE:				JN-AN-1184 ZigBeePro Application Template
+ *
+ * COMPONENT:			app_router.c
+ *
+ * DESCRIPTION:			Router Application
+ *
+ *****************************************************************************
+ *
+ * This software is owned by NXP B.V. and/or its supplier and is protected
+ * under applicable copyright laws. All rights are reserved. We grant You,
+ * and any third parties, a license to use this software solely and
+ * exclusively on NXP products [NXP Microcontrollers such as JN5169, JN5168,
+ * JN5164, JN5161].
+ * You, and any third parties must reproduce the copyright and warranty notice
+ * and any other legend of ownership on each copy or partial copy of the
+ * software.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Copyright NXP B.V. 2015. All rights reserved
+ *
+ ****************************************************************************/
 /****************************************************************************/
-/***        インクルードファイル                                                                                                                   ***/
+/***        Include files                                                 ***/
 /****************************************************************************/
 #include <jendefs.h>
 #include <string.h>
@@ -17,19 +45,10 @@
 #include "app_common.h"
 #include "app_router.h"
 
-//追加コード
+
 #include "pdum_apl.h"
 #include "pdum_gen.h"
 #include "Utils.h"
-#include "Time.h"
-#include "config.h"
-#include "zps_gen.h"
-
-// 追加
-#include <zps_apl_aps.h>
-#include <zps_apl_zdo.h>
-#include <zps_nwk_pub.h>
-#include "ZTimer.h"
 
 /****************************************************************************/
 /***        Macro Definitions                                             ***/
@@ -40,371 +59,133 @@
 	#define TRACE_APP 	TRUE
 #endif
 
-#ifndef PDM_E_STATUS_OK_RESTORED
-#define PDM_E_STATUS_OK_RESTORED PDM_E_STATUS_OK
-#endif
-
-// 追加
-#define ROUTE_MONITOR_INVALID_ADDRESS     0xFFFF
-#define ROUTE_MONITOR_RECOVERY_INTERVAL   ZTIMER_TIME_SEC(5)
-#define ROUTE_MONITOR_RETRY_INTERVAL      ZTIMER_TIME_SEC(10)
-#define ROUTE_MONITOR_REJOIN_INTERVAL     ZTIMER_TIME_SEC(30)
-#define ROUTE_MONITOR_MAX_ROUTE_RETRY     3
-#define ROUTE_MONITOR_MAX_REJOIN_ATTEMPT  2
-
-#define APP_CLUSTER_ID   MYPROFILE_MYCLUSTER_CLUSTER_ID
-#define APP_SRC_EP       AN1229_ZBP_ROUTER_MYENDPOINT_ENDPOINT
-#define APP_DST_EP       AN1229_ZBP_COORDINATOR_MYENDPOINT_ENDPOINT
-
-
+/****************************************************************************/
+/***        Type Definitions                                              ***/
+/****************************************************************************/
 
 /****************************************************************************/
-/***        型定義                                                       　　　　　　　　　　　　　　　　　　　　　　　　　　　　　***/
-/****************************************************************************/
-typedef struct
-{
-    uint16 u16LastFailedShortAddr;
-    uint8 u8LastApsStatus;
-    uint8 u8LastNwkStatus;
-    uint8 u8RecoveryAttempts;
-    uint8 u8RejoinAttempts;
-    bool_t bRecoveryNeeded;
-    bool_t bRouteDiscoveryInProgress;
-    bool_t bTimerArmed;
-    bool_t bRejoinScheduled;
-    uint32 u32LastDetectionTimeSec;
-    uint32 u32LastAttemptTimeSec;
-} tsRouteMonitor;
-
-/****************************************************************************/
-/***        ローカル関数プロトタイプ                                                                                                           ***/
+/***        Local Function Prototypes                                     ***/
 /****************************************************************************/
 PRIVATE void vStartup(void);
 PRIVATE void vWaitForNetworkDiscovery(ZPS_tsAfEvent sStackEvent);
 PRIVATE void vWaitForNetworkJoin(ZPS_tsAfEvent sStackEvent);
 PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent);
 PRIVATE void vClearDiscNT(void);
-PRIVATE bool_t bLoadDeviceState(void);
-
-// 追加
-#ifndef ZPS_APL_AF_ACK_REQ
-#define APP_TX_OPTION_ACK_REQUIRED (1U << 2)
-#else
-#define APP_TX_OPTION_ACK_REQUIRED ZPS_APL_AF_ACK_REQ
-#endif
-
-#define APP_ROUTE_MONITOR_STATUS_SEND_FAIL 0xFF
-
-PRIVATE void vDrainQueueOnOverrun(tszQueue *psQueue, const char *pcQueueName);
-PRIVATE void vReleaseApduIfPresent(ZPS_tsAfEvent *psEvent);
-PRIVATE bool_t bTriggerRouteProbe(uint16 u16ShortAddr);
-PRIVATE void vAttemptRouteRecovery(void);
-PRIVATE void vAttemptRejoin(void);
-PRIVATE void vResetRouteMonitor(void);
-PRIVATE void vRecordRouteFailure(uint16 u16Addr, uint8 u8Status, const char *pcReason);
-PRIVATE void vLogRouteMonitor(const char *pcPrefix);
-PRIVATE void vHandleManualRouteRecoveryRequest(void);
-PRIVATE void vShowRouteMonitorStatus(void);
-PRIVATE void vSendDataInternal(uint16 u16RequestedDest);
-PRIVATE uint16 u16ResolveDestinationAddress(uint16 u16RequestedDest);
 
 /****************************************************************************/
-/***        ローカル変数                                                                                                                            ***/
+/***        Exported Variables                                            ***/
+/****************************************************************************/
+
+/****************************************************************************/
+/***        Local Variables                                               ***/
 /****************************************************************************/
 PRIVATE tsDeviceDesc s_eDeviceState;
-
-// 追加
-PRIVATE tsRouteMonitor s_sRouteMonitor;
-PRIVATE uint32 u32SystemTimeSeconds = 0;
-PUBLIC uint8_t count1 = 1;
-PRIVATE uint16 u16LastUnicastDestination = COORDINATOR_ADR;
-
 PUBLIC uint8 au8DefaultTCLinkKey[16]    = {0x5a, 0x69, 0x67, 0x42, 0x65, 0x65, 0x41, 0x6c,
                                            0x6c, 0x69, 0x61, 0x6e, 0x63, 0x65, 0x30, 0x39};
 
-
-
 /****************************************************************************/
-/***        追加関数okayama                                                ***?                                                                            ***/
+/***        Exported Functions                                            ***/
 /****************************************************************************/
-PRIVATE void vReadInputCommand(void)
-{
-    commandType currentCommand = vReadCommand();
-
-    switch (currentCommand)
-    {
-        case SEND_COMMAND:
-        {
-            /* 既存の送信要求はここで処理する */
-        }
-        break;
-
-        case ROUTE_RECOVER_COMMAND:
-        {
-            vHandleManualRouteRecoveryRequest();
-        }
-        break;
-
-        case ROUTE_STATUS_COMMAND:
-        {
-            vShowRouteMonitorStatus();
-        }
-        break;
-
-        default:
-        {
-            /* 受信コマンドが無い場合は何もしない */
-        }
-        break;
-    }
-}
-
-PUBLIC void APP_vSetUnicastDestination(uint16 u16ShortAddr)
-{
-    if (ROUTE_MONITOR_INVALID_ADDRESS == u16ShortAddr)
-    {
-        u16LastUnicastDestination = COORDINATOR_ADR;
-    }
-    else
-    {
-        u16LastUnicastDestination = u16ShortAddr;
-    }
-
-    DBG_vPrintf(TRUE,
-                "APP: Updated default destination to 0x%04x\n",
-                u16LastUnicastDestination);
-}
-
-PUBLIC void SendData(void)
-{
-    vSendDataInternal(ROUTE_MONITOR_INVALID_ADDRESS);
-}
-
-PUBLIC void SendDataTo(uint16 u16ShortAddr)
-{
-    vSendDataInternal(u16ShortAddr);
-}
-
-PRIVATE void vSendDataInternal(uint16 u16RequestedDest)
-{
-    /* デモ用の送信処理 */
-    uint8 u8TransactionSequenceNumber = 0;
-    PDUM_thAPduInstance hAPduInst = PDUM_hAPduAllocateAPduInstance(apduZDP);
-
-    uint8 au8Payload[4] = { 6, count1++, 0x01, 0xA6 };
-    uint8 *pu8 = PDUM_pvAPduInstanceGetPayload(hAPduInst);
-    uint16 u16Len = sizeof(au8Payload);
-    memcpy(pu8, au8Payload, u16Len);
-    PDUM_eAPduInstanceSetPayloadSize(hAPduInst, u16Len);
-
-    if (hAPduInst == PDUM_INVALID_HANDLE)
-    {
-        DBG_vPrintf(TRUE, "APP: APDU allocation failed\n");
-        return;
-    }
-
-    u16Offset += PDUM_u16APduInstanceWriteNBO(hAPduInst, u16Offset, "a", au8Payload);
-    PDUM_eAPduInstanceSetPayloadSize(hAPduInst, u16Offset);
-
-    /* 以下は送信要求のサンプルコード。実際に使用する際は必要な処理を追加する。 */
-    ZPS_teStatus eStatus;
-
-    eStatus = ZPS_eAplAfUnicastDataReq(hAPduInst,
-                                       0x1337,
-                                       AN1229_ZBP_SLEEPINGENDDEVICE_MYENDPOINT_ENDPOINT, // Source EP (SED)
-                                       AN1229_ZBP_COORDINATOR_MYENDPOINT_ENDPOINT,       // Destination EP (Coordinator)
-                                       COORDINATOR_ADR,
-                                       ZPS_E_APL_AF_UNSECURE,
-                                       APP_TX_OPTION_ACK_REQUIRED,
-                                       &u8TransactionSequenceNumber);
-
-    if (ZPS_E_SUCCESS != eStatus)
-    {
-        DBG_vPrintf(TRUE,
-        			"APP: SendData unicast failed status=%d dest=0x%04x\n",
-                    eStatus,
-                    u16DstAddr);
-        PDUM_eAPduFreeAPduInstance(hAPduInst);
-    }
-    else
-    {
-        DBG_vPrintf(TRUE,
-                    "APP: SendData queued dest=0x%04x tsn=%d\n",
-                    u16DstAddr,
-                    u8TransactionSequenceNumber);
-    }
-}
-
-PRIVATE uint16 u16ResolveDestinationAddress(uint16 u16RequestedDest)
-{
-    if (ROUTE_MONITOR_INVALID_ADDRESS != u16RequestedDest)
-    {
-        u16LastUnicastDestination = u16RequestedDest;
-        return u16RequestedDest;
-    }
-
-    if (ROUTE_MONITOR_INVALID_ADDRESS != u16LastUnicastDestination)
-    {
-        return u16LastUnicastDestination;
-    }
-
-    u16LastUnicastDestination = COORDINATOR_ADR;
-    return COORDINATOR_ADR;
-}
-
-PRIVATE bool_t bLoadDeviceState(void)
-{
-    uint16 u16DataBytesRead = 0;
-    PDM_teStatus eStatus;
-
-    memset(&s_eDeviceState, 0, sizeof(s_eDeviceState));
-    s_eDeviceState.eNodeState = E_STARTUP;
-
-    eStatus = PDM_eReadDataFromRecord(PDM_ID_APP_ROUTER,
-                                      &s_eDeviceState,
-                                      sizeof(s_eDeviceState),
-                                      &u16DataBytesRead);
-
-    if ((PDM_E_STATUS_OK == eStatus) || (PDM_E_STATUS_OK_RESTORED == eStatus))
-    {
-        DBG_vPrintf(TRACE_APP,
-                    "APP: Warm start - restored node state %d\n",
-                    s_eDeviceState.eNodeState);
-        return TRUE;
-    }
-
-    DBG_vPrintf(TRACE_APP,
-                "APP: No persisted router context (status=%d)\n",
-                eStatus);
-    memset(&s_eDeviceState, 0, sizeof(s_eDeviceState));
-    s_eDeviceState.eNodeState = E_STARTUP;
-    return FALSE;
-}
-
-
-/* Route probe helper */
-PRIVATE bool_t bTriggerRouteProbe(uint16 u16ShortAddr)
-{
-    PDUM_thAPduInstance hAPduInst;
-    uint8 u8TransactionSequenceNumber = 0;
-    ZPS_teStatus eStatus;
-
-    DBG_vPrintf(TRUE,
-                "APP: Route probe send start -> 0x%04x\n",
-                u16ShortAddr);
-
-    hAPduInst = PDUM_hAPduAllocateAPduInstance(apduZDP);
-    if (PDUM_INVALID_HANDLE == hAPduInst)
-    {
-        DBG_vPrintf(TRUE, "APP: Route probe APDU allocate failed\n");
-        return FALSE;
-    }
-
-    PDUM_eAPduInstanceSetPayloadSize(hAPduInst, 0);
-
-    eStatus = ZPS_eAplAfUnicastDataReq(hAPduInst,
-                                        MYPROFILE_PROFILE_ID,
-                                        MYPROFILE_MYCLUSTER_CLUSTER_ID,
-                                        AN1229_ZBP_ROUTER_MYENDPOINT_ENDPOINT,
-                                        u16ShortAddr,
-                                        ZPS_E_APL_AF_UNSECURE,
-                                        APP_TX_OPTION_ACK_REQUIRED,
-                                        &u8TransactionSequenceNumber);
-
-    if (ZPS_E_SUCCESS != eStatus)
-    {
-        DBG_vPrintf(TRUE,
-                    "APP: Route probe send failed status=%d dest=0x%04x\n",
-                    eStatus,
-                    u16ShortAddr);
-        PDUM_eAPduFreeAPduInstance(hAPduInst);
-        return FALSE;
-    }
-
-    DBG_vPrintf(TRUE,
-                "APP: Route probe sent (tsn=%d) dest=0x%04x\n",
-                u8TransactionSequenceNumber,
-                u16ShortAddr);
-
-    return TRUE;
-}
-
-/****************************************************************************/
-/***        グローバル関数                                                                                                                         ***/
-/****************************************************************************/
-
 /****************************************************************************
  *
- * 関数名: APP_vInitialiseRouter
+ * NAME: APP_vInitialiseRouter
  *
- * 概要: ルータアプリケーション全体を初期化し、データを復元する
+ * DESCRIPTION:
+ * Initialises the router application
  *
- * 戻り値: void
+ * RETURNS:
+ * void
  *
  ****************************************************************************/
 PUBLIC void APP_vInitialiseRouter(void)
 {
-    // 追加
-    vResetRouteMonitor();
-    u32SystemTimeSeconds = 0;
+    bool_t bDeleteRecords = TRUE /*FALSE*/;
+    uint16 u16DataBytesRead;
 
-    (void)bLoadDeviceState();
+    /* If required, at this point delete the network context from flash, perhaps upon some condition
+     * For example, check if a button is being held down at reset, and if so request the Persistent
+     * Data Manager to delete all its records:
+     * e.g. bDeleteRecords = vCheckButtons();
+     * Alternatively, always call PDM_vDelete() if context saving is not required.
+     */
+    if (bDeleteRecords)
+    {
+        DBG_vPrintf(TRACE_APP, "APP: Deleting all records from flash\n");
+        PDM_vDeleteAllDataRecords();
+    }
 
-    /* ZBPro スタックの初期化 */
+    /* Restore any application data previously saved to flash
+     * All Application records must be loaded before the call to
+     * ZPS_eAplAfInit
+     */
+    s_eDeviceState.eNodeState = E_STARTUP;
+    PDM_eReadDataFromRecord(PDM_ID_APP_ROUTER,
+                    		&s_eDeviceState,
+                    		sizeof(s_eDeviceState),
+                    		&u16DataBytesRead);
+
+    /* Initialise ZBPro stack */
     ZPS_eAplAfInit();
     ZPS_vAplSecSetInitialSecurityState(ZPS_ZDO_PRECONFIGURED_LINK_KEY,
                                        au8DefaultTCLinkKey,
                                        0x00,
                                        ZPS_APS_GLOBAL_LINK_KEY);
-    /* 必要なソフトウェアモジュールの初期化をここで行う */
+    /* Initialise other software modules
+     * HERE
+     */
 
-    /* アプリケーションが利用する周辺機器の初期化もここで実施する */
+    /* Always initialise any peripherals used by the applicatio
+     * HERE
+     */
 
-    /* フラッシュから復元した結果、ネットワーク参加後の状態であれば
-     * スタックを再始動してアプリケーションを再開する。
-     * 状態が複数存在する場合は必要に応じて条件分岐を拡張する。
+    /* If the device state has been restored from flash, re-start the stack
+     * and set the application running again. Note that if there is more than 1 state
+     * where the network has already joined, then the other states should also be included
+     * in the test below
+     * E.g. E_RUNNING_1, E_RUNNING_2......
+     * if (E_RUNNING_1 ==s_eDeviceState || E_RUNNING_2 ==s_eDeviceState)
      */
     if (E_RUNNING ==s_eDeviceState.eNodeState)
     {
         ZPS_teStatus eStatus = ZPS_eAplZdoStartStack();
-        DBG_vPrintf(TRACE_APP, "APP: スタックを再始動します\r\n");
+        DBG_vPrintf(TRACE_APP, "APP: Re-starting Stack....\r\n");
         if (ZPS_E_SUCCESS != eStatus)
         {
-            DBG_vPrintf(TRACE_APP, "APP: ZPS_eZdoStartStack() が失敗しました エラー=%d", eStatus);
+            DBG_vPrintf(TRACE_APP, "APP: ZPS_eZdoStartStack() failed error %d", eStatus);
         }
-        /* 参加要求を許可 */
+        /* turn on joining */
         ZPS_eAplZdoPermitJoining(0xff);
 
-        /* その他のアプリケーションモジュールも再開する場合はここで実施する */
+        /* Re-start any other application software modules
+         * HERE
+         */
     }
     else
+        /* perform any actions require on initial start-up */
     {
-    	/* ネットワーク形成中にリセットされた場合でも開始状態へ戻す */
+        /* Return the device to the start-up start if it was reset during the network formation stage */
        s_eDeviceState.eNodeState = E_STARTUP;
     }
 }
 
 /****************************************************************************
  *
- * 関数名: APP_vtaskRouter
+ * NAME: APP_taskRouter
  *
- * 概要: ルータのメインステートマシンを処理する
+ * DESCRIPTION:
+ * Main state machine
  *
- * 戻り値: void
+ * RETURNS:
+ * void
  *
  ****************************************************************************/
-PUBLIC void APP_vtaskRouter(void)
+PUBLIC void APP_vtaskRouter ( void )
 {
     ZPS_tsAfEvent sStackEvent;
 
-    sStackEvent.eType = ZPS_EVENT_NONE;
-    bool_t bEventReady = ZQ_bQueueReceive(&APP_msgZpsEvents, &sStackEvent);
-
     if (ZTIMER_eGetState(u8App_tmr1sec) == E_ZTIMER_STATE_EXPIRED)
     {
-    	/* 1 秒タイマ満了時に内部時計を更新 */
-    	ZTIMER_eStart(u8App_tmr1sec, ZTIMER_TIME_SEC(1));
-    	u32SystemTimeSeconds++;
+    	ZTIMER_eStart (u8App_tmr1sec, ZTIMER_TIME_SEC(1) );
     }
 
     switch (s_eDeviceState.eNodeState)
@@ -429,75 +210,30 @@ PUBLIC void APP_vtaskRouter(void)
 
         case E_RUNNING:
         {
-        	/* Process every pending stack event to avoid queue overruns as advised by JN-UG-3113. */
-        	if (bEventReady)
-        	{
-        		do
-        		{
-        			vHandleStackEvent(sStackEvent);
-        	    } while (ZQ_bQueueReceive(&APP_msgZpsEvents, &sStackEvent));
-        	}
-        	vReadInputCommand();
-
-        	if (s_sRouteMonitor.bRecoveryNeeded && !s_sRouteMonitor.bRejoinScheduled)
-        	{
-        	    DBG_vPrintf(TRUE, "APP: [gĒTԂ֑J\n");
-        	    s_eDeviceState.eNodeState = E_ROUTE_RECOVERY;
-        	}
-        }
-        break;
-
-        // 追加
-        case E_ROUTE_RECOVERY:
-        {
-        /* Continue draining queued events so recovery decisions use fresh data. */
-        	if (bEventReady)
-        	{
-        		do
-        		{
-        			vHandleStackEvent(sStackEvent);
-        		} while (ZQ_bQueueReceive(&APP_msgZpsEvents, &sStackEvent));
-        	}
-        	vAttemptRouteRecovery();
-        	vReadInputCommand();
-    	}
-        break;
-
-        // 追加
-        case E_ROUTE_REJOIN:
-        {
-        	/* Drain the queue before attempting to rejoin so we react to the latest network status. */
-        	if (bEventReady)
-        	{
-        		do
-        		{
-        			vHandleStackEvent(sStackEvent);
-        		} while (ZQ_bQueueReceive(&APP_msgZpsEvents, &sStackEvent));
-                }
-        	vAttemptRejoin();
-        	vReadInputCommand();
+        	vHandleStackEvent(sStackEvent);
         }
         break;
 
         default:
         {
-            /* その他の状態では特別な処理は行わない */
+        	/* Do nothing */
         }
         break;
     }
 }
 
 /****************************************************************************/
-/***        ローカル関数                                                                                                                            ***/
+/***        Local Functions                                               ***/
 /****************************************************************************/
-
 /****************************************************************************
  *
- * 関数名: vStartup
+ * NAME: vStartup
  *
- * 概要: ネットワーク探索を開始する
+ * DESCRIPTION:
+ * Start the process of network discovery
  *
- * 戻り値: void
+ * RETURNS:
+ * void
  *
  ****************************************************************************/
 PRIVATE void vStartup(void)
@@ -506,7 +242,7 @@ PRIVATE void vStartup(void)
 
     vClearDiscNT();
 
-    /* スキャンするチャネルを設定しスタックを起動 */
+    /* Set channel to scan and start stack */
     ZPS_psAplAibGetAib()->pau32ApsChannelMask[0] = 1 << u8Channel;
 
     ZPS_teStatus eStatus = ZPS_eAplZdoStartStack();
@@ -514,7 +250,7 @@ PRIVATE void vStartup(void)
     {
        s_eDeviceState.eNodeState = E_DISCOVERY;
 
-       /* 次に探索するチャネルへ進める */
+       /* Move channel counter to next channel */
        u8Channel++;
 
        if (27 == u8Channel)
@@ -522,22 +258,25 @@ PRIVATE void vStartup(void)
            u8Channel = 11;
        }
     }
+
 }
 
 /****************************************************************************
  *
- * 関数名: vWaitForNetworkDiscovery
+ * NAME: vWaitForNetworkDiscovery
  *
- * 概要:ネットワーク探索中のスタックイベントを確認し必要な処理を行う
+ * DESCRIPTION:
+ * Check for and act upon stack events during network discovery.
  *
- * 引数:         名前           		 RW  用途
- *               sStackEvent     R   スタックイベントの詳細
- * 戻り値: void
+ * PARAMETERS:      Name            RW  Usage
+ *                  sStackEvent     R   Contains details of stack event
+ * RETURNS:
+ * void
  *
  ****************************************************************************/
 PRIVATE void vWaitForNetworkDiscovery(ZPS_tsAfEvent sStackEvent)
 {
-    /* ノードがネットワーク探索を完了するまで待機 */
+    /* wait for the node to complete network discovery */
     if (ZPS_EVENT_NONE != sStackEvent.eType)
     {
         if (ZPS_EVENT_NWK_DISCOVERY_COMPLETE == sStackEvent.eType)
@@ -553,12 +292,12 @@ PRIVATE void vWaitForNetworkDiscovery(ZPS_tsAfEvent sStackEvent)
             {
                 DBG_vPrintf(TRACE_APP, "APP: Network discovery failed with error %d\n",sStackEvent.uEvent.sNwkDiscoveryEvent.eStatus);
             }
-            if ((0 == sStackEvent.uEvent.sNwkDiscoveryEvent.u8NetworkCount) ||
-                (0xff == sStackEvent.uEvent.sNwkDiscoveryEvent.u8SelectedNetwork))
+            if (   0 == sStackEvent.uEvent.sNwkDiscoveryEvent.u8NetworkCount
+                || 0xff == sStackEvent.uEvent.sNwkDiscoveryEvent.u8SelectedNetwork)
             {
                 if (0 != sStackEvent.uEvent.sNwkDiscoveryEvent.u32UnscannedChannels)
                 {
-                	/* 未探索チャネルが残っている場合は探索を継続 */
+                    /* continue to look for networks on unscanned channels */
                     DBG_vPrintf(TRACE_APP, "APP: No networks found, continue scanning ...\n");
                     ZPS_eAplZdoDiscoverNetworks(sStackEvent.uEvent.sNwkDiscoveryEvent.u32UnscannedChannels);
                 }
@@ -587,12 +326,12 @@ PRIVATE void vWaitForNetworkDiscovery(ZPS_tsAfEvent sStackEvent)
 
                 if (ZPS_E_SUCCESS == eStatus)
                 {
-                	DBG_vPrintf(TRACE_APP, "APP: Joining network\n");
-                    s_eDeviceState.eNodeState = E_JOINING_NETWORK;
+                    DBG_vPrintf(TRACE_APP, "APP: Joining network\n");
+                   s_eDeviceState.eNodeState = E_JOINING_NETWORK;
                 }
                 else
                 {
-                	/* 再度スキャンを開始 */
+                    /* start scan again */
                     DBG_vPrintf(TRACE_APP, "APP: Failed to join network reason = %02x\n", eStatus);
                     s_eDeviceState.eNodeState = E_STARTUP;
                 }
@@ -609,17 +348,13 @@ PRIVATE void vWaitForNetworkDiscovery(ZPS_tsAfEvent sStackEvent)
                         sStackEvent.uEvent.sNwkJoinedEvent.u16Addr);
             s_eDeviceState.eNodeState = E_RUNNING;
 
-            ZPS_eAplZdoPermitJoining(0xff);
-            APP_vSetUnicastDestination(COORDINATOR_ADR);
-            vResetRouteMonitor();
-            s_sRouteMonitor.bTimerArmed = FALSE;
-
-            /* アプリケーション状態をフラッシュへ保存する。
-             * PDM_vSaveRecord() 呼び出し時に空き領域が不足すると、PDM は全レコードを消去・再書込みする点に注意。
+            /* Save the application state to flash. Note that all records may be saved at any time by the PDM:
+             * if a module has called PDM_vSaveRecord(), but there is insufficient spare memory, an erase is performed
+             * followed by a write of all records.
              */
             PDM_eSaveRecordData(PDM_ID_APP_ROUTER,
-            					&s_eDeviceState,
-            					sizeof(s_eDeviceState));
+                            	&s_eDeviceState,
+                            	sizeof(s_eDeviceState));
         }
         else
         {
@@ -630,49 +365,46 @@ PRIVATE void vWaitForNetworkDiscovery(ZPS_tsAfEvent sStackEvent)
 
 /****************************************************************************
  *
- * 関数名: vWaitForNetworkJoin
+ * NAME: vWaitForNetworkJoin
  *
- * 概要: ネットワーク参加処理中のスタックイベントを監視する
+ * DESCRIPTION:
+ * Check for and act upon stack events during network join.
  *
- * 引数:         名前            		 RW  用途
- *               sStackEvent     R   スタックイベントの詳細
- * 戻り値:void
+ * PARAMETERS:      Name            RW  Usage
+ *                  sStackEvent     R   Contains details of stack event
+ * RETURNS:
+ * void
  *
- *****************************************************************************/
+ ****************************************************************************/
 PRIVATE void vWaitForNetworkJoin(ZPS_tsAfEvent sStackEvent)
 {
-	uint64 u64ExtPANID;
-    /* ノードがネットワーク参加を完了するまで待機 */
+     uint64 u64ExtPANID;
+    /* wait for the node to complete network joining */
     if (ZPS_EVENT_NONE != sStackEvent.eType)
     {
         if (ZPS_EVENT_NWK_JOINED_AS_ROUTER == sStackEvent.eType)
         {
             DBG_vPrintf(TRACE_APP, "APP: Node joined network with Addr 0x%04x\n",
                         sStackEvent.uEvent.sNwkJoinedEvent.u16Addr);
-            /* 再参加用に EPID を保存  */
+            /* save the EPID for rejoins */
             u64ExtPANID = ZPS_u64NwkNibGetEpid(ZPS_pvAplZdoGetNwkHandle());
             ZPS_eAplAibSetApsUseExtendedPanId(u64ExtPANID);
             s_eDeviceState.eNodeState = E_RUNNING;
-            ZPS_eAplZdoPermitJoining(0xff);
-            APP_vSetUnicastDestination(COORDINATOR_ADR);
-
-            // 追加
-            vResetRouteMonitor();
-            s_sRouteMonitor.bTimerArmed = FALSE;
-
             PDM_eSaveRecordData(PDM_ID_APP_ROUTER,
-            					&s_eDeviceState,
+                            	&s_eDeviceState,
                             	sizeof(s_eDeviceState));
 
-            /* 1 秒タイマを起動し APP_vtaskRouter を定期実行 */
+            /* Start timer to periodically active APP_taskRouter */
             ZTIMER_eStart (u8App_tmr1sec, ZTIMER_TIME_SEC(1));
         }
         else if (ZPS_EVENT_NWK_FAILED_TO_JOIN == sStackEvent.eType)
         {
             DBG_vPrintf(TRACE_APP, "APP: Node failed to join network. Retrying ...\n");
             s_eDeviceState.eNodeState = E_STARTUP;
-            /* 必要であればここでアプリケーション状態をフラッシュへ保存する。
-             * PDM_vSaveRecord() 呼び出し時は全レコードが再書込みされる可能性がある点に注意。
+            /* Save the application state to flash. Note that all records may be saved at
+             * any time by the PDM: if a module has called PDM_vSaveRecord(), but there
+             * is insufficient spare memory, an erase is performed followed by a write
+             * of all records.
              */
         }
         else
@@ -682,461 +414,119 @@ PRIVATE void vWaitForNetworkJoin(ZPS_tsAfEvent sStackEvent)
     }
 }
 
-PRIVATE void vDrainQueueOnOverrun(tszQueue *psQueue, const char *pcQueueName)
-{
-    /* Clear the overrun queue so that the router can recover as outlined in JN-UG-3113. */
-    if (NULL == psQueue)
-    {
-        return;
-    }
-
-    DBG_vPrintf(TRACE_APP, "APP: Clearing %s after queue overrun as recommended by JN-UG-3113\n", pcQueueName);
-
-    ZPS_tsAfEvent sPendingEvent;
-    while (ZQ_bQueueReceive(psQueue, &sPendingEvent))
-    {
-        vReleaseApduIfPresent(&sPendingEvent);
-    }
-}
-
-PRIVATE void vReleaseApduIfPresent(ZPS_tsAfEvent *psEvent)
-{
-    /* Release any APDU buffer associated with an event that we are about to drop. */
-    if (NULL == psEvent)
-    {
-        return;
-    }
-
-    switch (psEvent->eType)
-    {
-        case ZPS_EVENT_APS_DATA_INDICATION:
-        {
-            if (psEvent->uEvent.sApsDataIndEvent.hAPduInst)
-            {
-                PDUM_eAPduFreeAPduInstance(psEvent->uEvent.sApsDataIndEvent.hAPduInst);
-            }
-        }
-        break;
-
-        case ZPS_EVENT_APS_INTERPAN_DATA_INDICATION:
-        {
-            if (psEvent->uEvent.sApsInterPanDataIndEvent.hAPduInst)
-            {
-                PDUM_eAPduFreeAPduInstance(psEvent->uEvent.sApsInterPanDataIndEvent.hAPduInst);
-            }
-        }
-        break;
-
-        case ZPS_EVENT_APS_ZGP_DATA_INDICATION:
-        {
-            if (psEvent->uEvent.sApsZgpDataIndEvent.hAPduInst)
-            {
-                PDUM_eAPduFreeAPduInstance(psEvent->uEvent.sApsZgpDataIndEvent.hAPduInst);
-            }
-        }
-        break;
-
-        default:
-        {
-            /* Nothing to release for other event types. */
-        }
-        break;
-    }
-}
-
 /****************************************************************************
  *
- * 関数名: vHandleStackEvent
+ * NAME: vHandleStackEvent
  *
- * 概要: ネットワーク参加後に発生するスタックイベントを処理する
+ * DESCRIPTION:
+ * Check for and act upon any valid stack event, after the node has joined a
+ * network and is in its running state
  *
- * 引数:         名前            		　RW  用途
- *               sStackEvent     R   スタックイベントの詳細
- * 戻り値: void
+ * PARAMETERS:      Name            RW  Usage
+ *                  sStackEvent     R   Contains details of stack event
+ * RETURNS:
+ * void
  *
  ****************************************************************************/
 PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
 {
-	if (ZPS_EVENT_NONE == sStackEvent.eType)
-	{
-		return;
-	}
-
-	switch (sStackEvent.eType)
-	{
-	case ZPS_EVENT_APS_DATA_INDICATION:
-		/* 受信した APDU は即座に解放する */
-		PDUM_eAPduFreeAPduInstance(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
-    break;
-
-    case ZPS_EVENT_APS_DATA_CONFIRM:
+    if (ZPS_EVENT_NONE != sStackEvent.eType)
     {
-        uint8 u8Status = sStackEvent.uEvent.sApsDataConfirmEvent.u8Status;
-        uint16 u16Dst = sStackEvent.uEvent.sApsDataConfirmEvent.uDstAddr.u16Addr;
-        DBG_vPrintf(TRACE_APP,
-                    "APP: vCheckStackEvent: ZPS_EVENT_APS_DATA_CONFIRM Status %d, Address 0x%04x\n",
-                    u8Status,
-                    u16Dst);
-        if (s_sRouteMonitor.bRouteDiscoveryInProgress &&
-            (u16Dst == s_sRouteMonitor.u16LastFailedShortAddr))
+        switch (sStackEvent.eType)
         {
-            if (u8Status != ZPS_E_SUCCESS)
+            case ZPS_EVENT_APS_DATA_INDICATION:
             {
-                vRecordRouteFailure(u16Dst, u8Status, "APSデータ送信失敗");
-                ZTIMER_eStop(u8RouteRecoveryTimer);
-                ZTIMER_eStart(u8RouteRecoveryTimer, ROUTE_MONITOR_RETRY_INTERVAL);
-                s_sRouteMonitor.bTimerArmed = TRUE;
-                if (s_eDeviceState.eNodeState == E_RUNNING)
+                //DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_AF_DATA_INDICATION\n");
+
+                /* Process incoming cluster messages ... */
+                //DBG_vPrintf(TRACE_APP, "        Profile :%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u16ProfileId);
+                //DBG_vPrintf(TRACE_APP, "        Cluster :%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u16ClusterId);
+                //DBG_vPrintf(TRACE_APP, "        EndPoint:%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u8DstEndpoint);
+
+                /* free the application protocol data unit (APDU) once it has been dealt with */
+                PDUM_eAPduFreeAPduInstance(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
+            }
+            break;
+
+            case ZPS_EVENT_APS_DATA_CONFIRM:
+            {
+            	DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_APS_DATA_CONFIRM Status %d, Address 0x%04x\n",
+                            sStackEvent.uEvent.sApsDataConfirmEvent.u8Status,
+                            sStackEvent.uEvent.sApsDataConfirmEvent.uDstAddr.u16Addr);
+            }
+            break;
+
+            case ZPS_EVENT_APS_DATA_ACK:
+            {
+            	DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_APS_DATA_ACK Status %d, Address 0x%04x\n",
+                            sStackEvent.uEvent.sApsDataAckEvent.u8Status,
+                            sStackEvent.uEvent.sApsDataAckEvent.u16DstAddr);
+            }
+            break;
+
+            case ZPS_EVENT_NWK_NEW_NODE_HAS_JOINED:
+            {
+            	DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: vCheckStackEvent: ZPS_EVENT_NEW_NODE_HAS_JOINED, Nwk Addr=0x%04x\n",
+                            sStackEvent.uEvent.sNwkJoinIndicationEvent.u16NwkAddr);
+            }
+            break;
+
+            case ZPS_EVENT_NWK_LEAVE_INDICATION:
+            {
+            	DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_LEAVE_INDICATION\n");
+            }
+            break;
+
+            case ZPS_EVENT_NWK_LEAVE_CONFIRM:
+            {
+            	DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_LEAVE_CONFIRM\n");
+            }
+            break;
+
+            case ZPS_EVENT_NWK_STATUS_INDICATION:
+            {
+            	DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_NWK_STATUS_INDICATION\n");
+            }
+            break;
+
+            case ZPS_EVENT_NWK_ROUTE_DISCOVERY_CONFIRM:
+            {
+            	DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_ROUTE_DISCOVERY_CFM\n");
+            }
+            break;
+
+            case ZPS_EVENT_ERROR:
+            {
+            	DBG_vPrintf(TRACE_APP, "APP: Monitor Sensors ZPS_EVENT_ERROR\n");
+                DBG_vPrintf(TRACE_APP, "    Error Code %d\n", sStackEvent.uEvent.sAfErrorEvent.eError);
+
+                if (ZPS_ERROR_OS_MESSAGE_QUEUE_OVERRUN == sStackEvent.uEvent.sAfErrorEvent.eError)
                 {
-                    s_eDeviceState.eNodeState = E_ROUTE_RECOVERY;
+                	DBG_vPrintf(TRACE_APP, "    Queue handle %d\n", sStackEvent.uEvent.sAfErrorEvent.uErrorData.sAfErrorOsMessageOverrun.hMessage);
                 }
             }
+            break;
+
+            case ZPS_EVENT_NWK_POLL_CONFIRM:
+            {
+                DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_NEW_POLL_COMPLETE, status = %d\n",
+                           sStackEvent.uEvent.sNwkPollConfirmEvent.u8Status );
+            }
+            break;
+
+            case ZPS_EVENT_NWK_JOINED_AS_ROUTER:
+            case ZPS_EVENT_NWK_STARTED:
+            case ZPS_EVENT_NWK_FAILED_TO_START:
+            case ZPS_EVENT_NWK_FAILED_TO_JOIN:
+            case ZPS_EVENT_NWK_DISCOVERY_COMPLETE:
+                /* Deliberate fall through */
+            default:
+            {
+                DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: unhandled event %d\n", sStackEvent.eType);
+            }
+            break;
         }
     }
-    break;
-
-    case ZPS_EVENT_APS_DATA_ACK:
-    {
-        uint8 u8Status = sStackEvent.uEvent.sApsDataAckEvent.u8Status;
-        uint16 u16Dst = sStackEvent.uEvent.sApsDataAckEvent.u16DstAddr;
-
-        DBG_vPrintf(TRACE_APP,
-                    "APP: vCheckStackEvent: ZPS_EVENT_APS_DATA_ACK Status %d, Address 0x%04x\n",
-                    u8Status,
-                    u16Dst);
-        if (s_sRouteMonitor.bRouteDiscoveryInProgress &&
-            (u16Dst == s_sRouteMonitor.u16LastFailedShortAddr))
-        {
-            if (u8Status == ZPS_E_SUCCESS)
-            {
-                vResetRouteMonitor();
-                if (s_eDeviceState.eNodeState != E_RUNNING)
-                {
-                    s_eDeviceState.eNodeState = E_RUNNING;
-                }
-            }
-            else
-            {
-                vRecordRouteFailure(u16Dst, u8Status, "APS ACK ERROR");
-                ZTIMER_eStop(u8RouteRecoveryTimer);
-                ZTIMER_eStart(u8RouteRecoveryTimer, ROUTE_MONITOR_RETRY_INTERVAL);
-                s_sRouteMonitor.bTimerArmed = TRUE;
-                if (s_eDeviceState.eNodeState == E_RUNNING)
-                {
-                    s_eDeviceState.eNodeState = E_ROUTE_RECOVERY;
-                }
-            }
-        }
-    }
-    break;
-
-    case ZPS_EVENT_NWK_NEW_NODE_HAS_JOINED:
-    {
-        DBG_vPrintf(TRACE_APP,
-        			"APP: vCheckStackEvent: vCheckStackEvent: ZPS_EVENT_NEW_NODE_HAS_JOINED, Nwk Addr=0x%04x\n",
-                    sStackEvent.uEvent.sNwkJoinIndicationEvent.u16NwkAddr);
-    }
-    break;
-
-    case ZPS_EVENT_NWK_LEAVE_INDICATION:
-    {
-        DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_LEAVE_INDICATION\n");
-    }
-    break;
-
-    case ZPS_EVENT_NWK_LEAVE_CONFIRM:
-    {
-        DBG_vPrintf(TRACE_APP, "APP: ノード離脱確認\n");
-    }
-    break;
-
-    case ZPS_EVENT_NWK_STATUS_INDICATION:
-    {
-        uint8 u8Status = sStackEvent.uEvent.sNwkStatusIndicationEvent.u8Status;
-        s_sRouteMonitor.u8LastNwkStatus = u8Status;
-
-        DBG_vPrintf(TRACE_APP,
-                    "APP: NWKステータス通知 status=%d\n",
-                    u8Status);
-
-        if (u8Status != ZPS_NWK_ENUM_SUCCESS)
-        {
-            vRecordRouteFailure(s_sRouteMonitor.u16LastFailedShortAddr,
-                                u8Status,
-                                "NWKステータス通知");
-        }
-    }
-    break;
-
-    case ZPS_EVENT_NWK_ROUTE_DISCOVERY_CONFIRM:
-    {
-        const uint8 u8Status = *((uint8 *)&sStackEvent.uEvent.sNwkRouteDiscoveryConfirmEvent);
-        uint16 u16Dst = s_sRouteMonitor.u16LastFailedShortAddr;
-        s_sRouteMonitor.u8LastNwkStatus = u8Status;
-
-        DBG_vPrintf(TRACE_APP,
-                    "APP: ルート探索結果 status=%d 宛先=0x%04x\n",
-                    u8Status,
-                    u16Dst);
-
-        if (u8Status == (uint8)ZPS_NWK_ENUM_SUCCESS){
-            DBG_vPrintf(TRUE, "APP: ルート再探索が成功しました\n");
-            vResetRouteMonitor();
-            s_eDeviceState.eNodeState = E_RUNNING;
-        }
-        else
-        {
-            vRecordRouteFailure(u16Dst, u8Status, "ルート探索失敗");
-            if (s_sRouteMonitor.u8RecoveryAttempts >= ROUTE_MONITOR_MAX_ROUTE_RETRY)
-            {
-                s_sRouteMonitor.bRejoinScheduled = TRUE;
-                s_eDeviceState.eNodeState = E_ROUTE_REJOIN;
-                ZTIMER_eStop(u8RouteRecoveryTimer);
-                ZTIMER_eStart(u8RouteRecoveryTimer, ROUTE_MONITOR_REJOIN_INTERVAL);
-                s_sRouteMonitor.bTimerArmed = TRUE;
-            }
-        }
-    }
-    break;
-
-    case ZPS_EVENT_ERROR:
-    {
-    	ZPS_teStatus eError = sStackEvent.uEvent.sAfErrorEvent.eError;
-        DBG_vPrintf(TRACE_APP, "APP: Monitor Sensors ZPS_EVENT_ERROR\n");
-        DBG_vPrintf(TRACE_APP, "Error Code %d\n\n", eError);
-
-        if (ZPS_ERROR_OS_MESSAGE_QUEUE_OVERRUN == eError)
-        {
-            void *pvMessage = sStackEvent.uEvent.sAfErrorEvent.uErrorData.sAfErrorOsMessageOverrun.hMessage;
-            DBG_vPrintf(TRACE_APP,
-                        "Queue handle %p\n",
-                        pvMessage);
-            /* Manual JN-UG-3113 asks us to drain the impacted queue so that the stack can resume safely. */
-            if (pvMessage == (void*)&APP_msgZpsEvents)
-            {
-                vDrainQueueOnOverrun(&APP_msgZpsEvents, "APP_msgZpsEvents");
-            }
-            else if (pvMessage == (void*)&APP_msgMyEndPointEvents)
-            {
-                vDrainQueueOnOverrun(&APP_msgMyEndPointEvents, "APP_msgMyEndPointEvents");
-            }
-            else
-            {
-                DBG_vPrintf(TRACE_APP, "Unknown queue overrun handle encountered.\n");
-            }
-        }
-    }
-    break;
-
-    case ZPS_EVENT_NWK_POLL_CONFIRM:
-    {
-        DBG_vPrintf(TRACE_APP,
-                    "APP: vCheckStackEvent: ZPS_EVENT_NEW_POLL_COMPLETE, status = %d\n",
-                    sStackEvent.uEvent.sNwkPollConfirmEvent.u8Status);
-    }
-    break;
-
-    default:
-    {
-    	DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: unhandled event %d\n", sStackEvent.eType);
-    }
-    break;
-	}
-}
-
-
-/****************************************************************************
-***           新規追加関数                                                                                                                    ***
-****************************************************************************/
-PRIVATE void vResetRouteMonitor(void)
-{
-    ZTIMER_eStop(u8RouteRecoveryTimer);
-    s_sRouteMonitor.u16LastFailedShortAddr = ROUTE_MONITOR_INVALID_ADDRESS;
-    s_sRouteMonitor.u8LastApsStatus = 0;
-    s_sRouteMonitor.u8LastNwkStatus = 0;
-    s_sRouteMonitor.u8RecoveryAttempts = 0;
-    s_sRouteMonitor.u8RejoinAttempts = 0;
-    s_sRouteMonitor.bRecoveryNeeded = FALSE;
-    s_sRouteMonitor.bRouteDiscoveryInProgress = FALSE;
-    s_sRouteMonitor.bTimerArmed = FALSE;
-    s_sRouteMonitor.bRejoinScheduled = FALSE;
-    s_sRouteMonitor.u32LastDetectionTimeSec = u32SystemTimeSeconds;
-    s_sRouteMonitor.u32LastAttemptTimeSec = 0;
-}
-
-PRIVATE void vLogRouteMonitor(const char *pcPrefix)
-{
-    DBG_vPrintf(TRUE,
-                "APP: [ルート監視] %s 宛先0x%04x APS=0x%02x NWK=0x%02x 再探索回数=%d 再参加回数=%d 最終検知=%lu秒\n",
-                pcPrefix,
-                s_sRouteMonitor.u16LastFailedShortAddr,
-                s_sRouteMonitor.u8LastApsStatus,
-                s_sRouteMonitor.u8LastNwkStatus,
-                s_sRouteMonitor.u8RecoveryAttempts,
-                s_sRouteMonitor.u8RejoinAttempts,
-                (unsigned long)s_sRouteMonitor.u32LastDetectionTimeSec);
-}
-
-PRIVATE void vRecordRouteFailure(uint16 u16Addr, uint8 u8Status, const char *pcReason)
-{
-    if (u16Addr != ROUTE_MONITOR_INVALID_ADDRESS)
-    {
-        s_sRouteMonitor.u16LastFailedShortAddr = u16Addr;
-    }
-
-    s_sRouteMonitor.u8LastApsStatus = u8Status;
-    s_sRouteMonitor.bRecoveryNeeded = TRUE;
-    s_sRouteMonitor.bRouteDiscoveryInProgress = FALSE;
-    s_sRouteMonitor.u32LastDetectionTimeSec = u32SystemTimeSeconds;
-
-    if (!s_sRouteMonitor.bTimerArmed)
-    {
-        ZTIMER_eStart(u8RouteRecoveryTimer, ROUTE_MONITOR_RECOVERY_INTERVAL);
-        s_sRouteMonitor.bTimerArmed = TRUE;
-    }
-
-    vLogRouteMonitor(pcReason);
-}
-
-PRIVATE void vAttemptRouteRecovery(void)
-{
-    if (!s_sRouteMonitor.bRecoveryNeeded)
-    {
-        s_eDeviceState.eNodeState = E_RUNNING;
-        return;
-    }
-
-    if (s_sRouteMonitor.u16LastFailedShortAddr == ROUTE_MONITOR_INVALID_ADDRESS)
-    {
-        DBG_vPrintf(TRUE, "APP: 再探索対象アドレスが未設定のため処理を終了します\n");
-        vResetRouteMonitor();
-        s_eDeviceState.eNodeState = E_RUNNING;
-        return;
-    }
-
-    if (s_sRouteMonitor.u8RecoveryAttempts >= ROUTE_MONITOR_MAX_ROUTE_RETRY)
-    {
-        s_sRouteMonitor.bRejoinScheduled = TRUE;
-        s_eDeviceState.eNodeState = E_ROUTE_REJOIN;
-        ZTIMER_eStop(u8RouteRecoveryTimer);
-        ZTIMER_eStart(u8RouteRecoveryTimer, ROUTE_MONITOR_REJOIN_INTERVAL);
-        s_sRouteMonitor.bTimerArmed = TRUE;
-        return;
-    }
-
-    if (!s_sRouteMonitor.bTimerArmed)
-    {
-        ZTIMER_eStart(u8RouteRecoveryTimer, ROUTE_MONITOR_RECOVERY_INTERVAL);
-        s_sRouteMonitor.bTimerArmed = TRUE;
-        return;
-    }
-
-    if (ZTIMER_eGetState(u8RouteRecoveryTimer) != E_ZTIMER_STATE_EXPIRED)
-    {
-        return;
-    }
-
-    s_sRouteMonitor.bTimerArmed = FALSE;
-
-    if (bTriggerRouteProbe(s_sRouteMonitor.u16LastFailedShortAddr))
-    {
-        s_sRouteMonitor.u8RecoveryAttempts++;
-        s_sRouteMonitor.bRouteDiscoveryInProgress = TRUE;
-        s_sRouteMonitor.u32LastAttemptTimeSec = u32SystemTimeSeconds;
-        vLogRouteMonitor("再探索実行");
-    }
-    else
-    {
-        vRecordRouteFailure(s_sRouteMonitor.u16LastFailedShortAddr,
-        					APP_ROUTE_MONITOR_STATUS_SEND_FAIL,
-                            "RouteProbeSendFail");
-    }
-
-    ZTIMER_eStart(u8RouteRecoveryTimer, ROUTE_MONITOR_RETRY_INTERVAL);
-    s_sRouteMonitor.bTimerArmed = TRUE;
-}
-
-PRIVATE void vAttemptRejoin(void)
-{
-    if (!s_sRouteMonitor.bRejoinScheduled)
-    {
-        s_eDeviceState.eNodeState = E_RUNNING;
-        return;
-    }
-
-    if (!s_sRouteMonitor.bTimerArmed)
-    {
-        ZTIMER_eStart(u8RouteRecoveryTimer, ROUTE_MONITOR_REJOIN_INTERVAL);
-        s_sRouteMonitor.bTimerArmed = TRUE;
-        return;
-    }
-
-    if (ZTIMER_eGetState(u8RouteRecoveryTimer) != E_ZTIMER_STATE_EXPIRED)
-    {
-        return;
-    }
-
-    s_sRouteMonitor.bTimerArmed = FALSE;
-
-    if (s_sRouteMonitor.u8RejoinAttempts >= ROUTE_MONITOR_MAX_REJOIN_ATTEMPT)
-    {
-        DBG_vPrintf(TRUE, "APP: 再参加試行回数が上限に達したためスタートアップへ戻ります\n");
-        vResetRouteMonitor();
-        s_eDeviceState.eNodeState = E_STARTUP;
-        return;
-    }
-
-    PDM_eSaveRecordData(PDM_ID_APP_ROUTER,
-                        &s_eDeviceState,
-                        sizeof(s_eDeviceState));
-
-    ZPS_teStatus eStatus = ZPS_eAplZdoRejoinNetwork(FALSE);
-
-    s_sRouteMonitor.u8RejoinAttempts++;
-    s_sRouteMonitor.u32LastAttemptTimeSec = u32SystemTimeSeconds;
-
-    DBG_vPrintf(TRUE,
-                "APP: 再参加を試行 status=%d 試行回数=%d\n",
-                eStatus,
-                s_sRouteMonitor.u8RejoinAttempts);
-
-    ZTIMER_eStart(u8RouteRecoveryTimer, ROUTE_MONITOR_REJOIN_INTERVAL);
-    s_sRouteMonitor.bTimerArmed = TRUE;
-}
-
-PRIVATE void vHandleManualRouteRecoveryRequest(void)
-{
-    if (s_sRouteMonitor.u16LastFailedShortAddr == ROUTE_MONITOR_INVALID_ADDRESS)
-    {
-        DBG_vPrintf(TRUE, "APP: 監視情報が存在しないため再探索を開始できません\n");
-        return;
-    }
-
-    DBG_vPrintf(TRUE, "APP: 手動ルート再探索要求を受信\n");
-
-    s_sRouteMonitor.bRecoveryNeeded = TRUE;
-    s_sRouteMonitor.bRejoinScheduled = FALSE;
-    s_sRouteMonitor.u8RecoveryAttempts = 0;
-    s_sRouteMonitor.u8RejoinAttempts = 0;
-    s_sRouteMonitor.bRouteDiscoveryInProgress = FALSE;
-    s_sRouteMonitor.u32LastDetectionTimeSec = u32SystemTimeSeconds;
-
-    ZTIMER_eStop(u8RouteRecoveryTimer);
-    ZTIMER_eStart(u8RouteRecoveryTimer, ROUTE_MONITOR_RECOVERY_INTERVAL);
-    s_sRouteMonitor.bTimerArmed = TRUE;
-    s_eDeviceState.eNodeState = E_ROUTE_RECOVERY;
-
-    vLogRouteMonitor("手動再探索");
-}
-
-PRIVATE void vShowRouteMonitorStatus(void)
-{
-    vLogRouteMonitor("状態照会");
-    DBG_vPrintf(TRUE,
-                "APP: [ルート監視] タイマ稼働=%d 再探索必要=%d 再参加待機=%d\n",
-                s_sRouteMonitor.bTimerArmed ? 1 : 0,
-                s_sRouteMonitor.bRecoveryNeeded ? 1 : 0,
-                s_sRouteMonitor.bRejoinScheduled ? 1 : 0);
 }
 
 /****************************************************************************

@@ -40,6 +40,8 @@
 #include <zps_apl_af.h>
 #include "app_common.h"
 #include "app_router.h"
+#include "pdum_gen.h"
+#include "zps_gen.h"
 
 /****************************************************************************/
 /***        Macro Definitions                                             ***/
@@ -61,7 +63,7 @@
 /****************************************************************************/
 /***        Exported Variables                                            ***/
 /****************************************************************************/
-
+static uint16 u16LastKnownEdShort = 0xFFFF;
 /****************************************************************************/
 /***        Local Variables                                               ***/
 /****************************************************************************/
@@ -81,87 +83,98 @@ tszQueue APP_msgZpsEvents;
  * void
  *
  ****************************************************************************/
+/* 受信→送信の中継ヘルパ */
+static void vForwardPayload(const ZPS_tsAfEvent *ev, uint16 u16DstShortAddr, uint8 u8DstEp)
+{
+    PDUM_thAPduInstance hTx = PDUM_hAPduAllocateAPduInstance(apduMyData);
+    if (hTx == PDUM_INVALID_HANDLE) {
+        DBG_vPrintf(TRUE, "RTR: APDU alloc failed\r\n");
+        return;
+    }
+    uint8  *pRx   = PDUM_pvAPduInstanceGetPayload(ev->uEvent.sApsDataIndEvent.hAPduInst);
+    uint16  rxLen = PDUM_u16APduInstanceGetPayloadSize(ev->uEvent.sApsDataIndEvent.hAPduInst);
+    uint16  maxTx = PDUM_u16APduGetSize(apduMyData);
+    if (rxLen > maxTx) rxLen = maxTx; /* 念のため過大防止 */
+
+    uint8 *pTx = PDUM_pvAPduInstanceGetPayload(hTx);
+    memcpy(pTx, pRx, rxLen);
+    PDUM_eAPduInstanceSetPayloadSize(hTx, rxLen);
+
+    uint8 tsn;
+    ZPS_teStatus st = ZPS_eAplAfUnicastDataReq(
+        hTx,
+        APP_CLUSTER_ID,
+        AN1229_ZBP_ROUTER_MYENDPOINT_ENDPOINT,        /* Router自身のEP */
+        u8DstEp,              /* 宛先EP */
+        u16DstShortAddr,      /* 宛先Short */
+        ZPS_E_APL_AF_UNSECURE,
+        0,
+        &tsn
+    );
+    if (st != ZPS_E_SUCCESS) {
+        DBG_vPrintf(TRUE, "RTR: forward fail %d\r\n", st);
+        PDUM_eAPduFreeAPduInstance(hTx);
+    } else {
+        DBG_vPrintf(TRACE_APP, "RTR: forward ok tsn=%d\r\n", tsn);
+    }
+}
+
 void APP_vtaskMyEndPoint ( void )
 {
     ZPS_tsAfEvent sStackEvent;
-    sStackEvent.eType = ZPS_EVENT_NONE;
 
-    /* check if any messages to collect */
-    if ( ZQ_bQueueReceive(&APP_msgMyEndPointEvents, &sStackEvent))
-    {
-        DBG_vPrintf(TRACE_APP, "APP: No event to process\n");
-    }
-
-    if (ZPS_EVENT_NONE != sStackEvent.eType)
+    while (ZQ_bQueueReceive(&APP_msgMyEndPointEvents, &sStackEvent))
     {
         switch (sStackEvent.eType)
         {
-            case ZPS_EVENT_APS_INTERPAN_DATA_INDICATION:
-            {
-                  DBG_vPrintf(TRACE_APP, "APP: event  ZPS_EVENT_APS_INTERPAN_DATA_INDICATION\n");
-                  PDUM_eAPduFreeAPduInstance(sStackEvent.uEvent.sApsInterPanDataIndEvent.hAPduInst);
-            }
-            break;
+        case ZPS_EVENT_APS_DATA_INDICATION:
+        {
+            uint16 cluster = sStackEvent.uEvent.sApsDataIndEvent.u16ClusterId;
+            uint8  srcEp   = sStackEvent.uEvent.sApsDataIndEvent.u8SrcEndpoint;
+            uint8  dstEp   = sStackEvent.uEvent.sApsDataIndEvent.u8DstEndpoint;
+            uint16 srcShort= sStackEvent.uEvent.sApsDataIndEvent.uSrcAddress.u16Addr;
 
-            case ZPS_EVENT_APS_ZGP_DATA_INDICATION:
-            {
-            	DBG_vPrintf(TRACE_APP, "APP: event  ZPS_EVENT_APS_ZGP_DATA_INDICATION\n");
-                if (sStackEvent.uEvent.sApsZgpDataIndEvent.hAPduInst)
-                {
-                    PDUM_eAPduFreeAPduInstance(sStackEvent.uEvent.sApsZgpDataIndEvent.hAPduInst);
+            if (cluster == APP_CLUSTER_ID) {
+
+                /* ED から来たなら，最新EDアドレスを記憶して C へ中継 */
+                if (srcEp == AN1229_ZBP_SLEEPINGENDDEVICE_MYENDPOINT_ENDPOINT && dstEp == AN1229_ZBP_ROUTER_MYENDPOINT_ENDPOINT) {
+                    u16LastKnownEdShort = srcShort;
+                    vForwardPayload(&sStackEvent, /*to C*/ 0x0000, AN1229_ZBP_COORDINATOR_MYENDPOINT_ENDPOINT);
+                }
+                /* C から来たなら，記憶している ED 宛に中継（未記憶なら捨てる） */
+                else if (srcEp == AN1229_ZBP_COORDINATOR_MYENDPOINT_ENDPOINT && dstEp == AN1229_ZBP_ROUTER_MYENDPOINT_ENDPOINT) {
+                    if (u16LastKnownEdShort != 0xFFFF) {
+                        vForwardPayload(&sStackEvent, u16LastKnownEdShort, AN1229_ZBP_SLEEPINGENDDEVICE_MYENDPOINT_ENDPOINT);
+                    } else {
+                        DBG_vPrintf(TRUE, "RTR: no ED yet，drop\r\n");
+                    }
                 }
             }
-            break;
+            PDUM_eAPduFreeAPduInstance(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
+        }
+        break;
 
-            case ZPS_EVENT_APS_DATA_INDICATION:
-            {
-            	DBG_vPrintf(TRACE_APP, "APP: APP_taskEndPoint: ZPS_EVENT_AF_DATA_INDICATION\n");
+        case ZPS_EVENT_APS_DATA_CONFIRM:
+        {
+        	DBG_vPrintf(TRACE_APP, "APP: APP_taskEndPoint: ZPS_EVENT_APS_DATA_CONFIRM Status %d, Address 0x%04x\n",
+        			sStackEvent.uEvent.sApsDataConfirmEvent.u8Status,
+        			sStackEvent.uEvent.sApsDataConfirmEvent.uDstAddr.u16Addr);
+        }
+        break;
 
-                /* Process incoming cluster messages for this endpoint... */
-                DBG_vPrintf(TRACE_APP, "    Data Indication:\r\n");
-                DBG_vPrintf(TRACE_APP, "        Profile :%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u16ProfileId);
-                DBG_vPrintf(TRACE_APP, "        Cluster :%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u16ClusterId);
-                DBG_vPrintf(TRACE_APP, "        EndPoint:%x\r\n",sStackEvent.uEvent.sApsDataIndEvent.u8DstEndpoint);
+        case ZPS_EVENT_APS_DATA_ACK:
+        {
+        	DBG_vPrintf(TRACE_APP, "APP: APP_taskEndPoint: ZPS_EVENT_APS_DATA_ACK Status %d, Address 0x%04x\n",
+        			sStackEvent.uEvent.sApsDataAckEvent.u8Status,
+        			sStackEvent.uEvent.sApsDataAckEvent.u16DstAddr);
+        }
+        break;
 
-          /*�ǉ�������������
-                                uint8 u8TempPayload;
-                                uint16 u16bytesread;
-                                uint16 i;
-                                DBG_vPrintf(TRACE_APP, "received data: ");
-                                for(i = 0; i < 15; i++){
-                                 u16bytesread = PDUM_u16APduInstanceReadNBO(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst,i,"b",&u8TempPayload);
-                                 DBG_vPrintf(TRACE_APP, "%c",u8TempPayload);
-                                }
-                                DBG_vPrintf(TRACE_APP, "\n");
-
-          �����܂�*/
-                /* free the application protocol data unit (APDU) once it has been dealt with */
-              //  SendData();//app_router.c�̊֐�
-                PDUM_eAPduFreeAPduInstance(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
-            }
-            break;
-
-            case ZPS_EVENT_APS_DATA_CONFIRM:
-            {
-            	DBG_vPrintf(TRACE_APP, "APP: APP_taskEndPoint: ZPS_EVENT_APS_DATA_CONFIRM Status %d, Address 0x%04x\n",
-                            sStackEvent.uEvent.sApsDataConfirmEvent.u8Status,
-                            sStackEvent.uEvent.sApsDataConfirmEvent.uDstAddr.u16Addr);
-            }
-            break;
-
-            case ZPS_EVENT_APS_DATA_ACK:
-            {
-            	DBG_vPrintf(TRACE_APP, "APP: APP_taskEndPoint: ZPS_EVENT_APS_DATA_ACK Status %d, Address 0x%04x\n",
-                            sStackEvent.uEvent.sApsDataAckEvent.u8Status,
-                            sStackEvent.uEvent.sApsDataAckEvent.u16DstAddr);
-            }
-            break;
-
-            default:
-            {
-            	DBG_vPrintf(TRACE_APP, "APP: APP_taskEndPoint: unhandled event %d\n", sStackEvent.eType);
-            }
-            break;
+        default:
+        {
+        	// DBG_vPrintf(TRACE_APP, "APP: APP_taskEndPoint: unhandled event %d\n", sStackEvent.eType);
+        }
+        break;
         }
     }
 }

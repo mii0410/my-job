@@ -1,0 +1,11 @@
+17:43:54 **** Clean-only build of configuration Router for project JN-AN-1229-ZPS-Application-Template ****
+make TRACE=1 JENNIC_CHIP=JN5169 JENNIC_CHIP_FAMILY=JN516x clean 
+Building trace version ...
+Makefile:179: ../../../../sdk/JN-SW-4170/Chip/Common/Build/config.mk: No such file or directory
+Building numbered PDM IDs version ...
+Makefile:180: ../../../../sdk/JN-SW-4170/Platform/Common/Build/Config.mk: No such file or directory
+Makefile:181: ../../../../sdk/JN-SW-4170/Stack/Common/Build/config.mk: No such file or directory
+make: *** No rule to make target `../../../../sdk/JN-SW-4170/Stack/Common/Build/config.mk'.  Stop.
+
+17:43:56 Build Finished (took 1s.191ms)
+
