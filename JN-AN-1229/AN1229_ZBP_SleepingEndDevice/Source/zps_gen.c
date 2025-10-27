@@ -6,7 +6,7 @@
  *
  * COMPONENT:      zps_gen.c
  *
- * DATE:           Fri Aug  1 09:22:02 2025
+ * DATE:           Mon Oct 27 13:11:12 2025
  *
  * AUTHOR:         Jennic Zigbee Protocol Stack Configuration Tool
  *
@@ -685,7 +685,7 @@ PRIVATE ZPS_tsAplAfNodeDescriptor s_sNodeDescriptor = {
     0,
     0x08,
     0,
-    0x80,
+    0x8c,
     0x1037,
     0x7f,
     0x0010,
@@ -696,8 +696,8 @@ PRIVATE ZPS_tsAplAfNodeDescriptor s_sNodeDescriptor = {
 /* Node Power Descriptor */
 PRIVATE ZPS_tsAplAfNodePowerDescriptor s_sNodePowerDescriptor = {
     0x0,
-    0x4,
-    0x4,
+    0x1,
+    0x1,
     0xC};
 
 /* APSDE duplicate table */
@@ -881,7 +881,7 @@ PRIVATE zps_tsApl s_sApl = {
         NULL,
         zps_vHandleApsdeDataFragIndNotSupported,
         { &s_sApsmeCmdContainer_1, NULL },
-        { { /* Timer */}, 200, 0 },
+        { { /* Timer */}, 100, 0 },
         { NULL, NULL },
         { /* Timer */}
     },

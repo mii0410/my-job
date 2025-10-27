@@ -6,6 +6,15 @@
 		<item value="227191" key="searchFlags"/>
 		<item value="false" key="caseSensitive"/>
 		<list key="previousPatterns">
+			<item value="apduApp"/>
+			<item value="AN1229_ZBP_COORDINATOR_MYENDPOINT_ENDPOINT"/>
+			<item value="ZTIMER_eOpen"/>
+			<item value="u8SecondTimer"/>
+			<item value="vReadCommand"/>
+			<item value="vAHI_Uart0RegisterCallback"/>
+			<item value="vAHI_Uart0RegisterCallbackvReadCharInterrupt"/>
+			<item value="DBG_vUartInit"/>
+			<item value="vForwardPayload"/>
 			<item value="triggered"/>
 			<item value="vfExtendedStatusCallBack"/>
 			<item value="ZPS_vHandleAfTask"/>

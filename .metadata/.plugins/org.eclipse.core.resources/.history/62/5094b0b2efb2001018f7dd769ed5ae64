@@ -183,10 +183,6 @@ PUBLIC void APP_vtaskRouter ( void )
 {
     ZPS_tsAfEvent sStackEvent;
 
-    if (!ZQ_bQueueReceive(&APP_msgZpsEvents, &sStackEvent)) {
-        sStackEvent.eType = ZPS_EVENT_NONE;
-    }
-
     if (ZTIMER_eGetState(u8App_tmr1sec) == E_ZTIMER_STATE_EXPIRED)
     {
     	ZTIMER_eStart (u8App_tmr1sec, ZTIMER_TIME_SEC(1) );
@@ -246,9 +242,6 @@ PRIVATE void vStartup(void)
 
     vClearDiscNT();
 
-    // 以前の拡張 PAN ID をクリア（ネットワーク拘束を外す）
-    ZPS_eAplAibSetApsUseExtendedPanId(0);
-
     /* Set channel to scan and start stack */
     ZPS_psAplAibGetAib()->pau32ApsChannelMask[0] = 1 << u8Channel;
 
@@ -256,9 +249,6 @@ PRIVATE void vStartup(void)
     if (ZPS_E_SUCCESS == eStatus)
     {
        s_eDeviceState.eNodeState = E_DISCOVERY;
-
-       // 追加：初回のアクティブスキャンを明示キック
-       ZPS_eAplZdoDiscoverNetworks(ZPS_psAplAibGetAib()->pau32ApsChannelMask[0]);
 
        /* Move channel counter to next channel */
        u8Channel++;

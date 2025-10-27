@@ -72,8 +72,6 @@
 #define RESTART_TIME    APP_TIME_MS(1000)
 #define SLEEP_TIME      5 * 32000  /* sets a sleep period of 5 seconds */
 
-#define ED_RX_ON_MODE   1   /* 1: 常時受信で Data Request を出さない．0: 従来どおりポーリング */
-
 /****************************************************************************/
 /***        Type Definitions                                              ***/
 /****************************************************************************/
@@ -98,7 +96,7 @@ PRIVATE void vWaitForNetworkJoin(ZPS_tsAfEvent sStackEvent);
 
 PRIVATE void vClearDiscNT(void);
 PRIVATE bool_t bLoadDeviceState(void);
-
+PRIVATE bool_t bPollOutstanding = FALSE; /* 送信済みPollが未完了ならTRUE */
 /****************************************************************************/
 /***        Exported Variables                                            ***/
 /****************************************************************************/
@@ -314,15 +312,13 @@ PUBLIC void APP_vtaskSleepingEndDevice (void)
 	        bEventReady = ZQ_bQueueReceive(&APP_msgZpsEvents, &sStackEvent);
 	    }
 
-	    /* Rx-on 非スリープでは Data Request を出さない */
-	    #if !ED_RX_ON_MODE
-	        /* 従来のポーリング運用を使う場合だけ有効化 */
-	        if (!bPollOutstanding) {
-	            if (ZPS_E_SUCCESS == ZPS_eAplZdoPoll()) {
-	                bPollOutstanding = TRUE;
-	            }
+	    /* 前回のPOLLが完了していれば新しいPOLLを出す */
+	    if (!bPollOutstanding) {
+	        if (ZPS_E_SUCCESS == ZPS_eAplZdoPoll()) {
+	            bPollOutstanding = TRUE;
+	            //DBG_vPrintf(TRACE_APP, "SED: Poll sent．\n");
 	        }
-	    #endif
+	    }
 
 	    vReadInputCommand();
 	}
@@ -718,12 +714,7 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
 		{
 //			DBG_vPrintf(TRACE_APP, "APP: vCheckStackEvent: ZPS_EVENT_NEW_POLL_COMPLETE, status = %d\n",
 //					sStackEvent.uEvent.sNwkPollConfirmEvent.u8Status );
-			/* Rx-on 非スリープでは Poll は使わないが，コードは温存 */
-			#if !ED_RX_ON_MODE
-			        bPollOutstanding = FALSE; /* 次のPOLLを許可 */
-			#else
-			        /* 何もしない */
-			#endif
+			bPollOutstanding = FALSE; /* 次のPOLLを許可 */
 
 			// スリープ状態するのに必要なコード　3/3個目 (使うなら)
 			//PWRM_eScheduleActivity(&sWake, SLEEP_TIME, vWakeCallBack);

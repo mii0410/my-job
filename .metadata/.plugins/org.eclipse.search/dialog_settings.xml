@@ -3,14 +3,11 @@
 	<section name="">
 		<item value="1000" key="org.eclipse.search.resultpage.limit"/>
 	</section>
-	<section name="">
-		<item value="1000" key="org.eclipse.search.resultpage.limit"/>
-	</section>
 	<section name="DialogBounds_SearchDialog">
 		<item value="554" key="DIALOG_WIDTH"/>
 		<item value="169" key="DIALOG_Y_ORIGIN"/>
-		<item value="90" key="DIALOG_X_ORIGIN"/>
 		<item value="453" key="DIALOG_HEIGHT"/>
+		<item value="90" key="DIALOG_X_ORIGIN"/>
 		<item value="1|Yu Gothic UI|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|Yu Gothic UI" key="DIALOG_FONT_NAME"/>
 	</section>
 	<section name="Search">
@@ -23,14 +20,19 @@
 			<item value="org.eclipse.cdt.ui.pdomSearchPage"/>
 		</list>
 	</section>
-	<section name="SearchDialog">
-		<item value="org.eclipse.cdt.ui.pdomSearchPage" key="PREVIOUS_PAGE"/>
+	<section name="org.eclipse.search.text.FileSearchResultPage">
+		<item value="1000" key="org.eclipse.search.resultpage.limit"/>
 	</section>
 	<section name="org.eclipse.cdt.ui.pdomSearchViewPage">
 		<item value="true" key="showEnclosingDefinitions"/>
 	</section>
-	<section name="org.eclipse.search.text.FileSearchResultPage">
-		<item value="1000" key="org.eclipse.search.resultpage.limit"/>
+	<section name="SearchDialog">
+		<item value="org.eclipse.cdt.ui.pdomSearchPage" key="PREVIOUS_PAGE"/>
+	</section>
+	<section name="DialogBounds_SearchHistorySelectionDialog">
+		<item value="486" key="DIALOG_WIDTH"/>
+		<item value="427" key="DIALOG_HEIGHT"/>
+		<item value="1|Yu Gothic UI|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|Yu Gothic UI" key="DIALOG_FONT_NAME"/>
 	</section>
 	<section name="TextSearchPage">
 		<item value="false" key="CASE_SENSITIVE"/>
@@ -38,9 +40,6 @@
 		<item value="false" key="SEARCH_DERIVED"/>
 		<item value="false" key="WHOLE_WORD"/>
 		<item value="7" key="HISTORY_SIZE"/>
-		<section name="EXTENSIONS">
-			<item value="*" key="0"/>
-		</section>
 		<section name="HISTORY2">
 			<item value="false" key="isRegExSearch"/>
 			<item value="        &#x09;vHandleStackEvent(sStackEvent);" key="textPattern"/>
@@ -52,6 +51,9 @@
 			</list>
 			<list key="workingSets">
 			</list>
+		</section>
+		<section name="EXTENSIONS">
+			<item value="*" key="0"/>
 		</section>
 		<section name="HISTORY3">
 			<item value="false" key="isRegExSearch"/>
@@ -125,11 +127,6 @@
 			<list key="workingSets">
 			</list>
 		</section>
-	</section>
-	<section name="DialogBounds_SearchHistorySelectionDialog">
-		<item value="486" key="DIALOG_WIDTH"/>
-		<item value="427" key="DIALOG_HEIGHT"/>
-		<item value="1|Yu Gothic UI|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|Yu Gothic UI" key="DIALOG_FONT_NAME"/>
 	</section>
 	<section name="SearchDialog.ScopePart">
 		<item value="0" key="scope"/>

@@ -98,7 +98,7 @@ PRIVATE void vWaitForNetworkJoin(ZPS_tsAfEvent sStackEvent);
 
 PRIVATE void vClearDiscNT(void);
 PRIVATE bool_t bLoadDeviceState(void);
-
+PRIVATE bool_t bPollOutstanding = FALSE; /* 送信済みPollが未完了ならTRUE */
 /****************************************************************************/
 /***        Exported Variables                                            ***/
 /****************************************************************************/
