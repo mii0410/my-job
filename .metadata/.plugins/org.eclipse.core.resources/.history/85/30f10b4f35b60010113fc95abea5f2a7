@@ -121,7 +121,6 @@ void APP_vtaskMyEndPoint (void)
                 uint8 *p = PDUM_pvAPduInstanceGetPayload(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
                 uint16 n = PDUM_u16APduInstanceGetPayloadSize(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
                 uint16 i;
-                DBG_vPrintf(TRUE, "LQI = %d", sStackEvent.uEvent.sApsDataIndEvent.u8LinkQuality);
 
                 DBG_vPrintf(TRUE, "COORD/EP: RX ind cluster=0x%04x dstEp=%d len=%d\r\n", cluster, dstEp, n);
 

@@ -54,7 +54,6 @@
 #include "config.h"
 #include "zps_gen.h"
 #include "AppHardwareApi.h"
-#include <string.h>
 
 /****************************************************************************/
 /***        Macro Definitions                                             ***/
@@ -76,10 +75,9 @@
 
 #define ED_RX_ON_MODE   1   /* 1: 常時受信で Data Request を出さない．0: 従来どおりポーリング */
 
-#define PI_UART         E_AHI_UART_0
+#define PI_UART         E_AHI_UART_1
 #define PI_TIMEOUT_MS   300
-#define PI_SPIN_LIMIT (2000000UL)
-
+#define PI_WARMUP_MS    10
 
 /****************************************************************************/
 /***        Type Definitions                                              ***/
@@ -161,30 +159,23 @@ PRIVATE bool_t bLoadDeviceState(void)
 }
 
 /***    温度読み取り     ***/
-static bool_t pi_write(const char *s)
+static bool_t pi_readline(char *buf, uint8 maxlen, uint32 timeout_ms)
 {
-    while (*s) {
-        while ((u8AHI_UartReadLineStatus(PI_UART) & E_AHI_UART_LS_THRE) == 0) {
-            /* 忙待ち．delay禁止 */
-        }
-        vAHI_UartWriteData(PI_UART, (uint8)*s++);
-    }
-    return TRUE;
-}
-
-static bool_t pi_readline(char *buf, uint8 maxlen)
-{
+    uint32 elapsed = 0;
     uint8  i = 0;
-    uint32 spins = 0;
 
-    while (spins < PI_SPIN_LIMIT && i < (uint8)(maxlen - 1)) {
-        if ((u8AHI_UartReadLineStatus(PI_UART) & E_AHI_UART_LS_DR) != 0) {
+    while (elapsed < timeout_ms && i < (uint8)(maxlen - 1)) {
+        /* データがある分だけ読む（複数バイト溜まっている場合に備えてwhile） */
+        while ((u8AHI_UartReadLineStatus(PI_UART) & E_AHI_UART_LS_DR) != 0) {
             uint8 c = u8AHI_UartReadData(PI_UART);
             buf[i++] = (char)c;
-            if (c == '\n' || c == '\r') break;
-        } else {
-            ++spins;   /* 短い忙待ちだけ */
+            if (c == '\n' || i >= (uint8)(maxlen - 1)) {
+                buf[i] = '\0';
+                return TRUE;
+            }
         }
+        vAHI_DelayMs(1);
+        ++elapsed;
     }
     buf[i] = '\0';
     return (i != 0);
@@ -194,67 +185,36 @@ static bool_t pi_readline(char *buf, uint8 maxlen)
 static bool_t APP_Pi_GetTempBlocking(int16 *pi16CentiC)
 {
     char line[32];
-    pi_write("GET\n");
-    if (!pi_readline(line, sizeof(line))) return FALSE;
-
+    if (!pi_readline(line, sizeof(line), PI_TIMEOUT_MS)) {
+        return FALSE;
+    }
     if (line[0]=='O' && line[1]=='K' && line[2]==',') {
         long v = 0; bool neg = FALSE; char *p = &line[3];
         if (*p=='-'){ neg=TRUE; ++p; }
-        while (*p>='0' && *p<='9') { v = v*10 + (*p - '0'); ++p; }
+        while(*p>='0' && *p<='9'){ v = v*10 + (*p - '0'); ++p; }
         if (neg) v = -v;
         *pi16CentiC = (int16)v;
         return TRUE;
     }
     return FALSE;
 }
-
-static uint8 APP_itoa10(int v, char *out)
-{
-    char tmp[12];
-    uint8 n = 0, pos = 0;
-    bool neg = (v < 0);
-    if (neg) v = -v;
-    do { tmp[n++] = (char)('0' + (v % 10)); v /= 10; } while (v && n < sizeof(tmp));
-    if (neg) out[pos++] = '-';
-    while (n) out[pos++] = tmp[--n];
-    return pos;
-}
-
-/* 追加：centi℃を "25.12" のような文字列に変換して out へ書く */
-static uint8 APP_itoa_centi_deg(int16 centi, char *out)
-{
-    int v = centi;         /* centi℃（例：2512）*/
-    uint8 pos = 0;
-
-    if (v < 0) {           /* 符号処理（例：-12 → "-0.12"）*/
-        out[pos++] = '-';
-        v = -v;
-    }
-
-    int q = v / 100;       /* 整数部（℃）*/
-    int r = v % 100;       /* 小数部（0..99）*/
-
-    pos += APP_itoa10(q, out + pos);  /* 整数部 */
-    out[pos++] = '.';                  /* 小数点 */
-    out[pos++] = (char)('0' + (r / 10));
-    out[pos++] = (char)('0' + (r % 10));
-    return pos;                        /* 書き込んだ文字数 */
-}
 /***    温度読み取り     ***/
 
 PRIVATE void vBuildAppPayload(PDUM_thAPduInstance h)
 {
-    uint8 *buf = PDUM_pvAPduInstanceGetPayload(h);
-    uint16 len = 0;
     int16 tCenti;
+    uint8 *buf = PDUM_pvAPduInstanceGetPayload(h);
 
     if (APP_Pi_GetTempBlocking(&tCenti)) {
-        memcpy(buf + len, "TEMP,", 5); len += 5;
-        len += APP_itoa_centi_deg(tCenti, (char*)(buf + len));
+        /* "TEMP,<centiC>\n" 例: TEMP,2534 */
+        int len = sprintf((char*)buf, "TEMP,%d", (int)tCenti);
+        PDUM_eAPduInstanceSetPayloadSize(h, (uint16)len);
     } else {
-        memcpy(buf + len, "ERR,UART_TO", 11); len += 11;
+        const char *msg = "ERR,UART_TO";
+        uint16 len = (uint16)strlen(msg);
+        memcpy(buf, msg, len);
+        PDUM_eAPduInstanceSetPayloadSize(h, len);
     }
-    PDUM_eAPduInstanceSetPayloadSize(h, len);
 }
 
 PUBLIC void SendData(){ //データを送信する関数

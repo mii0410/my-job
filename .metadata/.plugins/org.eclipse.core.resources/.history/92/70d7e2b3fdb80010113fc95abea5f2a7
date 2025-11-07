@@ -54,7 +54,6 @@
 #include "config.h"
 #include "zps_gen.h"
 #include "AppHardwareApi.h"
-#include <string.h>
 
 /****************************************************************************/
 /***        Macro Definitions                                             ***/
@@ -76,10 +75,9 @@
 
 #define ED_RX_ON_MODE   1   /* 1: 常時受信で Data Request を出さない．0: 従来どおりポーリング */
 
-#define PI_UART         E_AHI_UART_0
+#define PI_UART         E_AHI_UART_1
 #define PI_TIMEOUT_MS   300
-#define PI_SPIN_LIMIT (2000000UL)
-
+#define PI_SPIN_LIMIT   (50000UL)
 
 /****************************************************************************/
 /***        Type Definitions                                              ***/
@@ -172,7 +170,7 @@ static bool_t pi_write(const char *s)
     return TRUE;
 }
 
-static bool_t pi_readline(char *buf, uint8 maxlen)
+static bool_t pi_readline(char *buf, uint8 maxlen, uint32 timeout_ms)
 {
     uint8  i = 0;
     uint32 spins = 0;
@@ -181,7 +179,7 @@ static bool_t pi_readline(char *buf, uint8 maxlen)
         if ((u8AHI_UartReadLineStatus(PI_UART) & E_AHI_UART_LS_DR) != 0) {
             uint8 c = u8AHI_UartReadData(PI_UART);
             buf[i++] = (char)c;
-            if (c == '\n' || c == '\r') break;
+            if (c == '\n') break;
         } else {
             ++spins;   /* 短い忙待ちだけ */
         }
@@ -219,27 +217,6 @@ static uint8 APP_itoa10(int v, char *out)
     while (n) out[pos++] = tmp[--n];
     return pos;
 }
-
-/* 追加：centi℃を "25.12" のような文字列に変換して out へ書く */
-static uint8 APP_itoa_centi_deg(int16 centi, char *out)
-{
-    int v = centi;         /* centi℃（例：2512）*/
-    uint8 pos = 0;
-
-    if (v < 0) {           /* 符号処理（例：-12 → "-0.12"）*/
-        out[pos++] = '-';
-        v = -v;
-    }
-
-    int q = v / 100;       /* 整数部（℃）*/
-    int r = v % 100;       /* 小数部（0..99）*/
-
-    pos += APP_itoa10(q, out + pos);  /* 整数部 */
-    out[pos++] = '.';                  /* 小数点 */
-    out[pos++] = (char)('0' + (r / 10));
-    out[pos++] = (char)('0' + (r % 10));
-    return pos;                        /* 書き込んだ文字数 */
-}
 /***    温度読み取り     ***/
 
 PRIVATE void vBuildAppPayload(PDUM_thAPduInstance h)
@@ -250,7 +227,7 @@ PRIVATE void vBuildAppPayload(PDUM_thAPduInstance h)
 
     if (APP_Pi_GetTempBlocking(&tCenti)) {
         memcpy(buf + len, "TEMP,", 5); len += 5;
-        len += APP_itoa_centi_deg(tCenti, (char*)(buf + len));
+        len += APP_itoa10((int)tCenti, (char*)(buf + len));
     } else {
         memcpy(buf + len, "ERR,UART_TO", 11); len += 11;
     }

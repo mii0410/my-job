@@ -154,10 +154,10 @@ PUBLIC void vAppMain(void)
     //DBG_vUartInit(DBG_E_UART_0, DBG_E_UART_BAUD_RATE_115200);
 
     /*追加コード*/
-    DBG_vUartInit (DBG_E_UART_1, DBG_E_UART_BAUD_RATE_115200);
+    DBG_vUartInit (DBG_E_UART_0, DBG_E_UART_BAUD_RATE_115200);
 
     vAHI_Uart0RegisterCallback(vUartCallback); // terminalからの文字入力
-    vAHI_UartSetInterrupt(DBG_E_UART_1,
+    vAHI_UartSetInterrupt(DBG_E_UART_0,
     		FALSE,
     		FALSE,                    // Enable Rx line status
     		FALSE,                    // Enable Tx FIFO empty
@@ -171,13 +171,6 @@ PUBLIC void vAppMain(void)
     vAHI_UartSetBaudRate(E_AHI_UART_1, E_AHI_UART_RATE_115200);
     /* フロー制御なし（必要なら適宜調整） */
     vAHI_UartSetControl(E_AHI_UART_1, FALSE, FALSE, E_AHI_UART_WORD_LEN_8, TRUE, FALSE);
-
-    /* UART0: Pi(ttyUSB0)と会話するポート */
-    vAHI_UartEnable(E_AHI_UART_0);
-    vAHI_UartReset(E_AHI_UART_0, TRUE, TRUE);
-    vAHI_UartReset(E_AHI_UART_0, FALSE, FALSE);
-    vAHI_UartSetBaudRate(E_AHI_UART_0, E_AHI_UART_RATE_115200);
-    vAHI_UartSetControl(E_AHI_UART_0, FALSE, FALSE, E_AHI_UART_WORD_LEN_8, TRUE, FALSE);
 
     DBG_vPrintf(TRACE_APP, "\nAPP: Power Up\n");
 #if JENNIC_CHIP_FAMILY == JN516x
