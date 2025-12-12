@@ -1,0 +1,294 @@
+/*****************************************************************************
+ *
+ * MODULE:				JN-AN-1184 ZigBeePro Application Template
+ *
+ * COMPONENT:			app_endpoint.c
+ *
+ * DESCRIPTION:			End Point Event Handler
+ *
+ *****************************************************************************
+ *
+ * This software is owned by NXP B.V. and/or its supplier and is protected
+ * under applicable copyright laws. All rights are reserved. We grant You,
+ * and any third parties, a license to use this software solely and
+ * exclusively on NXP products [NXP Microcontrollers such as JN5169, JN5168,
+ * JN5164, JN5161].
+ * You, and any third parties must reproduce the copyright and warranty notice
+ * and any other legend of ownership on each copy or partial copy of the
+ * software.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Copyright NXP B.V. 2015. All rights reserved
+ *
+ ****************************************************************************/
+/****************************************************************************/
+/***        Include files                                                 ***/
+/****************************************************************************/
+#include <jendefs.h>
+#include <dbg.h>
+#include <pdm.h>
+#include <pwrm.h>
+#include <zps_apl_af.h>
+#include <PDM_IDs.h>
+#include "app_common.h"
+#include "app_coordinator.h"
+#include "ZTimer.h"
+#include "ZQueue.h"
+//追加
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include "DBG.h"
+#include "dbg_jtag.h"
+#include "DBG_Uart.h"
+#include "pdum_apl.h"
+#include "pdum_gen.h"
+#include "Utils.h"
+#include "Time.h"
+#include "config.h"
+/****************************************************************************/
+/***        Macro Definitions                                             ***/
+/****************************************************************************/
+#ifndef DEBUG_APP
+	#define TRACE_APP 	FALSE
+#else
+	#define TRACE_APP 	TRUE
+#endif
+#define APP_MAX_LOG_PAYLOAD_BYTES   16U
+tszQueue APP_msgMyEndPointEvents;
+tszQueue APP_msgZpsEvents;
+
+uint8_t p = 0;
+
+/****************************************************************************
+ *
+ * NAME: APP_taskEndpoint
+ *
+ * DESCRIPTION:
+ * End Point event handling
+ *
+ * RETURNS:
+ * void
+ *
+ ****************************************************************************/
+/* ---- path trace state ---- */
+typedef struct {
+    bool_t  active;          /* トレース進行中か */
+    uint16  dst;             /* 目標EDのショート */
+    uint16  current;         /* 現在「このノードのRTから次ホップを知りたい」対象 */
+    uint8   hopCount;        /* 収集済みホップ数 */
+    uint16  hops[16];        /* 経路（0:0000=Coord を入れていく） */
+    uint16  waitingOn;       /* どのノードにMgmt_Rtg_reqを出しているか */
+    uint8   seq;             /* ZDPシーケンス番号（必要なら照合） */
+} tsPathTrace;
+
+static tsPathTrace sPathTrace;
+
+
+static void vIssueMgmtRtgReq(uint16 u16Router)
+{
+    /* ZDP Mgmt_Rtg_req: 指定ノードのルーティング表を取得する．
+       startIndex=0，discoverRoute=TRUE で必要なら経路発見も促す【UG 8.2.3.35】 */
+    ZPS_tsAplZdpMgmtRtgReq req;
+    req.u8StartIndex = 0;
+
+    ZPS_tuAddress u;
+    u.u16Addr = u16Router;
+
+    uint8 seq;
+    (void)ZPS_eAplZdpMgmtRtgRequest(
+        ZPS_pvAplZdoGetAplHandle()->hZdpApdu, /* どのAPDUを使うかはプロジェクト既定のもの */
+        u, FALSE, &seq, &req);
+
+    sPathTrace.waitingOn = u16Router;
+    sPathTrace.seq       = seq;
+}
+
+static void vStartPathTrace(uint16 u16Dst)
+{
+    memset(&sPathTrace, 0, sizeof(sPathTrace));
+    sPathTrace.active   = TRUE;
+    sPathTrace.dst      = u16Dst;
+    sPathTrace.hops[0]  = 0x0000; /* 常にC始点 */
+    sPathTrace.hopCount = 1;
+    sPathTrace.current  = 0x0000; /* まずCの次ホップを知る */
+
+    /* 先にC→EDへのユニキャストを一発撃っておくと，必要なら経路発見が走る */
+    u16LastKnownNodeAddr = u16Dst; /* 既存の送信APIを流用 */
+    SendData();                    /* ダミー送信でRT充足を促す */
+
+    /* その後にC（=0x0000）のRTを取りに行く */
+    vIssueMgmtRtgReq(0x0000);
+}
+
+void APP_vtaskMyEndPoint (void)
+{
+    ZPS_tsAfEvent sStackEvent;
+
+    while (ZQ_bQueueReceive(&APP_msgMyEndPointEvents, &sStackEvent))
+    {
+        switch (sStackEvent.eType)
+        {
+
+            case ZPS_EVENT_APS_DATA_INDICATION: //何かしら他端末からのデータを受信した(受信したデータを扱う場合はここの部分を変更させる)
+            {
+
+//                uint16 u16bytesread;
+//                uint8_t i = 0;
+//                uint8_t u8LQI = 0;
+//                uint8_t addr = 0;
+//                uint8_t Rxbyte[3];//受信データを格納する配列
+//
+//
+//                u16bytesread = PDUM_u16APduInstanceReadNBO(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst,0,"a\x10",&Rxbyte);
+//                addr = sStackEvent.uEvent.sApsDataIndEvent.uSrcAddress.u16Addr;
+//                u8LQI = 0;
+//                //u8LQI = sStackEvent.uEvent.sApsDataIndEvent.u8LinkQuality;
+//                vAHI_UartWriteData(DBG_E_UART_0, Rxbyte[0]); //受信したセンサの識別番号
+//                vAHI_UartWriteData(DBG_E_UART_0, Rxbyte[1]); //受信した各センサの順番
+//                vAHI_UartWriteData(DBG_E_UART_0, addr); //受信したデータの送信元のshortアドレス
+//                vAHI_UartWriteData(DBG_E_UART_0, u8LQI); //受信したデータのLQI値
+//                vAHI_UartWriteData(DBG_E_UART_0, Rxbyte[2]); //受信したデータ１つ目
+//                vAHI_UartWriteData(DBG_E_UART_0, Rxbyte[3]);//受信したデータ２つ目
+//                memset(Rxbyte, 0, sizeof(Rxbyte));
+                uint16 cluster = sStackEvent.uEvent.sApsDataIndEvent.u16ClusterId;
+                uint8  dstEp   = sStackEvent.uEvent.sApsDataIndEvent.u8DstEndpoint;
+
+                /* まずは何が来ているか可視化（HEX＋安全ASCII） */
+                uint8 *p = PDUM_pvAPduInstanceGetPayload(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
+                uint16 n = PDUM_u16APduInstanceGetPayloadSize(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
+                uint16 i;
+                DBG_vPrintf(TRUE, "LQI = %d", sStackEvent.uEvent.sApsDataIndEvent.u8LinkQuality);
+
+                DBG_vPrintf(TRUE, "COORD/EP: RX ind cluster=0x%04x dstEp=%d len=%d\r\n", cluster, dstEp, n);
+
+                DBG_vPrintf(TRUE, "  HEX : ");
+                for (i = 0; i < n; i++) { DBG_vPrintf(TRUE, "%02x ", p[i]); }
+                DBG_vPrintf(TRUE, "\r\n");
+
+                DBG_vPrintf(TRUE, "  TEXT: ");
+                for (i = 0; i < n; i++) {
+                    uint8 c = p[i];
+                    DBG_vPrintf(TRUE, "%c", (c >= 0x20 && c <= 0x7E) ? c : '.');
+                }
+                DBG_vPrintf(TRUE, "\r\n");
+
+                uint16 u16Cluster = psStackEvent->uEvent.sApsDataIndEvent.u16ClusterId;
+                /* 追加: Mgmt_Rtg_rsp(0x8032) を処理 */
+                if (u16Cluster == ZPS_ZDP_MGMT_RT_RSP_CLUSTER_ID && sPathTrace.active) {
+                    PDUM_thAPduInstance h = psStackEvent->uEvent.sApsDataIndEvent.hAPduInst;
+                    uint8 *p  = PDUM_pvAPduInstanceGetPayload(h);
+                    uint16 sz = PDUM_u16APduInstanceGetPayloadSize(h);
+                    if (sz >= 4) {
+                        uint8 status = p[0];
+                        uint8 total  = p[1];
+                        uint8 start  = p[2];
+                        uint8 count  = p[3];
+                        uint8 *q = p + 4;
+
+                        /* ZDP仕様: 1エントリ= [Dst(2)][Flags(1)][NextHop(2)] = 5B */
+                        for (uint8 i = 0; i < count && (q + 5) <= p + sz; i++, q += 5) {
+                            uint16 dst    = (uint16)q[0] | ((uint16)q[1] << 8);
+                            uint8  flags  = q[2];
+                            uint16 nxtHop = (uint16)q[3] | ((uint16)q[4] << 8);
+
+                            if (dst == sPathTrace.dst) {
+                                /* 経路に次ホップを追加 */
+                                sPathTrace.hops[sPathTrace.hopCount++] = nxtHop;
+
+                                /* 種別ラベルは後段でNodeDescを照会して付けられるが，まずはR/ED簡易推定 */
+                                DBG_vPrintf(TRUE, "[PATH] nextHop to 0x%04x is 0x%04x\n", sPathTrace.dst, nxtHop);
+
+                                if (nxtHop == sPathTrace.dst) {
+                                    /* 完了．整形出力 */
+                                    DBG_vPrintf(TRUE, "[PATH] 0x%04x", sPathTrace.hops[0]);
+                                    for (uint8 k = 1; k < sPathTrace.hopCount; k++) {
+                                        DBG_vPrintf(TRUE, " -> 0x%04x", sPathTrace.hops[k]);
+                                    }
+                                    DBG_vPrintf(TRUE, "\r\n");
+                                    sPathTrace.active = FALSE;
+                                } else {
+                                    /* さらに次のルータのRTを取りに行く */
+                                    sPathTrace.current = nxtHop;
+                                    vIssueMgmtRtgReq(nxtHop);
+                                }
+                                break; /* 目的宛の行だけ見ればよい */
+                            }
+                        }
+                    }
+                }
+
+                /* free the application protocol data unit (APDU) once it has been dealt with */
+                PDUM_eAPduFreeAPduInstance(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
+
+            }
+            break;
+
+            case ZPS_EVENT_APS_DATA_CONFIRM:
+            {
+                DBG_vPrintf(TRACE_APP, "APP: APP_taskEndPoint: ZPS_EVENT_APS_DATA_CONFIRM Status %d, Address 0x%04x\n",
+                            sStackEvent.uEvent.sApsDataConfirmEvent.u8Status,
+                            sStackEvent.uEvent.sApsDataConfirmEvent.uDstAddr.u16Addr);
+
+            }
+            break;
+
+            case ZPS_EVENT_APS_DATA_ACK:
+            {
+            	DBG_vPrintf(TRACE_APP, "APP: APP_taskEndPoint: ZPS_EVENT_APS_DATA_ACK Status %d, Address 0x%04x\n",
+                            sStackEvent.uEvent.sApsDataAckEvent.u8Status,
+                            sStackEvent.uEvent.sApsDataAckEvent.u16DstAddr);
+            }
+            break;
+
+            default:
+            {
+            	DBG_vPrintf(TRACE_APP, "APP: APP_taskEndPoint: unhandled event %d\n", sStackEvent.eType);
+            }
+            break;
+        }
+    }
+}
+
+
+/****************************************************************************
+ *
+ * NAME: APP_vGenCallback
+ *
+ * DESCRIPTION:
+ * Stack callback
+ *
+ * RETURNS:
+ * void
+ *
+ ****************************************************************************/
+PUBLIC void APP_vGenCallback(uint8 u8Endpoint, ZPS_tsAfEvent *psStackEvent)
+{
+    if ( u8Endpoint == 0 )
+    {
+    	ZQ_bQueueSend(&APP_msgZpsEvents, (void*) psStackEvent);
+    }
+    else
+    {
+    	ZQ_bQueueSend(&APP_msgMyEndPointEvents, (void*) psStackEvent);
+    }
+}
+
+/****************************************************************************/
+/***        Local Functions                                               ***/
+/****************************************************************************/
+
+/****************************************************************************/
+/***        END OF FILE                                                   ***/
+/****************************************************************************/

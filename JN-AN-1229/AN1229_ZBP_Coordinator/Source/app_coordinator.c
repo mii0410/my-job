@@ -55,7 +55,12 @@
 #include <zps_apl_zdo.h>
 #include <zps_nwk_nib.h>
 
-
+#include <string.h>  /* memset用 */
+#include <zps_apl_zdp.h>  /* ZDP Mgmt_Rtg/NodeDesc など */
+#ifndef ZPS_ZDP_MGMT_RT_REQ_CLUSTER_ID
+#define ZPS_ZDP_MGMT_RT_REQ_CLUSTER_ID 0x0032
+#define ZPS_ZDP_MGMT_RT_RSP_CLUSTER_ID 0x8032
+#endif
 /****************************************************************************/
 /***        Macro Definitions                                             ***/
 /****************************************************************************/
@@ -70,6 +75,8 @@
 #else
 #define APP_TX_OPTION_ACK_REQUIRED ZPS_APL_AF_ACK_REQ
 #endif
+
+#define MAX_HOPS 16
 
 /****************************************************************************/
 /***        Type Definitions                                              ***/
@@ -102,6 +109,27 @@ PRIVATE void vLogUnexpectedAfErrorEvent(const ZPS_tsAfErrorEvent *psErrorEvent);
 PRIVATE tsDeviceDesc s_eDeviceState;
 PUBLIC uint8 au8DefaultTCLinkKey[16] = {0x5a, 0x69, 0x67, 0x42, 0x65, 0x65, 0x41, 0x6c, 0x6c, 0x69, 0x61, 0x6e, 0x63, 0x65, 0x30, 0x39};
 PRIVATE uint16 u16LastKnownNodeAddr = 0xFFFF;
+
+/* 最後にCOORDへアプリデータを送ってきたEDの短縮アドレスを保持 */
+PRIVATE uint16 u16LastEd = 0xFFFF;
+
+/* EDのアドレスを登録する*/
+PUBLIC void APP_vRegisterEd(uint16 u16ShortAddr)
+{
+    if (u16ShortAddr == 0xFFFF)
+    {
+        DBG_vPrintf(TRUE, "COORD: ignore invalid ED addr 0xFFFF\r\n");
+        return;
+    }
+
+    u16LastEd = u16ShortAddr;
+    vUpdateLastKnownNodeAddr(u16ShortAddr);
+
+    DBG_vPrintf(TRUE,
+                "COORD: register ED 0x%04x (lastKnown=0x%04x)\r\n",
+                u16ShortAddr, u16LastKnownNodeAddr);
+}
+
 //追加関数
 
 PUBLIC void APP_vSetCommand(uint8 command)
@@ -110,6 +138,54 @@ PUBLIC void APP_vSetCommand(uint8 command)
     DBG_vPrintf(TRACE_APP, "CMD: %d\n", command);
 }
 
+/* ===== PATH TRACE (C -> ... -> ED) state ===== */
+typedef struct {
+    bool_t active;      /* 収集中か */
+    uint16 dst;         /* 目標EDのショート */
+    uint8  hopCount;    /* 収集済みホップ数 */
+    uint16 hops[16];    /* 逆順に格納（次ホップ，次の次…） */
+    uint16 nextQuery;   /* 次に Mgmt_Rtg_req を投げるノード（最初は0x0000＝C自身） */
+    uint8  seq;         /* ZDPシーケンス */
+} tsPathTrace;
+
+static tsPathTrace sPT;
+
+static void PT_Reset(void) { memset(&sPT, 0, sizeof(sPT)); }
+
+static void PT_Start(uint16 ed)
+{
+    PT_Reset();
+    sPT.active    = TRUE;
+    sPT.dst       = ed;
+    sPT.nextQuery = 0x0000; /* まずC自身のRTを参照 */
+
+    /* Mgmt_Rtg_reqの作成（startIndex=0） */
+    ZPS_tsAplZdpMgmtRtgReq req;
+    req.u8StartIndex = 0;
+
+    /* 宛先（まずはC=0x0000） */
+    ZPS_tuAddress a;
+    a.u16Addr = sPT.nextQuery;
+
+    /* APDUを確保して正しい順番で呼び出し */
+    PDUM_thAPduInstance h = PDUM_hAPduAllocateAPduInstance(apduZDP);
+    if (h == PDUM_INVALID_HANDLE) {
+        DBG_vPrintf(TRUE, "PT: apdu alloc fail\n");
+        sPT.active = FALSE;
+        return;
+    }
+
+    uint8 seq = 0;
+    ZPS_teStatus e = ZPS_eAplZdpMgmtRtgRequest(h, a, FALSE, &seq, &req);
+    if (e != ZPS_E_SUCCESS) {
+        DBG_vPrintf(TRUE, "PT: MgmtRtgReq send fail %d\n", e);
+        PDUM_eAPduFreeAPduInstance(h);
+        sPT.active = FALSE;
+        return;
+    }
+    sPT.seq = seq;
+    DBG_vPrintf(TRUE, "PT: start dst=0x%04x\n", ed);
+}
 
 /****************************************************************************
  *
@@ -277,6 +353,27 @@ PRIVATE void vReadInputCommand()
 
         case STATUS_COMMAND:
             vPrintNetworkStatus();
+            /* 直近で受信した相手が分かっていれば，そのEDまでのC->...->EDを追跡開始 */
+            /* 新：EDを最優先に選ぶ．無ければ従来どおり lastKnown にフォールバック */
+
+            uint16 u16Target = 0xFFFF;
+
+            /* 1) 直近にCOORDへデータを送ってきたEDがあれば最優先 */
+            if (u16LastEd != 0xFFFF) {
+                u16Target = u16LastEd;
+            }
+            /* 2) 無ければ従来どおりの既知アドレス */
+            else if (u16LastKnownNodeAddr != 0xFFFF) {
+                u16Target = u16LastKnownNodeAddr;
+            }
+
+            if (u16Target != 0xFFFF) {
+                DBG_vPrintf(TRUE, "PT: start dst=0x%04x (lastED=0x%04x lastKnown=0x%04x)\n",
+                            u16Target, u16LastEd, u16LastKnownNodeAddr);
+                PT_Start(u16Target);
+            } else {
+                DBG_vPrintf(TRUE, "PT: no ED/known target yet\n");
+            }
             break;
 
         /* 必要に応じて追加 */
@@ -366,6 +463,7 @@ PRIVATE void vClearLastKnownNodeAddr(void)
         DBG_vPrintf(TRUE, "APP: Clearing known short address (was 0x%04x)\n", u16LastKnownNodeAddr);
     }
     u16LastKnownNodeAddr = 0xFFFF;
+    u16LastEd = 0xFFFF;
 }
 
 
@@ -444,6 +542,9 @@ PRIVATE void vWaitForNetworkFormation(ZPS_tsAfEvent sStackEvent)
             PDM_eSaveRecordData(PDM_ID_APP_COORD,
                             	&s_eDeviceState,
                             	sizeof(s_eDeviceState));
+            /* NWK started → Cをコンセントレータとして全体に通知（Many-to-One） */
+            ZPS_eAplZdoManyToOneRouteRequest(TRUE, 0); /* 半径0=スタックに任せる */
+            /* これにより各ルータのRTエントリに「Many-to-One」「RouteRecordReqd」ビットが立つ【UG 8.2.3.35相当】 */
         }
     }
 }
@@ -574,6 +675,7 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
         {
         	uint16 cluster  = sStackEvent.uEvent.sApsDataIndEvent.u16ClusterId;
         	uint8  dstEp    = sStackEvent.uEvent.sApsDataIndEvent.u8DstEndpoint;
+        	uint16 src     = sStackEvent.uEvent.sApsDataIndEvent.uSrcAddress.u16Addr;
 
         	/* 自アプリのクラスタとEPだけを可視化 */
         	if (cluster == 0x1234 && dstEp == AN1229_ZBP_COORDINATOR_MYENDPOINT_ENDPOINT)
@@ -582,7 +684,17 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
         		uint16 len   = PDUM_u16APduInstanceGetPayloadSize(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
         		uint16 i;
 
-        		DBG_vPrintf(TRUE, "COORD: Received %d bytes (Cluster 0x%04x)\r\n", len, cluster);
+        		/* ここで送信元アドレスと一緒にログを出す */
+                DBG_vPrintf(TRUE,
+                            "COORD: RX from 0x%04x len=%d (Cluster 0x%04x LQI=%d)\r\n",
+                            src,
+                            len,
+                            cluster,
+                            sStackEvent.uEvent.sApsDataIndEvent.u8LinkQuality);
+
+        		/* EDキャッシュと「既知アドレス」をEDで上書き */
+        		u16LastEd = src;
+        		vUpdateLastKnownNodeAddr(src);  /* 既存関数．0xFFFF防御あり */
 
         		/* HEX */
         		DBG_vPrintf(TRUE, "  HEX : ");
@@ -602,9 +714,79 @@ PRIVATE void vHandleStackEvent(ZPS_tsAfEvent sStackEvent)
         			}
         		}
         		DBG_vPrintf(TRUE, "\r\n");
+        	} else if (cluster == ZPS_ZDP_MGMT_RT_RSP_CLUSTER_ID &&
+        	         dstEp == 0 &&
+        	         sPT.active)
+        	{
+        	    uint8 *p  = PDUM_pvAPduInstanceGetPayload(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
+        	    uint16 ln = PDUM_u16APduInstanceGetPayloadSize(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
+
+        	    if (ln >= 5) {
+        	        uint8  count = p[4];
+        	        uint8 *q     = &p[5];
+        	        uint16 nextHop = 0xFFFF;
+        	        uint8  idx;
+
+        	        /* 1レコード=5B: Dst(2) Flags(1) NextHop(2) を走査し，目的EDの行だけ拾う */
+        	        for (idx = 0; idx < count && (5u + 5u*idx) <= (ln - 5u); idx++, q += 5) {
+        	            uint16 dst = (uint16)q[0] | ((uint16)q[1] << 8);
+        	            uint16 nh  = (uint16)q[3] | ((uint16)q[4] << 8);
+        	            if (dst == sPT.dst) { nextHop = nh; break; }
+        	        }
+
+        	        if (nextHop == 0xFFFF) {
+        	            DBG_vPrintf(TRUE, "PT: no entry for 0x%04x @0x%04x\n",
+        	                        sPT.dst, sStackEvent.uEvent.sApsDataIndEvent.uSrcAddress.u16Addr);
+        	            sPT.active = FALSE;
+        	        } else if (nextHop == sPT.dst) {
+        	            /* 完了．EDは配列に積まない（重複防止） */
+        	            uint16 me = ZPS_u16AplZdoGetNwkAddr();
+        	            int k;
+        	            DBG_vPrintf(TRUE, "PATH: 0x%04x", me);
+        	            for (k = sPT.hopCount - 1; k >= 0; --k) {
+        	                DBG_vPrintf(TRUE, " -> 0x%04x", sPT.hops[k]);
+        	            }
+        	            DBG_vPrintf(TRUE, " -> 0x%04x\n", sPT.dst);
+        	            sPT.active = FALSE;
+        	        } else {
+        	            /* 中継だけ記録して次ノードのRTを問い合わせ（APDU確保→正しい引数順で1回だけ送信） */
+        	            if (sPT.hopCount < MAX_HOPS) {
+        	                sPT.hops[sPT.hopCount++] = nextHop;
+        	            }
+
+        	            ZPS_tsAplZdpMgmtRtgReq req2;
+        	            ZPS_tuAddress          a2;
+        	            PDUM_thAPduInstance    h2;
+        	            uint8                  seq2 = 0;
+
+        	            req2.u8StartIndex = 0;
+        	            a2.u16Addr        = nextHop;
+
+        	            h2 = PDUM_hAPduAllocateAPduInstance(apduZDP);
+        	            if (h2 != PDUM_INVALID_HANDLE) {
+        	                ZPS_teStatus e2 = ZPS_eAplZdpMgmtRtgRequest(
+        	                    h2,    /* APDU */
+        	                    a2,    /* 宛先ノード */
+        	                    FALSE, /* discoverRoute */
+        	                    &seq2, /* TSN返却 */
+        	                    &req2  /* 要求 */
+        	                );
+        	                if (e2 != ZPS_E_SUCCESS) {
+        	                    DBG_vPrintf(TRUE, "PT: next req fail %d\n", e2);
+        	                    PDUM_eAPduFreeAPduInstance(h2);
+        	                    sPT.active = FALSE;
+        	                } else {
+        	                    sPT.seq = seq2;
+        	                    DBG_vPrintf(TRUE, "PT: query next=0x%04x\n", nextHop);
+        	                }
+        	            } else {
+        	                DBG_vPrintf(TRUE, "PT: apdu alloc fail(next)\n");
+        	                sPT.active = FALSE;
+        	            }
+        	        }
+        	    }
         	}
             DBG_vPrintf(TRUE, "\r\n");
-        	vUpdateLastKnownNodeAddr(sStackEvent.uEvent.sApsDataIndEvent.uSrcAddress.u16Addr);
         	PDUM_eAPduFreeAPduInstance(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
         }
         break;

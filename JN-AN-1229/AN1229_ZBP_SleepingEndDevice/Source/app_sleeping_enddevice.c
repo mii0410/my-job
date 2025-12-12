@@ -123,6 +123,8 @@ PUBLIC uint8 au8DefaultTCLinkKey[16]    = {0x5a, 0x69, 0x67, 0x42, 0x65, 0x65, 0
 PRIVATE void vReadInputCommand();
 PUBLIC void SendData();
 
+/* JOIN時に一回だけ送るHELLO（Cにアドレスを記憶させる） */
+PRIVATE void vSendHelloToCoordinator(void);
 /****************************************************************************/
 /***        Exported Functions                                            ***/
 /****************************************************************************/
@@ -158,6 +160,53 @@ PRIVATE bool_t bLoadDeviceState(void)
 	memset(&s_eDeviceState, 0, sizeof(s_eDeviceState));
 	s_eDeviceState.eNodeState = E_STARTUP;
 	return FALSE;
+}
+
+/* JOIN/REJOIN直後に一回だけ投げるHELLOパケット */
+PRIVATE void vSendHelloToCoordinator(void)
+{
+    uint8 u8TransactionSequenceNumber = 0;
+    PDUM_thAPduInstance hAPduInst;
+
+    hAPduInst = PDUM_hAPduAllocateAPduInstance(apduMyData);
+    if (hAPduInst == PDUM_INVALID_HANDLE)
+    {
+        DBG_vPrintf(TRUE, "SED: HELLO PDUM allocate fail\n");
+        return;
+    }
+
+    /* ペイロード "HELLO" を積む*/
+    uint8 *p  = PDUM_pvAPduInstanceGetPayload(hAPduInst);
+    uint16 len = 0;
+    p[len++] = 'H';
+    p[len++] = 'E';
+    p[len++] = 'L';
+    p[len++] = 'L';
+    p[len++] = 'O';
+    PDUM_eAPduInstanceSetPayloadSize(hAPduInst, len);
+
+    /* 宛先は常にコーディネータ（0x0000）．クラスタとEPは既存と同じ． */
+    ZPS_teStatus eStatus = ZPS_eAplAfUnicastDataReq(
+                                hAPduInst,
+                                0x1234,     /* Cluster ID（COORD側も0x1234を見ている） */
+                                AN1229_ZBP_SLEEPINGENDDEVICE_MYENDPOINT_ENDPOINT, /* src = ED */
+                                AN1229_ZBP_COORDINATOR_MYENDPOINT_ENDPOINT,       /* 本来AN1229_ZBP_COORDINATOR_MYENDPOINT_ENDPOINTで１に指定すべき */
+                                COORDINATOR_ADR,                                  /* 宛先ショート ＝ 0x0000 */
+                                ZPS_E_APL_AF_UNSECURE,
+                                0, /* Tx options */
+                                &u8TransactionSequenceNumber);
+
+    if (eStatus != ZPS_E_SUCCESS)
+    {
+        DBG_vPrintf(TRUE, "SED: HELLO unicast failed: %d\n", eStatus);
+        PDUM_eAPduFreeAPduInstance(hAPduInst);
+    }
+    else
+    {
+        DBG_vPrintf(TRUE, "SED: HELLO sent to coord (tsn=%d)\n",
+                    u8TransactionSequenceNumber);
+        /* 成功時はスタック側でAPDU管理される．ここではfreeしない． */
+    }
 }
 
 /***    温度読み取り     ***/
@@ -570,6 +619,8 @@ PRIVATE void vWaitForNetworkDiscovery(ZPS_tsAfEvent sStackEvent)
 					&s_eDeviceState,
 					sizeof(s_eDeviceState));
 
+			/* REJOIN 時も C にHELLOして，自分のshortを再通知しておく */
+			vSendHelloToCoordinator();
 		}
 		else
 		{
@@ -616,6 +667,9 @@ PRIVATE void vWaitForNetworkJoin(ZPS_tsAfEvent sStackEvent)
 
 			//スリープ状態するのに必要なコード　2/3個目 (使うなら)
 			//PWRM_eScheduleActivity(&sWake, SLEEP_TIME, vWakeCallBack);
+
+			/* JOIN 完了したので，C=0x0000 宛に HELLO を送る */
+			vSendHelloToCoordinator();
 		}
 		else if (ZPS_EVENT_NWK_FAILED_TO_JOIN == sStackEvent.eType)
 		{

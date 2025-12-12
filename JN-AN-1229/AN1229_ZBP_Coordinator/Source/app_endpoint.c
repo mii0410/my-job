@@ -82,8 +82,6 @@ uint8_t p = 0;
  * void
  *
  ****************************************************************************/
-
-
 void APP_vtaskMyEndPoint (void)
 {
     ZPS_tsAfEvent sStackEvent;
@@ -114,27 +112,36 @@ void APP_vtaskMyEndPoint (void)
 //                vAHI_UartWriteData(DBG_E_UART_0, Rxbyte[2]); //受信したデータ１つ目
 //                vAHI_UartWriteData(DBG_E_UART_0, Rxbyte[3]);//受信したデータ２つ目
 //                memset(Rxbyte, 0, sizeof(Rxbyte));
-                uint16 cluster = sStackEvent.uEvent.sApsDataIndEvent.u16ClusterId;
-                uint8  dstEp   = sStackEvent.uEvent.sApsDataIndEvent.u8DstEndpoint;
+            	 uint16 cluster = sStackEvent.uEvent.sApsDataIndEvent.u16ClusterId;
+            	 uint8  dstEp   = sStackEvent.uEvent.sApsDataIndEvent.u8DstEndpoint;
+            	 uint16 src     = sStackEvent.uEvent.sApsDataIndEvent.uSrcAddress.u16Addr;
+            	 uint8  lqi     = sStackEvent.uEvent.sApsDataIndEvent.u8LinkQuality;
 
-                /* まずは何が来ているか可視化（HEX＋安全ASCII） */
-                uint8 *p = PDUM_pvAPduInstanceGetPayload(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
-                uint16 n = PDUM_u16APduInstanceGetPayloadSize(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
-                uint16 i;
-                DBG_vPrintf(TRUE, "LQI = %d", sStackEvent.uEvent.sApsDataIndEvent.u8LinkQuality);
+            	 uint8 *p = PDUM_pvAPduInstanceGetPayload(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
+            	 uint16 n = PDUM_u16APduInstanceGetPayloadSize(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
+            	 uint16 i;
 
-                DBG_vPrintf(TRUE, "COORD/EP: RX ind cluster=0x%04x dstEp=%d len=%d\r\n", cluster, dstEp, n);
+            	 DBG_vPrintf(TRUE, "LQI = %d\r\n", lqi);
+            	 DBG_vPrintf(TRUE,
+            			 "COORD/EP: RX ind src=0x%04x cluster=0x%04x dstEp=%d len=%d\r\n",
+            			 src, cluster, dstEp, n);
 
-                DBG_vPrintf(TRUE, "  HEX : ");
-                for (i = 0; i < n; i++) { DBG_vPrintf(TRUE, "%02x ", p[i]); }
-                DBG_vPrintf(TRUE, "\r\n");
+            	 /* ★HELLO(クラスタ0x1234, COORDのEP宛て)ならEDを登録 */
+            	 if (cluster == 0x1234 && dstEp == 1)
+            	 {
+            		 APP_vRegisterEd(src);
+            	 }
 
-                DBG_vPrintf(TRUE, "  TEXT: ");
-                for (i = 0; i < n; i++) {
-                    uint8 c = p[i];
-                    DBG_vPrintf(TRUE, "%c", (c >= 0x20 && c <= 0x7E) ? c : '.');
-                }
-                DBG_vPrintf(TRUE, "\r\n");
+            	 DBG_vPrintf(TRUE, "  HEX : ");
+            	 for (i = 0; i < n; i++) { DBG_vPrintf(TRUE, "%02x ", p[i]); }
+            	 DBG_vPrintf(TRUE, "\r\n");
+
+            	 DBG_vPrintf(TRUE, "  TEXT: ");
+            	 for (i = 0; i < n; i++) {
+            		 uint8 c = p[i];
+            		 DBG_vPrintf(TRUE, "%c", (c >= 0x20 && c <= 0x7E) ? c : '.');
+            	 }
+            	 DBG_vPrintf(TRUE, "\r\n");
 
                 /* free the application protocol data unit (APDU) once it has been dealt with */
                 PDUM_eAPduFreeAPduInstance(sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
